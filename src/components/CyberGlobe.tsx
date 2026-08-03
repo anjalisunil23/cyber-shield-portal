@@ -30,12 +30,14 @@ export function CyberGlobe({ compact = false }: { compact?: boolean }) {
               width: `${r.size}%`,
               height: `${r.size}%`,
               opacity: r.opacity,
+              ["--tiltX" as string]: `${r.tilt}deg`,
               transform: `translate(-50%,-50%) rotateX(${r.tilt}deg)`,
               animation: `ring-spin ${r.dur}s linear infinite`,
               boxShadow: "0 0 24px -6px rgba(168,85,247,0.8)",
             }}
           />
         ))}
+
 
         <div className="absolute left-1/2 top-1/2 h-[46%] w-[46%] -translate-x-1/2 -translate-y-1/2">
           <div
