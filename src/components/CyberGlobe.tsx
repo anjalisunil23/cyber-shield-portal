@@ -59,11 +59,13 @@ export function CyberGlobe({ compact = false }: { compact?: boolean }) {
         />
       </div>
 
-      <div className="absolute left-1/2 top-[6%] grid h-14 w-14 -translate-x-1/2 place-items-center rounded-2xl border border-violet-glow/45 bg-surface/70 backdrop-blur-md"
-        style={{ boxShadow: "0 0 32px -8px rgba(168,85,247,0.95)" }}
+      <div className="absolute left-1/2 top-[4%] flex -translate-x-1/2 items-center gap-2 rounded-full border border-violet-glow/45 bg-surface/70 px-4 py-2 text-[11px] font-medium backdrop-blur-md"
+        style={{ boxShadow: "0 0 32px -10px rgba(168,85,247,0.95)" }}
       >
-        <Fingerprint className="h-7 w-7 text-violet-glow" />
+        <Fingerprint className="h-4 w-4 text-violet-glow" />
+        Biometric session
       </div>
+
 
       {CHIPS.map(({ Icon, label }, i) => (
         <div
