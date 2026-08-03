@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Shield, Network, Sparkles, FileText, GitBranch, ScanEye } from "lucide-react";
+import {
+  Shield, Network, Sparkles, FileText, GitBranch, ScanEye,
+  Briefcase, ShieldCheck, Settings2, Lock, Activity, ArrowRight,
+} from "lucide-react";
 import { ParticleBackground } from "@/components/ParticleBackground";
-import { ShieldGraphic } from "@/components/ShieldGraphic";
+import { CyberGlobe } from "@/components/CyberGlobe";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,6 +49,41 @@ const FEATURES = [
   },
 ];
 
+const STATS = [
+  { value: "72%", label: "Less time spent collating evidence" },
+  { value: "4x", label: "Faster first-pass report drafting" },
+  { value: "100%", label: "Actions written to the audit trail" },
+  { value: "0", label: "Autonomous AI decisions" },
+];
+
+const ROLES = [
+  {
+    Icon: Briefcase,
+    title: "Investigator",
+    to: "/dashboard/investigator" as const,
+    points: ["Create and manage cases", "Log notes and evidence metadata", "Request forensic analysis", "Finalize AI-drafted reports"],
+  },
+  {
+    Icon: ShieldCheck,
+    title: "Supervisor",
+    to: "/dashboard/supervisor" as const,
+    points: ["Approve reports before closure", "Monitor caseloads and forensic workload", "Correct and rate AI summaries", "Assign forensic resources"],
+  },
+  {
+    Icon: Settings2,
+    title: "Admin",
+    to: "/dashboard/admin" as const,
+    points: ["Manage accounts and roles", "Maintain audit logs", "Track uptime and incidents", "Configure system settings"],
+  },
+];
+
+const FLOW = [
+  { step: "01", title: "Ingest", desc: "Evidence metadata, forensic exports and case notes land in one custody-tracked vault." },
+  { step: "02", title: "Correlate", desc: "The engine links entities across sources and ranks leads with visible reasoning." },
+  { step: "03", title: "Draft", desc: "An AI-assisted report is composed with every claim tied to its source evidence." },
+  { step: "04", title: "Approve", desc: "Investigators finalize and supervisors sign off before anything is filed." },
+];
+
 function Landing() {
   return (
     <div className="relative min-h-screen">
@@ -59,8 +97,9 @@ function Landing() {
           </Link>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="transition-colors hover:text-foreground">Features</a>
+            <a href="#roles" className="transition-colors hover:text-foreground">Roles</a>
+            <a href="#workflow" className="transition-colors hover:text-foreground">Workflow</a>
             <a href="#about" className="transition-colors hover:text-foreground">About</a>
-            <a href="#contact" className="transition-colors hover:text-foreground">Contact</a>
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -94,16 +133,31 @@ function Landing() {
               <Link to="/register" className="btn-violet rounded-xl px-6 py-3 text-sm font-semibold">
                 Get Started
               </Link>
-              <a
-                href="#features"
-                className="rounded-xl border border-border px-6 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                Explore modules
-              </a>
+                View dashboards <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs text-muted-foreground">
+              <span className="inline-flex items-center gap-2"><Lock className="h-4 w-4 text-violet-glow" /> End-to-end custody tracking</span>
+              <span className="inline-flex items-center gap-2"><Activity className="h-4 w-4 text-violet-glow" /> Full audit trail</span>
             </div>
           </div>
           <div className="animate-rise-in" style={{ animationDelay: "0.15s" }}>
-            <ShieldGraphic priority />
+            <CyberGlobe />
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-5">
+          <div className="glass-card grid gap-6 p-7 sm:grid-cols-2 lg:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.label}>
+                <p className="font-display text-3xl font-semibold text-gradient-violet sm:text-4xl">{s.value}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -114,9 +168,9 @@ function Landing() {
           </p>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map(({ Icon, title, desc }) => (
-              <article key={title} className="glass-card glow-hover p-6">
+              <article key={title} className="glass-card glow-hover group p-6">
                 <div
-                  className="grid h-11 w-11 place-items-center rounded-xl border border-violet-glow/35 bg-surface/60"
+                  className="grid h-11 w-11 place-items-center rounded-xl border border-violet-glow/35 bg-surface/60 transition-transform duration-300 group-hover:scale-110"
                   style={{ boxShadow: "0 0 22px -8px rgba(168,85,247,0.9)" }}
                 >
                   <Icon className="h-5 w-5 text-violet-glow" />
@@ -124,6 +178,50 @@ function Landing() {
                 <h3 className="mt-5 text-lg font-semibold">{title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
               </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="roles" className="mx-auto max-w-7xl px-5 py-10">
+          <h2 className="text-3xl font-semibold sm:text-4xl">Built for every role</h2>
+          <p className="mt-3 max-w-2xl text-muted-foreground">
+            Permissions, dashboards and workflows tailored to how each team member works a case.
+          </p>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {ROLES.map(({ Icon, title, points, to }) => (
+              <Link key={title} to={to} className="glass-card glow-hover group p-6">
+                <div
+                  className="grid h-12 w-12 place-items-center rounded-xl border border-violet-glow/35 bg-surface/60 transition-transform duration-300 group-hover:scale-110"
+                  style={{ boxShadow: "0 0 24px -8px rgba(168,85,247,0.9)" }}
+                >
+                  <Icon className="h-6 w-6 text-violet-glow" />
+                </div>
+                <h3 className="mt-5 text-lg font-semibold">{title}</h3>
+                <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+                  {points.map((p) => (
+                    <li key={p} className="flex gap-2">
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-glow" />
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+                <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-violet-glow">
+                  Open dashboard <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section id="workflow" className="mx-auto max-w-7xl px-5 py-16">
+          <h2 className="text-3xl font-semibold sm:text-4xl">How a case moves</h2>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {FLOW.map(({ step, title, desc }) => (
+              <div key={step} className="glass-card glow-hover relative overflow-hidden p-6">
+                <span className="font-display text-4xl font-bold text-violet-glow/25">{step}</span>
+                <h3 className="mt-3 text-lg font-semibold">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+              </div>
             ))}
           </div>
         </section>
@@ -161,7 +259,8 @@ function Landing() {
           </div>
           <div className="flex flex-wrap gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground">Features</a>
-            <a href="#about" className="hover:text-foreground">About</a>
+            <a href="#roles" className="hover:text-foreground">Roles</a>
+            <Link to="/dashboard" className="hover:text-foreground">Dashboards</Link>
             <Link to="/login" className="hover:text-foreground">Login</Link>
             <Link to="/register" className="hover:text-foreground">Register</Link>
           </div>
