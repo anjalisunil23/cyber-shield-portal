@@ -41,9 +41,11 @@ import { Route as DashboardAiAnalysisRouteImport } from './routes/dashboard/ai-a
 import { Route as DashboardCasesRouteImport } from './routes/dashboard/cases'
 import { Route as DashboardEvidenceRouteImport } from './routes/dashboard/evidence'
 import { Route as DashboardGraphRouteImport } from './routes/dashboard/graph'
+import { Route as DashboardInvestigatorRouteImport } from './routes/dashboard/investigator'
 import { Route as DashboardNotificationsRouteImport } from './routes/dashboard/notifications'
 import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardSupervisorRouteImport } from './routes/dashboard/supervisor'
 import { Route as DashboardTeamRouteImport } from './routes/dashboard/team'
 import { Route as DashboardTimelineRouteImport } from './routes/dashboard/timeline'
 import { Route as InvestigatorCasesRouteImport } from './routes/investigator/cases'
@@ -255,6 +257,11 @@ const DashboardGraphRoute = DashboardGraphRouteImport.update({
   path: '/graph',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardInvestigatorRoute = DashboardInvestigatorRouteImport.update({
+  id: '/investigator',
+  path: '/investigator',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -268,6 +275,11 @@ const DashboardReportsRoute = DashboardReportsRouteImport.update({
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSupervisorRoute = DashboardSupervisorRouteImport.update({
+  id: '/supervisor',
+  path: '/supervisor',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardTeamRoute = DashboardTeamRouteImport.update({
@@ -558,9 +570,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/cases': typeof DashboardCasesRouteWithChildren
   '/dashboard/evidence': typeof DashboardEvidenceRoute
   '/dashboard/graph': typeof DashboardGraphRoute
+  '/dashboard/investigator': typeof DashboardInvestigatorRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/supervisor': typeof DashboardSupervisorRoute
   '/dashboard/team': typeof DashboardTeamRoute
   '/dashboard/timeline': typeof DashboardTimelineRoute
   '/investigator/cases': typeof InvestigatorCasesRouteWithChildren
@@ -644,9 +658,11 @@ export interface FileRoutesByTo {
   '/dashboard/cases': typeof DashboardCasesRouteWithChildren
   '/dashboard/evidence': typeof DashboardEvidenceRoute
   '/dashboard/graph': typeof DashboardGraphRoute
+  '/dashboard/investigator': typeof DashboardInvestigatorRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/supervisor': typeof DashboardSupervisorRoute
   '/dashboard/team': typeof DashboardTeamRoute
   '/dashboard/timeline': typeof DashboardTimelineRoute
   '/investigator/cases': typeof InvestigatorCasesRouteWithChildren
@@ -732,9 +748,11 @@ export interface FileRoutesById {
   '/dashboard/cases': typeof DashboardCasesRouteWithChildren
   '/dashboard/evidence': typeof DashboardEvidenceRoute
   '/dashboard/graph': typeof DashboardGraphRoute
+  '/dashboard/investigator': typeof DashboardInvestigatorRoute
   '/dashboard/notifications': typeof DashboardNotificationsRoute
   '/dashboard/reports': typeof DashboardReportsRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/supervisor': typeof DashboardSupervisorRoute
   '/dashboard/team': typeof DashboardTeamRoute
   '/dashboard/timeline': typeof DashboardTimelineRoute
   '/investigator/cases': typeof InvestigatorCasesRouteWithChildren
@@ -821,9 +839,11 @@ export interface FileRouteTypes {
     | '/dashboard/cases'
     | '/dashboard/evidence'
     | '/dashboard/graph'
+    | '/dashboard/investigator'
     | '/dashboard/notifications'
     | '/dashboard/reports'
     | '/dashboard/settings'
+    | '/dashboard/supervisor'
     | '/dashboard/team'
     | '/dashboard/timeline'
     | '/investigator/cases'
@@ -907,9 +927,11 @@ export interface FileRouteTypes {
     | '/dashboard/cases'
     | '/dashboard/evidence'
     | '/dashboard/graph'
+    | '/dashboard/investigator'
     | '/dashboard/notifications'
     | '/dashboard/reports'
     | '/dashboard/settings'
+    | '/dashboard/supervisor'
     | '/dashboard/team'
     | '/dashboard/timeline'
     | '/investigator/cases'
@@ -994,9 +1016,11 @@ export interface FileRouteTypes {
     | '/dashboard/cases'
     | '/dashboard/evidence'
     | '/dashboard/graph'
+    | '/dashboard/investigator'
     | '/dashboard/notifications'
     | '/dashboard/reports'
     | '/dashboard/settings'
+    | '/dashboard/supervisor'
     | '/dashboard/team'
     | '/dashboard/timeline'
     | '/investigator/cases'
@@ -1295,6 +1319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardGraphRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/investigator': {
+      id: '/dashboard/investigator'
+      path: '/investigator'
+      fullPath: '/dashboard/investigator'
+      preLoaderRoute: typeof DashboardInvestigatorRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/notifications': {
       id: '/dashboard/notifications'
       path: '/notifications'
@@ -1314,6 +1345,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/dashboard/settings'
       preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/supervisor': {
+      id: '/dashboard/supervisor'
+      path: '/supervisor'
+      fullPath: '/dashboard/supervisor'
+      preLoaderRoute: typeof DashboardSupervisorRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/team': {
@@ -1729,9 +1767,11 @@ interface DashboardRouteChildren {
   DashboardCasesRoute: typeof DashboardCasesRouteWithChildren
   DashboardEvidenceRoute: typeof DashboardEvidenceRoute
   DashboardGraphRoute: typeof DashboardGraphRoute
+  DashboardInvestigatorRoute: typeof DashboardInvestigatorRoute
   DashboardNotificationsRoute: typeof DashboardNotificationsRoute
   DashboardReportsRoute: typeof DashboardReportsRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardSupervisorRoute: typeof DashboardSupervisorRoute
   DashboardTeamRoute: typeof DashboardTeamRoute
   DashboardTimelineRoute: typeof DashboardTimelineRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -1743,9 +1783,11 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardCasesRoute: DashboardCasesRouteWithChildren,
   DashboardEvidenceRoute: DashboardEvidenceRoute,
   DashboardGraphRoute: DashboardGraphRoute,
+  DashboardInvestigatorRoute: DashboardInvestigatorRoute,
   DashboardNotificationsRoute: DashboardNotificationsRoute,
   DashboardReportsRoute: DashboardReportsRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardSupervisorRoute: DashboardSupervisorRoute,
   DashboardTeamRoute: DashboardTeamRoute,
   DashboardTimelineRoute: DashboardTimelineRoute,
   DashboardIndexRoute: DashboardIndexRoute,
