@@ -10,12 +10,124 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ActivityRouteImport } from './routes/activity'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as InvestigatorRouteImport } from './routes/investigator'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MajorAdminRouteImport } from './routes/major-admin'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as SuperiorRouteImport } from './routes/superior'
+import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
+import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
+import { Route as AdminAssignmentsRouteImport } from './routes/admin/assignments'
+import { Route as AdminCasesRouteImport } from './routes/admin/cases'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminEvidenceRouteImport } from './routes/admin/evidence'
+import { Route as AdminInvestigatorsRouteImport } from './routes/admin/investigators'
+import { Route as AdminReportsRouteImport } from './routes/admin/reports'
+import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
+import { Route as AdminSuperiorOfficersRouteImport } from './routes/admin/superior-officers'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard/admin'
+import { Route as DashboardAiAnalysisRouteImport } from './routes/dashboard/ai-analysis'
+import { Route as DashboardCasesRouteImport } from './routes/dashboard/cases'
+import { Route as DashboardEvidenceRouteImport } from './routes/dashboard/evidence'
+import { Route as DashboardGraphRouteImport } from './routes/dashboard/graph'
+import { Route as DashboardNotificationsRouteImport } from './routes/dashboard/notifications'
+import { Route as DashboardReportsRouteImport } from './routes/dashboard/reports'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
+import { Route as DashboardTeamRouteImport } from './routes/dashboard/team'
+import { Route as DashboardTimelineRouteImport } from './routes/dashboard/timeline'
+import { Route as InvestigatorCasesRouteImport } from './routes/investigator/cases'
+import { Route as InvestigatorDashboardRouteImport } from './routes/investigator/dashboard'
+import { Route as InvestigatorEvidenceRouteImport } from './routes/investigator/evidence'
+import { Route as InvestigatorLeadsRouteImport } from './routes/investigator/leads'
+import { Route as InvestigatorNotesRouteImport } from './routes/investigator/notes'
+import { Route as InvestigatorReportsRouteImport } from './routes/investigator/reports'
+import { Route as InvestigatorSettingsRouteImport } from './routes/investigator/settings'
+import { Route as InvestigatorTasksRouteImport } from './routes/investigator/tasks'
+import { Route as InvestigatorTimelineRouteImport } from './routes/investigator/timeline'
+import { Route as InvestigatorUploadRouteImport } from './routes/investigator/upload'
+import { Route as MajorAdminAdminsRouteImport } from './routes/major-admin/admins'
+import { Route as MajorAdminAnalyticsRouteImport } from './routes/major-admin/analytics'
+import { Route as MajorAdminAuditLogsRouteImport } from './routes/major-admin/audit-logs'
+import { Route as MajorAdminBackupRouteImport } from './routes/major-admin/backup'
+import { Route as MajorAdminCasesRouteImport } from './routes/major-admin/cases'
+import { Route as MajorAdminDashboardRouteImport } from './routes/major-admin/dashboard'
+import { Route as MajorAdminDepartmentsRouteImport } from './routes/major-admin/departments'
+import { Route as MajorAdminReportsRouteImport } from './routes/major-admin/reports'
+import { Route as MajorAdminRolesRouteImport } from './routes/major-admin/roles'
+import { Route as MajorAdminSettingsRouteImport } from './routes/major-admin/settings'
+import { Route as MajorAdminStorageRouteImport } from './routes/major-admin/storage'
+import { Route as MajorAdminUsersRouteImport } from './routes/major-admin/users'
+import { Route as ProfileEditRouteImport } from './routes/profile.edit'
+import { Route as ProfileSecurityRouteImport } from './routes/profile.security'
+import { Route as SuperiorAnalyticsRouteImport } from './routes/superior/analytics'
+import { Route as SuperiorCasesRouteImport } from './routes/superior/cases'
+import { Route as SuperiorDashboardRouteImport } from './routes/superior/dashboard'
+import { Route as SuperiorEvidenceRouteImport } from './routes/superior/evidence'
+import { Route as SuperiorInvestigatorsRouteImport } from './routes/superior/investigators'
+import { Route as SuperiorLeadsRouteImport } from './routes/superior/leads'
+import { Route as SuperiorRelationshipsRouteImport } from './routes/superior/relationships'
+import { Route as SuperiorReportsRouteImport } from './routes/superior/reports'
+import { Route as SuperiorSettingsRouteImport } from './routes/superior/settings'
+import { Route as SuperiorTasksRouteImport } from './routes/superior/tasks'
+import { Route as SuperiorTimelineRouteImport } from './routes/superior/timeline'
+import { Route as AdminUsersCreateRouteImport } from './routes/admin/users.create'
+import { Route as DashboardCasesCaseIdRouteImport } from './routes/dashboard/cases.$caseId'
+import { Route as InvestigatorCasesCaseIdRouteImport } from './routes/investigator/cases.$caseId'
+import { Route as InvestigatorEvidenceEvidenceIdRouteImport } from './routes/investigator/evidence.$evidenceId'
+import { Route as MajorAdminAdminsCreateRouteImport } from './routes/major-admin/admins.create'
+import { Route as MajorAdminDepartmentsDeptIdRouteImport } from './routes/major-admin/departments.$deptId'
+import { Route as MajorAdminUsersUserIdRouteImport } from './routes/major-admin/users.$userId'
+import { Route as SuperiorCasesCaseIdRouteImport } from './routes/superior/cases.$caseId'
+import { Route as SuperiorCasesCreateRouteImport } from './routes/superior/cases.create'
+import { Route as SuperiorEvidenceEvidenceIdRouteImport } from './routes/superior/evidence.$evidenceId'
+import { Route as AdminUsersUserIdEditRouteImport } from './routes/admin/users.$userId.edit'
+import { Route as MajorAdminAdminsAdminIdEditRouteImport } from './routes/major-admin/admins.$adminId.edit'
+import { Route as SuperiorCasesCaseIdAssignRouteImport } from './routes/superior/cases.$caseId.assign'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivityRoute = ActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestigatorRoute = InvestigatorRouteImport.update({
+  id: '/investigator',
+  path: '/investigator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -23,40 +135,938 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MajorAdminRoute = MajorAdminRouteImport.update({
+  id: '/major-admin',
+  path: '/major-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuperiorRoute = SuperiorRouteImport.update({
+  id: '/superior',
+  path: '/superior',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnauthorizedRoute = UnauthorizedRouteImport.update({
+  id: '/unauthorized',
+  path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAssignmentsRoute = AdminAssignmentsRouteImport.update({
+  id: '/assignments',
+  path: '/assignments',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCasesRoute = AdminCasesRouteImport.update({
+  id: '/cases',
+  path: '/cases',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminEvidenceRoute = AdminEvidenceRouteImport.update({
+  id: '/evidence',
+  path: '/evidence',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInvestigatorsRoute = AdminInvestigatorsRouteImport.update({
+  id: '/investigators',
+  path: '/investigators',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReportsRoute = AdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSuperiorOfficersRoute = AdminSuperiorOfficersRouteImport.update({
+  id: '/superior-officers',
+  path: '/superior-officers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAiAnalysisRoute = DashboardAiAnalysisRouteImport.update({
+  id: '/ai-analysis',
+  path: '/ai-analysis',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCasesRoute = DashboardCasesRouteImport.update({
+  id: '/cases',
+  path: '/cases',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardEvidenceRoute = DashboardEvidenceRouteImport.update({
+  id: '/evidence',
+  path: '/evidence',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardGraphRoute = DashboardGraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardNotificationsRoute = DashboardNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardReportsRoute = DashboardReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTeamRoute = DashboardTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTimelineRoute = DashboardTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const InvestigatorCasesRoute = InvestigatorCasesRouteImport.update({
+  id: '/cases',
+  path: '/cases',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorDashboardRoute = InvestigatorDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorEvidenceRoute = InvestigatorEvidenceRouteImport.update({
+  id: '/evidence',
+  path: '/evidence',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorLeadsRoute = InvestigatorLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorNotesRoute = InvestigatorNotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorReportsRoute = InvestigatorReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorSettingsRoute = InvestigatorSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorTasksRoute = InvestigatorTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorTimelineRoute = InvestigatorTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const InvestigatorUploadRoute = InvestigatorUploadRouteImport.update({
+  id: '/upload',
+  path: '/upload',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
+const MajorAdminAdminsRoute = MajorAdminAdminsRouteImport.update({
+  id: '/admins',
+  path: '/admins',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminAnalyticsRoute = MajorAdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminAuditLogsRoute = MajorAdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminBackupRoute = MajorAdminBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminCasesRoute = MajorAdminCasesRouteImport.update({
+  id: '/cases',
+  path: '/cases',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminDashboardRoute = MajorAdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminDepartmentsRoute = MajorAdminDepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminReportsRoute = MajorAdminReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminRolesRoute = MajorAdminRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminSettingsRoute = MajorAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminStorageRoute = MajorAdminStorageRouteImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminUsersRoute = MajorAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const ProfileEditRoute = ProfileEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => ProfileRoute,
+} as any)
+const ProfileSecurityRoute = ProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => ProfileRoute,
+} as any)
+const SuperiorAnalyticsRoute = SuperiorAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorCasesRoute = SuperiorCasesRouteImport.update({
+  id: '/cases',
+  path: '/cases',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorDashboardRoute = SuperiorDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorEvidenceRoute = SuperiorEvidenceRouteImport.update({
+  id: '/evidence',
+  path: '/evidence',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorInvestigatorsRoute = SuperiorInvestigatorsRouteImport.update({
+  id: '/investigators',
+  path: '/investigators',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorLeadsRoute = SuperiorLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorRelationshipsRoute = SuperiorRelationshipsRouteImport.update({
+  id: '/relationships',
+  path: '/relationships',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorReportsRoute = SuperiorReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorSettingsRoute = SuperiorSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorTasksRoute = SuperiorTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorTimelineRoute = SuperiorTimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const AdminUsersCreateRoute = AdminUsersCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
+const DashboardCasesCaseIdRoute = DashboardCasesCaseIdRouteImport.update({
+  id: '/$caseId',
+  path: '/$caseId',
+  getParentRoute: () => DashboardCasesRoute,
+} as any)
+const InvestigatorCasesCaseIdRoute = InvestigatorCasesCaseIdRouteImport.update({
+  id: '/$caseId',
+  path: '/$caseId',
+  getParentRoute: () => InvestigatorCasesRoute,
+} as any)
+const InvestigatorEvidenceEvidenceIdRoute =
+  InvestigatorEvidenceEvidenceIdRouteImport.update({
+    id: '/$evidenceId',
+    path: '/$evidenceId',
+    getParentRoute: () => InvestigatorEvidenceRoute,
+  } as any)
+const MajorAdminAdminsCreateRoute = MajorAdminAdminsCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => MajorAdminAdminsRoute,
+} as any)
+const MajorAdminDepartmentsDeptIdRoute =
+  MajorAdminDepartmentsDeptIdRouteImport.update({
+    id: '/$deptId',
+    path: '/$deptId',
+    getParentRoute: () => MajorAdminDepartmentsRoute,
+  } as any)
+const MajorAdminUsersUserIdRoute = MajorAdminUsersUserIdRouteImport.update({
+  id: '/$userId',
+  path: '/$userId',
+  getParentRoute: () => MajorAdminUsersRoute,
+} as any)
+const SuperiorCasesCaseIdRoute = SuperiorCasesCaseIdRouteImport.update({
+  id: '/$caseId',
+  path: '/$caseId',
+  getParentRoute: () => SuperiorCasesRoute,
+} as any)
+const SuperiorCasesCreateRoute = SuperiorCasesCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => SuperiorCasesRoute,
+} as any)
+const SuperiorEvidenceEvidenceIdRoute =
+  SuperiorEvidenceEvidenceIdRouteImport.update({
+    id: '/$evidenceId',
+    path: '/$evidenceId',
+    getParentRoute: () => SuperiorEvidenceRoute,
+  } as any)
+const AdminUsersUserIdEditRoute = AdminUsersUserIdEditRouteImport.update({
+  id: '/$userId/edit',
+  path: '/$userId/edit',
+  getParentRoute: () => AdminUsersRoute,
+} as any)
+const MajorAdminAdminsAdminIdEditRoute =
+  MajorAdminAdminsAdminIdEditRouteImport.update({
+    id: '/$adminId/edit',
+    path: '/$adminId/edit',
+    getParentRoute: () => MajorAdminAdminsRoute,
+  } as any)
+const SuperiorCasesCaseIdAssignRoute =
+  SuperiorCasesCaseIdAssignRouteImport.update({
+    id: '/assign',
+    path: '/assign',
+    getParentRoute: () => SuperiorCasesCaseIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activity': typeof ActivityRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/help': typeof HelpRoute
+  '/investigator': typeof InvestigatorRouteWithChildren
   '/login': typeof LoginRoute
+  '/major-admin': typeof MajorAdminRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/superior': typeof SuperiorRouteWithChildren
+  '/unauthorized': typeof UnauthorizedRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/assignments': typeof AdminAssignmentsRoute
+  '/admin/cases': typeof AdminCasesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/evidence': typeof AdminEvidenceRoute
+  '/admin/investigators': typeof AdminInvestigatorsRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/superior-officers': typeof AdminSuperiorOfficersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/ai-analysis': typeof DashboardAiAnalysisRoute
+  '/dashboard/cases': typeof DashboardCasesRouteWithChildren
+  '/dashboard/evidence': typeof DashboardEvidenceRoute
+  '/dashboard/graph': typeof DashboardGraphRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/team': typeof DashboardTeamRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
+  '/investigator/cases': typeof InvestigatorCasesRouteWithChildren
+  '/investigator/dashboard': typeof InvestigatorDashboardRoute
+  '/investigator/evidence': typeof InvestigatorEvidenceRouteWithChildren
+  '/investigator/leads': typeof InvestigatorLeadsRoute
+  '/investigator/notes': typeof InvestigatorNotesRoute
+  '/investigator/reports': typeof InvestigatorReportsRoute
+  '/investigator/settings': typeof InvestigatorSettingsRoute
+  '/investigator/tasks': typeof InvestigatorTasksRoute
+  '/investigator/timeline': typeof InvestigatorTimelineRoute
+  '/investigator/upload': typeof InvestigatorUploadRoute
+  '/major-admin/admins': typeof MajorAdminAdminsRouteWithChildren
+  '/major-admin/analytics': typeof MajorAdminAnalyticsRoute
+  '/major-admin/audit-logs': typeof MajorAdminAuditLogsRoute
+  '/major-admin/backup': typeof MajorAdminBackupRoute
+  '/major-admin/cases': typeof MajorAdminCasesRoute
+  '/major-admin/dashboard': typeof MajorAdminDashboardRoute
+  '/major-admin/departments': typeof MajorAdminDepartmentsRouteWithChildren
+  '/major-admin/reports': typeof MajorAdminReportsRoute
+  '/major-admin/roles': typeof MajorAdminRolesRoute
+  '/major-admin/settings': typeof MajorAdminSettingsRoute
+  '/major-admin/storage': typeof MajorAdminStorageRoute
+  '/major-admin/users': typeof MajorAdminUsersRouteWithChildren
+  '/profile/edit': typeof ProfileEditRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/superior/analytics': typeof SuperiorAnalyticsRoute
+  '/superior/cases': typeof SuperiorCasesRouteWithChildren
+  '/superior/dashboard': typeof SuperiorDashboardRoute
+  '/superior/evidence': typeof SuperiorEvidenceRouteWithChildren
+  '/superior/investigators': typeof SuperiorInvestigatorsRoute
+  '/superior/leads': typeof SuperiorLeadsRoute
+  '/superior/relationships': typeof SuperiorRelationshipsRoute
+  '/superior/reports': typeof SuperiorReportsRoute
+  '/superior/settings': typeof SuperiorSettingsRoute
+  '/superior/tasks': typeof SuperiorTasksRoute
+  '/superior/timeline': typeof SuperiorTimelineRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/admin/users/create': typeof AdminUsersCreateRoute
+  '/dashboard/cases/$caseId': typeof DashboardCasesCaseIdRoute
+  '/investigator/cases/$caseId': typeof InvestigatorCasesCaseIdRoute
+  '/investigator/evidence/$evidenceId': typeof InvestigatorEvidenceEvidenceIdRoute
+  '/major-admin/admins/create': typeof MajorAdminAdminsCreateRoute
+  '/major-admin/departments/$deptId': typeof MajorAdminDepartmentsDeptIdRoute
+  '/major-admin/users/$userId': typeof MajorAdminUsersUserIdRoute
+  '/superior/cases/$caseId': typeof SuperiorCasesCaseIdRouteWithChildren
+  '/superior/cases/create': typeof SuperiorCasesCreateRoute
+  '/superior/evidence/$evidenceId': typeof SuperiorEvidenceEvidenceIdRoute
+  '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
+  '/major-admin/admins/$adminId/edit': typeof MajorAdminAdminsAdminIdEditRoute
+  '/superior/cases/$caseId/assign': typeof SuperiorCasesCaseIdAssignRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activity': typeof ActivityRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/help': typeof HelpRoute
+  '/investigator': typeof InvestigatorRouteWithChildren
   '/login': typeof LoginRoute
+  '/major-admin': typeof MajorAdminRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/superior': typeof SuperiorRouteWithChildren
+  '/unauthorized': typeof UnauthorizedRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/assignments': typeof AdminAssignmentsRoute
+  '/admin/cases': typeof AdminCasesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/evidence': typeof AdminEvidenceRoute
+  '/admin/investigators': typeof AdminInvestigatorsRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/superior-officers': typeof AdminSuperiorOfficersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/ai-analysis': typeof DashboardAiAnalysisRoute
+  '/dashboard/cases': typeof DashboardCasesRouteWithChildren
+  '/dashboard/evidence': typeof DashboardEvidenceRoute
+  '/dashboard/graph': typeof DashboardGraphRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/team': typeof DashboardTeamRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
+  '/investigator/cases': typeof InvestigatorCasesRouteWithChildren
+  '/investigator/dashboard': typeof InvestigatorDashboardRoute
+  '/investigator/evidence': typeof InvestigatorEvidenceRouteWithChildren
+  '/investigator/leads': typeof InvestigatorLeadsRoute
+  '/investigator/notes': typeof InvestigatorNotesRoute
+  '/investigator/reports': typeof InvestigatorReportsRoute
+  '/investigator/settings': typeof InvestigatorSettingsRoute
+  '/investigator/tasks': typeof InvestigatorTasksRoute
+  '/investigator/timeline': typeof InvestigatorTimelineRoute
+  '/investigator/upload': typeof InvestigatorUploadRoute
+  '/major-admin/admins': typeof MajorAdminAdminsRouteWithChildren
+  '/major-admin/analytics': typeof MajorAdminAnalyticsRoute
+  '/major-admin/audit-logs': typeof MajorAdminAuditLogsRoute
+  '/major-admin/backup': typeof MajorAdminBackupRoute
+  '/major-admin/cases': typeof MajorAdminCasesRoute
+  '/major-admin/dashboard': typeof MajorAdminDashboardRoute
+  '/major-admin/departments': typeof MajorAdminDepartmentsRouteWithChildren
+  '/major-admin/reports': typeof MajorAdminReportsRoute
+  '/major-admin/roles': typeof MajorAdminRolesRoute
+  '/major-admin/settings': typeof MajorAdminSettingsRoute
+  '/major-admin/storage': typeof MajorAdminStorageRoute
+  '/major-admin/users': typeof MajorAdminUsersRouteWithChildren
+  '/profile/edit': typeof ProfileEditRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/superior/analytics': typeof SuperiorAnalyticsRoute
+  '/superior/cases': typeof SuperiorCasesRouteWithChildren
+  '/superior/dashboard': typeof SuperiorDashboardRoute
+  '/superior/evidence': typeof SuperiorEvidenceRouteWithChildren
+  '/superior/investigators': typeof SuperiorInvestigatorsRoute
+  '/superior/leads': typeof SuperiorLeadsRoute
+  '/superior/relationships': typeof SuperiorRelationshipsRoute
+  '/superior/reports': typeof SuperiorReportsRoute
+  '/superior/settings': typeof SuperiorSettingsRoute
+  '/superior/tasks': typeof SuperiorTasksRoute
+  '/superior/timeline': typeof SuperiorTimelineRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/admin/users/create': typeof AdminUsersCreateRoute
+  '/dashboard/cases/$caseId': typeof DashboardCasesCaseIdRoute
+  '/investigator/cases/$caseId': typeof InvestigatorCasesCaseIdRoute
+  '/investigator/evidence/$evidenceId': typeof InvestigatorEvidenceEvidenceIdRoute
+  '/major-admin/admins/create': typeof MajorAdminAdminsCreateRoute
+  '/major-admin/departments/$deptId': typeof MajorAdminDepartmentsDeptIdRoute
+  '/major-admin/users/$userId': typeof MajorAdminUsersUserIdRoute
+  '/superior/cases/$caseId': typeof SuperiorCasesCaseIdRouteWithChildren
+  '/superior/cases/create': typeof SuperiorCasesCreateRoute
+  '/superior/evidence/$evidenceId': typeof SuperiorEvidenceEvidenceIdRoute
+  '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
+  '/major-admin/admins/$adminId/edit': typeof MajorAdminAdminsAdminIdEditRoute
+  '/superior/cases/$caseId/assign': typeof SuperiorCasesCaseIdAssignRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/activity': typeof ActivityRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/help': typeof HelpRoute
+  '/investigator': typeof InvestigatorRouteWithChildren
   '/login': typeof LoginRoute
+  '/major-admin': typeof MajorAdminRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/profile': typeof ProfileRouteWithChildren
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/search': typeof SearchRoute
+  '/superior': typeof SuperiorRouteWithChildren
+  '/unauthorized': typeof UnauthorizedRoute
+  '/admin/analytics': typeof AdminAnalyticsRoute
+  '/admin/assignments': typeof AdminAssignmentsRoute
+  '/admin/cases': typeof AdminCasesRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/evidence': typeof AdminEvidenceRoute
+  '/admin/investigators': typeof AdminInvestigatorsRoute
+  '/admin/reports': typeof AdminReportsRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/superior-officers': typeof AdminSuperiorOfficersRoute
+  '/admin/users': typeof AdminUsersRouteWithChildren
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/ai-analysis': typeof DashboardAiAnalysisRoute
+  '/dashboard/cases': typeof DashboardCasesRouteWithChildren
+  '/dashboard/evidence': typeof DashboardEvidenceRoute
+  '/dashboard/graph': typeof DashboardGraphRoute
+  '/dashboard/notifications': typeof DashboardNotificationsRoute
+  '/dashboard/reports': typeof DashboardReportsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/team': typeof DashboardTeamRoute
+  '/dashboard/timeline': typeof DashboardTimelineRoute
+  '/investigator/cases': typeof InvestigatorCasesRouteWithChildren
+  '/investigator/dashboard': typeof InvestigatorDashboardRoute
+  '/investigator/evidence': typeof InvestigatorEvidenceRouteWithChildren
+  '/investigator/leads': typeof InvestigatorLeadsRoute
+  '/investigator/notes': typeof InvestigatorNotesRoute
+  '/investigator/reports': typeof InvestigatorReportsRoute
+  '/investigator/settings': typeof InvestigatorSettingsRoute
+  '/investigator/tasks': typeof InvestigatorTasksRoute
+  '/investigator/timeline': typeof InvestigatorTimelineRoute
+  '/investigator/upload': typeof InvestigatorUploadRoute
+  '/major-admin/admins': typeof MajorAdminAdminsRouteWithChildren
+  '/major-admin/analytics': typeof MajorAdminAnalyticsRoute
+  '/major-admin/audit-logs': typeof MajorAdminAuditLogsRoute
+  '/major-admin/backup': typeof MajorAdminBackupRoute
+  '/major-admin/cases': typeof MajorAdminCasesRoute
+  '/major-admin/dashboard': typeof MajorAdminDashboardRoute
+  '/major-admin/departments': typeof MajorAdminDepartmentsRouteWithChildren
+  '/major-admin/reports': typeof MajorAdminReportsRoute
+  '/major-admin/roles': typeof MajorAdminRolesRoute
+  '/major-admin/settings': typeof MajorAdminSettingsRoute
+  '/major-admin/storage': typeof MajorAdminStorageRoute
+  '/major-admin/users': typeof MajorAdminUsersRouteWithChildren
+  '/profile/edit': typeof ProfileEditRoute
+  '/profile/security': typeof ProfileSecurityRoute
+  '/superior/analytics': typeof SuperiorAnalyticsRoute
+  '/superior/cases': typeof SuperiorCasesRouteWithChildren
+  '/superior/dashboard': typeof SuperiorDashboardRoute
+  '/superior/evidence': typeof SuperiorEvidenceRouteWithChildren
+  '/superior/investigators': typeof SuperiorInvestigatorsRoute
+  '/superior/leads': typeof SuperiorLeadsRoute
+  '/superior/relationships': typeof SuperiorRelationshipsRoute
+  '/superior/reports': typeof SuperiorReportsRoute
+  '/superior/settings': typeof SuperiorSettingsRoute
+  '/superior/tasks': typeof SuperiorTasksRoute
+  '/superior/timeline': typeof SuperiorTimelineRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/admin/users/create': typeof AdminUsersCreateRoute
+  '/dashboard/cases/$caseId': typeof DashboardCasesCaseIdRoute
+  '/investigator/cases/$caseId': typeof InvestigatorCasesCaseIdRoute
+  '/investigator/evidence/$evidenceId': typeof InvestigatorEvidenceEvidenceIdRoute
+  '/major-admin/admins/create': typeof MajorAdminAdminsCreateRoute
+  '/major-admin/departments/$deptId': typeof MajorAdminDepartmentsDeptIdRoute
+  '/major-admin/users/$userId': typeof MajorAdminUsersUserIdRoute
+  '/superior/cases/$caseId': typeof SuperiorCasesCaseIdRouteWithChildren
+  '/superior/cases/create': typeof SuperiorCasesCreateRoute
+  '/superior/evidence/$evidenceId': typeof SuperiorEvidenceEvidenceIdRoute
+  '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
+  '/major-admin/admins/$adminId/edit': typeof MajorAdminAdminsAdminIdEditRoute
+  '/superior/cases/$caseId/assign': typeof SuperiorCasesCaseIdAssignRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/activity'
+    | '/admin'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/help'
+    | '/investigator'
+    | '/login'
+    | '/major-admin'
+    | '/notifications'
+    | '/profile'
+    | '/register'
+    | '/reset-password'
+    | '/search'
+    | '/superior'
+    | '/unauthorized'
+    | '/admin/analytics'
+    | '/admin/assignments'
+    | '/admin/cases'
+    | '/admin/dashboard'
+    | '/admin/evidence'
+    | '/admin/investigators'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/superior-officers'
+    | '/admin/users'
+    | '/dashboard/admin'
+    | '/dashboard/ai-analysis'
+    | '/dashboard/cases'
+    | '/dashboard/evidence'
+    | '/dashboard/graph'
+    | '/dashboard/notifications'
+    | '/dashboard/reports'
+    | '/dashboard/settings'
+    | '/dashboard/team'
+    | '/dashboard/timeline'
+    | '/investigator/cases'
+    | '/investigator/dashboard'
+    | '/investigator/evidence'
+    | '/investigator/leads'
+    | '/investigator/notes'
+    | '/investigator/reports'
+    | '/investigator/settings'
+    | '/investigator/tasks'
+    | '/investigator/timeline'
+    | '/investigator/upload'
+    | '/major-admin/admins'
+    | '/major-admin/analytics'
+    | '/major-admin/audit-logs'
+    | '/major-admin/backup'
+    | '/major-admin/cases'
+    | '/major-admin/dashboard'
+    | '/major-admin/departments'
+    | '/major-admin/reports'
+    | '/major-admin/roles'
+    | '/major-admin/settings'
+    | '/major-admin/storage'
+    | '/major-admin/users'
+    | '/profile/edit'
+    | '/profile/security'
+    | '/superior/analytics'
+    | '/superior/cases'
+    | '/superior/dashboard'
+    | '/superior/evidence'
+    | '/superior/investigators'
+    | '/superior/leads'
+    | '/superior/relationships'
+    | '/superior/reports'
+    | '/superior/settings'
+    | '/superior/tasks'
+    | '/superior/timeline'
+    | '/dashboard/'
+    | '/admin/users/create'
+    | '/dashboard/cases/$caseId'
+    | '/investigator/cases/$caseId'
+    | '/investigator/evidence/$evidenceId'
+    | '/major-admin/admins/create'
+    | '/major-admin/departments/$deptId'
+    | '/major-admin/users/$userId'
+    | '/superior/cases/$caseId'
+    | '/superior/cases/create'
+    | '/superior/evidence/$evidenceId'
+    | '/admin/users/$userId/edit'
+    | '/major-admin/admins/$adminId/edit'
+    | '/superior/cases/$caseId/assign'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
-  id: '__root__' | '/' | '/login' | '/register'
+  to:
+    | '/'
+    | '/activity'
+    | '/admin'
+    | '/forgot-password'
+    | '/help'
+    | '/investigator'
+    | '/login'
+    | '/major-admin'
+    | '/notifications'
+    | '/profile'
+    | '/register'
+    | '/reset-password'
+    | '/search'
+    | '/superior'
+    | '/unauthorized'
+    | '/admin/analytics'
+    | '/admin/assignments'
+    | '/admin/cases'
+    | '/admin/dashboard'
+    | '/admin/evidence'
+    | '/admin/investigators'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/superior-officers'
+    | '/admin/users'
+    | '/dashboard/admin'
+    | '/dashboard/ai-analysis'
+    | '/dashboard/cases'
+    | '/dashboard/evidence'
+    | '/dashboard/graph'
+    | '/dashboard/notifications'
+    | '/dashboard/reports'
+    | '/dashboard/settings'
+    | '/dashboard/team'
+    | '/dashboard/timeline'
+    | '/investigator/cases'
+    | '/investigator/dashboard'
+    | '/investigator/evidence'
+    | '/investigator/leads'
+    | '/investigator/notes'
+    | '/investigator/reports'
+    | '/investigator/settings'
+    | '/investigator/tasks'
+    | '/investigator/timeline'
+    | '/investigator/upload'
+    | '/major-admin/admins'
+    | '/major-admin/analytics'
+    | '/major-admin/audit-logs'
+    | '/major-admin/backup'
+    | '/major-admin/cases'
+    | '/major-admin/dashboard'
+    | '/major-admin/departments'
+    | '/major-admin/reports'
+    | '/major-admin/roles'
+    | '/major-admin/settings'
+    | '/major-admin/storage'
+    | '/major-admin/users'
+    | '/profile/edit'
+    | '/profile/security'
+    | '/superior/analytics'
+    | '/superior/cases'
+    | '/superior/dashboard'
+    | '/superior/evidence'
+    | '/superior/investigators'
+    | '/superior/leads'
+    | '/superior/relationships'
+    | '/superior/reports'
+    | '/superior/settings'
+    | '/superior/tasks'
+    | '/superior/timeline'
+    | '/dashboard'
+    | '/admin/users/create'
+    | '/dashboard/cases/$caseId'
+    | '/investigator/cases/$caseId'
+    | '/investigator/evidence/$evidenceId'
+    | '/major-admin/admins/create'
+    | '/major-admin/departments/$deptId'
+    | '/major-admin/users/$userId'
+    | '/superior/cases/$caseId'
+    | '/superior/cases/create'
+    | '/superior/evidence/$evidenceId'
+    | '/admin/users/$userId/edit'
+    | '/major-admin/admins/$adminId/edit'
+    | '/superior/cases/$caseId/assign'
+  id:
+    | '__root__'
+    | '/'
+    | '/activity'
+    | '/admin'
+    | '/dashboard'
+    | '/forgot-password'
+    | '/help'
+    | '/investigator'
+    | '/login'
+    | '/major-admin'
+    | '/notifications'
+    | '/profile'
+    | '/register'
+    | '/reset-password'
+    | '/search'
+    | '/superior'
+    | '/unauthorized'
+    | '/admin/analytics'
+    | '/admin/assignments'
+    | '/admin/cases'
+    | '/admin/dashboard'
+    | '/admin/evidence'
+    | '/admin/investigators'
+    | '/admin/reports'
+    | '/admin/settings'
+    | '/admin/superior-officers'
+    | '/admin/users'
+    | '/dashboard/admin'
+    | '/dashboard/ai-analysis'
+    | '/dashboard/cases'
+    | '/dashboard/evidence'
+    | '/dashboard/graph'
+    | '/dashboard/notifications'
+    | '/dashboard/reports'
+    | '/dashboard/settings'
+    | '/dashboard/team'
+    | '/dashboard/timeline'
+    | '/investigator/cases'
+    | '/investigator/dashboard'
+    | '/investigator/evidence'
+    | '/investigator/leads'
+    | '/investigator/notes'
+    | '/investigator/reports'
+    | '/investigator/settings'
+    | '/investigator/tasks'
+    | '/investigator/timeline'
+    | '/investigator/upload'
+    | '/major-admin/admins'
+    | '/major-admin/analytics'
+    | '/major-admin/audit-logs'
+    | '/major-admin/backup'
+    | '/major-admin/cases'
+    | '/major-admin/dashboard'
+    | '/major-admin/departments'
+    | '/major-admin/reports'
+    | '/major-admin/roles'
+    | '/major-admin/settings'
+    | '/major-admin/storage'
+    | '/major-admin/users'
+    | '/profile/edit'
+    | '/profile/security'
+    | '/superior/analytics'
+    | '/superior/cases'
+    | '/superior/dashboard'
+    | '/superior/evidence'
+    | '/superior/investigators'
+    | '/superior/leads'
+    | '/superior/relationships'
+    | '/superior/reports'
+    | '/superior/settings'
+    | '/superior/tasks'
+    | '/superior/timeline'
+    | '/dashboard/'
+    | '/admin/users/create'
+    | '/dashboard/cases/$caseId'
+    | '/investigator/cases/$caseId'
+    | '/investigator/evidence/$evidenceId'
+    | '/major-admin/admins/create'
+    | '/major-admin/departments/$deptId'
+    | '/major-admin/users/$userId'
+    | '/superior/cases/$caseId'
+    | '/superior/cases/create'
+    | '/superior/evidence/$evidenceId'
+    | '/admin/users/$userId/edit'
+    | '/major-admin/admins/$adminId/edit'
+    | '/superior/cases/$caseId/assign'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ActivityRoute: typeof ActivityRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  DashboardRoute: typeof DashboardRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  HelpRoute: typeof HelpRoute
+  InvestigatorRoute: typeof InvestigatorRouteWithChildren
   LoginRoute: typeof LoginRoute
+  MajorAdminRoute: typeof MajorAdminRouteWithChildren
+  NotificationsRoute: typeof NotificationsRoute
+  ProfileRoute: typeof ProfileRouteWithChildren
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SearchRoute: typeof SearchRoute
+  SuperiorRoute: typeof SuperiorRouteWithChildren
+  UnauthorizedRoute: typeof UnauthorizedRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,11 +1078,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activity': {
+      id: '/activity'
+      path: '/activity'
+      fullPath: '/activity'
+      preLoaderRoute: typeof ActivityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investigator': {
+      id: '/investigator'
+      path: '/investigator'
+      fullPath: '/investigator'
+      preLoaderRoute: typeof InvestigatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/major-admin': {
+      id: '/major-admin'
+      path: '/major-admin'
+      fullPath: '/major-admin'
+      preLoaderRoute: typeof MajorAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -82,14 +1155,839 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/superior': {
+      id: '/superior'
+      path: '/superior'
+      fullPath: '/superior'
+      preLoaderRoute: typeof SuperiorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unauthorized': {
+      id: '/unauthorized'
+      path: '/unauthorized'
+      fullPath: '/unauthorized'
+      preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/analytics': {
+      id: '/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AdminAnalyticsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/assignments': {
+      id: '/admin/assignments'
+      path: '/assignments'
+      fullPath: '/admin/assignments'
+      preLoaderRoute: typeof AdminAssignmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/cases': {
+      id: '/admin/cases'
+      path: '/cases'
+      fullPath: '/admin/cases'
+      preLoaderRoute: typeof AdminCasesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/evidence': {
+      id: '/admin/evidence'
+      path: '/evidence'
+      fullPath: '/admin/evidence'
+      preLoaderRoute: typeof AdminEvidenceRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/investigators': {
+      id: '/admin/investigators'
+      path: '/investigators'
+      fullPath: '/admin/investigators'
+      preLoaderRoute: typeof AdminInvestigatorsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reports': {
+      id: '/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AdminReportsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/superior-officers': {
+      id: '/admin/superior-officers'
+      path: '/superior-officers'
+      fullPath: '/admin/superior-officers'
+      preLoaderRoute: typeof AdminSuperiorOfficersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/ai-analysis': {
+      id: '/dashboard/ai-analysis'
+      path: '/ai-analysis'
+      fullPath: '/dashboard/ai-analysis'
+      preLoaderRoute: typeof DashboardAiAnalysisRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/cases': {
+      id: '/dashboard/cases'
+      path: '/cases'
+      fullPath: '/dashboard/cases'
+      preLoaderRoute: typeof DashboardCasesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/evidence': {
+      id: '/dashboard/evidence'
+      path: '/evidence'
+      fullPath: '/dashboard/evidence'
+      preLoaderRoute: typeof DashboardEvidenceRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/graph': {
+      id: '/dashboard/graph'
+      path: '/graph'
+      fullPath: '/dashboard/graph'
+      preLoaderRoute: typeof DashboardGraphRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/notifications': {
+      id: '/dashboard/notifications'
+      path: '/notifications'
+      fullPath: '/dashboard/notifications'
+      preLoaderRoute: typeof DashboardNotificationsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/reports': {
+      id: '/dashboard/reports'
+      path: '/reports'
+      fullPath: '/dashboard/reports'
+      preLoaderRoute: typeof DashboardReportsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/team': {
+      id: '/dashboard/team'
+      path: '/team'
+      fullPath: '/dashboard/team'
+      preLoaderRoute: typeof DashboardTeamRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/timeline': {
+      id: '/dashboard/timeline'
+      path: '/timeline'
+      fullPath: '/dashboard/timeline'
+      preLoaderRoute: typeof DashboardTimelineRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/investigator/cases': {
+      id: '/investigator/cases'
+      path: '/cases'
+      fullPath: '/investigator/cases'
+      preLoaderRoute: typeof InvestigatorCasesRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/dashboard': {
+      id: '/investigator/dashboard'
+      path: '/dashboard'
+      fullPath: '/investigator/dashboard'
+      preLoaderRoute: typeof InvestigatorDashboardRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/evidence': {
+      id: '/investigator/evidence'
+      path: '/evidence'
+      fullPath: '/investigator/evidence'
+      preLoaderRoute: typeof InvestigatorEvidenceRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/leads': {
+      id: '/investigator/leads'
+      path: '/leads'
+      fullPath: '/investigator/leads'
+      preLoaderRoute: typeof InvestigatorLeadsRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/notes': {
+      id: '/investigator/notes'
+      path: '/notes'
+      fullPath: '/investigator/notes'
+      preLoaderRoute: typeof InvestigatorNotesRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/reports': {
+      id: '/investigator/reports'
+      path: '/reports'
+      fullPath: '/investigator/reports'
+      preLoaderRoute: typeof InvestigatorReportsRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/settings': {
+      id: '/investigator/settings'
+      path: '/settings'
+      fullPath: '/investigator/settings'
+      preLoaderRoute: typeof InvestigatorSettingsRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/tasks': {
+      id: '/investigator/tasks'
+      path: '/tasks'
+      fullPath: '/investigator/tasks'
+      preLoaderRoute: typeof InvestigatorTasksRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/timeline': {
+      id: '/investigator/timeline'
+      path: '/timeline'
+      fullPath: '/investigator/timeline'
+      preLoaderRoute: typeof InvestigatorTimelineRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/investigator/upload': {
+      id: '/investigator/upload'
+      path: '/upload'
+      fullPath: '/investigator/upload'
+      preLoaderRoute: typeof InvestigatorUploadRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
+    '/major-admin/admins': {
+      id: '/major-admin/admins'
+      path: '/admins'
+      fullPath: '/major-admin/admins'
+      preLoaderRoute: typeof MajorAdminAdminsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/analytics': {
+      id: '/major-admin/analytics'
+      path: '/analytics'
+      fullPath: '/major-admin/analytics'
+      preLoaderRoute: typeof MajorAdminAnalyticsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/audit-logs': {
+      id: '/major-admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/major-admin/audit-logs'
+      preLoaderRoute: typeof MajorAdminAuditLogsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/backup': {
+      id: '/major-admin/backup'
+      path: '/backup'
+      fullPath: '/major-admin/backup'
+      preLoaderRoute: typeof MajorAdminBackupRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/cases': {
+      id: '/major-admin/cases'
+      path: '/cases'
+      fullPath: '/major-admin/cases'
+      preLoaderRoute: typeof MajorAdminCasesRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/dashboard': {
+      id: '/major-admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/major-admin/dashboard'
+      preLoaderRoute: typeof MajorAdminDashboardRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/departments': {
+      id: '/major-admin/departments'
+      path: '/departments'
+      fullPath: '/major-admin/departments'
+      preLoaderRoute: typeof MajorAdminDepartmentsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/reports': {
+      id: '/major-admin/reports'
+      path: '/reports'
+      fullPath: '/major-admin/reports'
+      preLoaderRoute: typeof MajorAdminReportsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/roles': {
+      id: '/major-admin/roles'
+      path: '/roles'
+      fullPath: '/major-admin/roles'
+      preLoaderRoute: typeof MajorAdminRolesRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/settings': {
+      id: '/major-admin/settings'
+      path: '/settings'
+      fullPath: '/major-admin/settings'
+      preLoaderRoute: typeof MajorAdminSettingsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/storage': {
+      id: '/major-admin/storage'
+      path: '/storage'
+      fullPath: '/major-admin/storage'
+      preLoaderRoute: typeof MajorAdminStorageRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/users': {
+      id: '/major-admin/users'
+      path: '/users'
+      fullPath: '/major-admin/users'
+      preLoaderRoute: typeof MajorAdminUsersRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/profile/edit': {
+      id: '/profile/edit'
+      path: '/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof ProfileEditRouteImport
+      parentRoute: typeof ProfileRoute
+    }
+    '/profile/security': {
+      id: '/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof ProfileSecurityRouteImport
+      parentRoute: typeof ProfileRoute
+    }
+    '/superior/analytics': {
+      id: '/superior/analytics'
+      path: '/analytics'
+      fullPath: '/superior/analytics'
+      preLoaderRoute: typeof SuperiorAnalyticsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/cases': {
+      id: '/superior/cases'
+      path: '/cases'
+      fullPath: '/superior/cases'
+      preLoaderRoute: typeof SuperiorCasesRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/dashboard': {
+      id: '/superior/dashboard'
+      path: '/dashboard'
+      fullPath: '/superior/dashboard'
+      preLoaderRoute: typeof SuperiorDashboardRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/evidence': {
+      id: '/superior/evidence'
+      path: '/evidence'
+      fullPath: '/superior/evidence'
+      preLoaderRoute: typeof SuperiorEvidenceRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/investigators': {
+      id: '/superior/investigators'
+      path: '/investigators'
+      fullPath: '/superior/investigators'
+      preLoaderRoute: typeof SuperiorInvestigatorsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/leads': {
+      id: '/superior/leads'
+      path: '/leads'
+      fullPath: '/superior/leads'
+      preLoaderRoute: typeof SuperiorLeadsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/relationships': {
+      id: '/superior/relationships'
+      path: '/relationships'
+      fullPath: '/superior/relationships'
+      preLoaderRoute: typeof SuperiorRelationshipsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/reports': {
+      id: '/superior/reports'
+      path: '/reports'
+      fullPath: '/superior/reports'
+      preLoaderRoute: typeof SuperiorReportsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/settings': {
+      id: '/superior/settings'
+      path: '/settings'
+      fullPath: '/superior/settings'
+      preLoaderRoute: typeof SuperiorSettingsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/tasks': {
+      id: '/superior/tasks'
+      path: '/tasks'
+      fullPath: '/superior/tasks'
+      preLoaderRoute: typeof SuperiorTasksRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/timeline': {
+      id: '/superior/timeline'
+      path: '/timeline'
+      fullPath: '/superior/timeline'
+      preLoaderRoute: typeof SuperiorTimelineRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/admin/users/create': {
+      id: '/admin/users/create'
+      path: '/create'
+      fullPath: '/admin/users/create'
+      preLoaderRoute: typeof AdminUsersCreateRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
+    '/dashboard/cases/$caseId': {
+      id: '/dashboard/cases/$caseId'
+      path: '/$caseId'
+      fullPath: '/dashboard/cases/$caseId'
+      preLoaderRoute: typeof DashboardCasesCaseIdRouteImport
+      parentRoute: typeof DashboardCasesRoute
+    }
+    '/investigator/cases/$caseId': {
+      id: '/investigator/cases/$caseId'
+      path: '/$caseId'
+      fullPath: '/investigator/cases/$caseId'
+      preLoaderRoute: typeof InvestigatorCasesCaseIdRouteImport
+      parentRoute: typeof InvestigatorCasesRoute
+    }
+    '/investigator/evidence/$evidenceId': {
+      id: '/investigator/evidence/$evidenceId'
+      path: '/$evidenceId'
+      fullPath: '/investigator/evidence/$evidenceId'
+      preLoaderRoute: typeof InvestigatorEvidenceEvidenceIdRouteImport
+      parentRoute: typeof InvestigatorEvidenceRoute
+    }
+    '/major-admin/admins/create': {
+      id: '/major-admin/admins/create'
+      path: '/create'
+      fullPath: '/major-admin/admins/create'
+      preLoaderRoute: typeof MajorAdminAdminsCreateRouteImport
+      parentRoute: typeof MajorAdminAdminsRoute
+    }
+    '/major-admin/departments/$deptId': {
+      id: '/major-admin/departments/$deptId'
+      path: '/$deptId'
+      fullPath: '/major-admin/departments/$deptId'
+      preLoaderRoute: typeof MajorAdminDepartmentsDeptIdRouteImport
+      parentRoute: typeof MajorAdminDepartmentsRoute
+    }
+    '/major-admin/users/$userId': {
+      id: '/major-admin/users/$userId'
+      path: '/$userId'
+      fullPath: '/major-admin/users/$userId'
+      preLoaderRoute: typeof MajorAdminUsersUserIdRouteImport
+      parentRoute: typeof MajorAdminUsersRoute
+    }
+    '/superior/cases/$caseId': {
+      id: '/superior/cases/$caseId'
+      path: '/$caseId'
+      fullPath: '/superior/cases/$caseId'
+      preLoaderRoute: typeof SuperiorCasesCaseIdRouteImport
+      parentRoute: typeof SuperiorCasesRoute
+    }
+    '/superior/cases/create': {
+      id: '/superior/cases/create'
+      path: '/create'
+      fullPath: '/superior/cases/create'
+      preLoaderRoute: typeof SuperiorCasesCreateRouteImport
+      parentRoute: typeof SuperiorCasesRoute
+    }
+    '/superior/evidence/$evidenceId': {
+      id: '/superior/evidence/$evidenceId'
+      path: '/$evidenceId'
+      fullPath: '/superior/evidence/$evidenceId'
+      preLoaderRoute: typeof SuperiorEvidenceEvidenceIdRouteImport
+      parentRoute: typeof SuperiorEvidenceRoute
+    }
+    '/admin/users/$userId/edit': {
+      id: '/admin/users/$userId/edit'
+      path: '/$userId/edit'
+      fullPath: '/admin/users/$userId/edit'
+      preLoaderRoute: typeof AdminUsersUserIdEditRouteImport
+      parentRoute: typeof AdminUsersRoute
+    }
+    '/major-admin/admins/$adminId/edit': {
+      id: '/major-admin/admins/$adminId/edit'
+      path: '/$adminId/edit'
+      fullPath: '/major-admin/admins/$adminId/edit'
+      preLoaderRoute: typeof MajorAdminAdminsAdminIdEditRouteImport
+      parentRoute: typeof MajorAdminAdminsRoute
+    }
+    '/superior/cases/$caseId/assign': {
+      id: '/superior/cases/$caseId/assign'
+      path: '/assign'
+      fullPath: '/superior/cases/$caseId/assign'
+      preLoaderRoute: typeof SuperiorCasesCaseIdAssignRouteImport
+      parentRoute: typeof SuperiorCasesCaseIdRoute
+    }
   }
 }
 
+interface AdminUsersRouteChildren {
+  AdminUsersCreateRoute: typeof AdminUsersCreateRoute
+  AdminUsersUserIdEditRoute: typeof AdminUsersUserIdEditRoute
+}
+
+const AdminUsersRouteChildren: AdminUsersRouteChildren = {
+  AdminUsersCreateRoute: AdminUsersCreateRoute,
+  AdminUsersUserIdEditRoute: AdminUsersUserIdEditRoute,
+}
+
+const AdminUsersRouteWithChildren = AdminUsersRoute._addFileChildren(
+  AdminUsersRouteChildren,
+)
+
+interface AdminRouteChildren {
+  AdminAnalyticsRoute: typeof AdminAnalyticsRoute
+  AdminAssignmentsRoute: typeof AdminAssignmentsRoute
+  AdminCasesRoute: typeof AdminCasesRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminEvidenceRoute: typeof AdminEvidenceRoute
+  AdminInvestigatorsRoute: typeof AdminInvestigatorsRoute
+  AdminReportsRoute: typeof AdminReportsRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminSuperiorOfficersRoute: typeof AdminSuperiorOfficersRoute
+  AdminUsersRoute: typeof AdminUsersRouteWithChildren
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalyticsRoute: AdminAnalyticsRoute,
+  AdminAssignmentsRoute: AdminAssignmentsRoute,
+  AdminCasesRoute: AdminCasesRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminEvidenceRoute: AdminEvidenceRoute,
+  AdminInvestigatorsRoute: AdminInvestigatorsRoute,
+  AdminReportsRoute: AdminReportsRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminSuperiorOfficersRoute: AdminSuperiorOfficersRoute,
+  AdminUsersRoute: AdminUsersRouteWithChildren,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface DashboardCasesRouteChildren {
+  DashboardCasesCaseIdRoute: typeof DashboardCasesCaseIdRoute
+}
+
+const DashboardCasesRouteChildren: DashboardCasesRouteChildren = {
+  DashboardCasesCaseIdRoute: DashboardCasesCaseIdRoute,
+}
+
+const DashboardCasesRouteWithChildren = DashboardCasesRoute._addFileChildren(
+  DashboardCasesRouteChildren,
+)
+
+interface DashboardRouteChildren {
+  DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardAiAnalysisRoute: typeof DashboardAiAnalysisRoute
+  DashboardCasesRoute: typeof DashboardCasesRouteWithChildren
+  DashboardEvidenceRoute: typeof DashboardEvidenceRoute
+  DashboardGraphRoute: typeof DashboardGraphRoute
+  DashboardNotificationsRoute: typeof DashboardNotificationsRoute
+  DashboardReportsRoute: typeof DashboardReportsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardTeamRoute: typeof DashboardTeamRoute
+  DashboardTimelineRoute: typeof DashboardTimelineRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAdminRoute: DashboardAdminRoute,
+  DashboardAiAnalysisRoute: DashboardAiAnalysisRoute,
+  DashboardCasesRoute: DashboardCasesRouteWithChildren,
+  DashboardEvidenceRoute: DashboardEvidenceRoute,
+  DashboardGraphRoute: DashboardGraphRoute,
+  DashboardNotificationsRoute: DashboardNotificationsRoute,
+  DashboardReportsRoute: DashboardReportsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardTeamRoute: DashboardTeamRoute,
+  DashboardTimelineRoute: DashboardTimelineRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
+interface InvestigatorCasesRouteChildren {
+  InvestigatorCasesCaseIdRoute: typeof InvestigatorCasesCaseIdRoute
+}
+
+const InvestigatorCasesRouteChildren: InvestigatorCasesRouteChildren = {
+  InvestigatorCasesCaseIdRoute: InvestigatorCasesCaseIdRoute,
+}
+
+const InvestigatorCasesRouteWithChildren =
+  InvestigatorCasesRoute._addFileChildren(InvestigatorCasesRouteChildren)
+
+interface InvestigatorEvidenceRouteChildren {
+  InvestigatorEvidenceEvidenceIdRoute: typeof InvestigatorEvidenceEvidenceIdRoute
+}
+
+const InvestigatorEvidenceRouteChildren: InvestigatorEvidenceRouteChildren = {
+  InvestigatorEvidenceEvidenceIdRoute: InvestigatorEvidenceEvidenceIdRoute,
+}
+
+const InvestigatorEvidenceRouteWithChildren =
+  InvestigatorEvidenceRoute._addFileChildren(InvestigatorEvidenceRouteChildren)
+
+interface InvestigatorRouteChildren {
+  InvestigatorCasesRoute: typeof InvestigatorCasesRouteWithChildren
+  InvestigatorDashboardRoute: typeof InvestigatorDashboardRoute
+  InvestigatorEvidenceRoute: typeof InvestigatorEvidenceRouteWithChildren
+  InvestigatorLeadsRoute: typeof InvestigatorLeadsRoute
+  InvestigatorNotesRoute: typeof InvestigatorNotesRoute
+  InvestigatorReportsRoute: typeof InvestigatorReportsRoute
+  InvestigatorSettingsRoute: typeof InvestigatorSettingsRoute
+  InvestigatorTasksRoute: typeof InvestigatorTasksRoute
+  InvestigatorTimelineRoute: typeof InvestigatorTimelineRoute
+  InvestigatorUploadRoute: typeof InvestigatorUploadRoute
+}
+
+const InvestigatorRouteChildren: InvestigatorRouteChildren = {
+  InvestigatorCasesRoute: InvestigatorCasesRouteWithChildren,
+  InvestigatorDashboardRoute: InvestigatorDashboardRoute,
+  InvestigatorEvidenceRoute: InvestigatorEvidenceRouteWithChildren,
+  InvestigatorLeadsRoute: InvestigatorLeadsRoute,
+  InvestigatorNotesRoute: InvestigatorNotesRoute,
+  InvestigatorReportsRoute: InvestigatorReportsRoute,
+  InvestigatorSettingsRoute: InvestigatorSettingsRoute,
+  InvestigatorTasksRoute: InvestigatorTasksRoute,
+  InvestigatorTimelineRoute: InvestigatorTimelineRoute,
+  InvestigatorUploadRoute: InvestigatorUploadRoute,
+}
+
+const InvestigatorRouteWithChildren = InvestigatorRoute._addFileChildren(
+  InvestigatorRouteChildren,
+)
+
+interface MajorAdminAdminsRouteChildren {
+  MajorAdminAdminsCreateRoute: typeof MajorAdminAdminsCreateRoute
+  MajorAdminAdminsAdminIdEditRoute: typeof MajorAdminAdminsAdminIdEditRoute
+}
+
+const MajorAdminAdminsRouteChildren: MajorAdminAdminsRouteChildren = {
+  MajorAdminAdminsCreateRoute: MajorAdminAdminsCreateRoute,
+  MajorAdminAdminsAdminIdEditRoute: MajorAdminAdminsAdminIdEditRoute,
+}
+
+const MajorAdminAdminsRouteWithChildren =
+  MajorAdminAdminsRoute._addFileChildren(MajorAdminAdminsRouteChildren)
+
+interface MajorAdminDepartmentsRouteChildren {
+  MajorAdminDepartmentsDeptIdRoute: typeof MajorAdminDepartmentsDeptIdRoute
+}
+
+const MajorAdminDepartmentsRouteChildren: MajorAdminDepartmentsRouteChildren = {
+  MajorAdminDepartmentsDeptIdRoute: MajorAdminDepartmentsDeptIdRoute,
+}
+
+const MajorAdminDepartmentsRouteWithChildren =
+  MajorAdminDepartmentsRoute._addFileChildren(
+    MajorAdminDepartmentsRouteChildren,
+  )
+
+interface MajorAdminUsersRouteChildren {
+  MajorAdminUsersUserIdRoute: typeof MajorAdminUsersUserIdRoute
+}
+
+const MajorAdminUsersRouteChildren: MajorAdminUsersRouteChildren = {
+  MajorAdminUsersUserIdRoute: MajorAdminUsersUserIdRoute,
+}
+
+const MajorAdminUsersRouteWithChildren = MajorAdminUsersRoute._addFileChildren(
+  MajorAdminUsersRouteChildren,
+)
+
+interface MajorAdminRouteChildren {
+  MajorAdminAdminsRoute: typeof MajorAdminAdminsRouteWithChildren
+  MajorAdminAnalyticsRoute: typeof MajorAdminAnalyticsRoute
+  MajorAdminAuditLogsRoute: typeof MajorAdminAuditLogsRoute
+  MajorAdminBackupRoute: typeof MajorAdminBackupRoute
+  MajorAdminCasesRoute: typeof MajorAdminCasesRoute
+  MajorAdminDashboardRoute: typeof MajorAdminDashboardRoute
+  MajorAdminDepartmentsRoute: typeof MajorAdminDepartmentsRouteWithChildren
+  MajorAdminReportsRoute: typeof MajorAdminReportsRoute
+  MajorAdminRolesRoute: typeof MajorAdminRolesRoute
+  MajorAdminSettingsRoute: typeof MajorAdminSettingsRoute
+  MajorAdminStorageRoute: typeof MajorAdminStorageRoute
+  MajorAdminUsersRoute: typeof MajorAdminUsersRouteWithChildren
+}
+
+const MajorAdminRouteChildren: MajorAdminRouteChildren = {
+  MajorAdminAdminsRoute: MajorAdminAdminsRouteWithChildren,
+  MajorAdminAnalyticsRoute: MajorAdminAnalyticsRoute,
+  MajorAdminAuditLogsRoute: MajorAdminAuditLogsRoute,
+  MajorAdminBackupRoute: MajorAdminBackupRoute,
+  MajorAdminCasesRoute: MajorAdminCasesRoute,
+  MajorAdminDashboardRoute: MajorAdminDashboardRoute,
+  MajorAdminDepartmentsRoute: MajorAdminDepartmentsRouteWithChildren,
+  MajorAdminReportsRoute: MajorAdminReportsRoute,
+  MajorAdminRolesRoute: MajorAdminRolesRoute,
+  MajorAdminSettingsRoute: MajorAdminSettingsRoute,
+  MajorAdminStorageRoute: MajorAdminStorageRoute,
+  MajorAdminUsersRoute: MajorAdminUsersRouteWithChildren,
+}
+
+const MajorAdminRouteWithChildren = MajorAdminRoute._addFileChildren(
+  MajorAdminRouteChildren,
+)
+
+interface ProfileRouteChildren {
+  ProfileEditRoute: typeof ProfileEditRoute
+  ProfileSecurityRoute: typeof ProfileSecurityRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileEditRoute: ProfileEditRoute,
+  ProfileSecurityRoute: ProfileSecurityRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
+
+interface SuperiorCasesCaseIdRouteChildren {
+  SuperiorCasesCaseIdAssignRoute: typeof SuperiorCasesCaseIdAssignRoute
+}
+
+const SuperiorCasesCaseIdRouteChildren: SuperiorCasesCaseIdRouteChildren = {
+  SuperiorCasesCaseIdAssignRoute: SuperiorCasesCaseIdAssignRoute,
+}
+
+const SuperiorCasesCaseIdRouteWithChildren =
+  SuperiorCasesCaseIdRoute._addFileChildren(SuperiorCasesCaseIdRouteChildren)
+
+interface SuperiorCasesRouteChildren {
+  SuperiorCasesCaseIdRoute: typeof SuperiorCasesCaseIdRouteWithChildren
+  SuperiorCasesCreateRoute: typeof SuperiorCasesCreateRoute
+}
+
+const SuperiorCasesRouteChildren: SuperiorCasesRouteChildren = {
+  SuperiorCasesCaseIdRoute: SuperiorCasesCaseIdRouteWithChildren,
+  SuperiorCasesCreateRoute: SuperiorCasesCreateRoute,
+}
+
+const SuperiorCasesRouteWithChildren = SuperiorCasesRoute._addFileChildren(
+  SuperiorCasesRouteChildren,
+)
+
+interface SuperiorEvidenceRouteChildren {
+  SuperiorEvidenceEvidenceIdRoute: typeof SuperiorEvidenceEvidenceIdRoute
+}
+
+const SuperiorEvidenceRouteChildren: SuperiorEvidenceRouteChildren = {
+  SuperiorEvidenceEvidenceIdRoute: SuperiorEvidenceEvidenceIdRoute,
+}
+
+const SuperiorEvidenceRouteWithChildren =
+  SuperiorEvidenceRoute._addFileChildren(SuperiorEvidenceRouteChildren)
+
+interface SuperiorRouteChildren {
+  SuperiorAnalyticsRoute: typeof SuperiorAnalyticsRoute
+  SuperiorCasesRoute: typeof SuperiorCasesRouteWithChildren
+  SuperiorDashboardRoute: typeof SuperiorDashboardRoute
+  SuperiorEvidenceRoute: typeof SuperiorEvidenceRouteWithChildren
+  SuperiorInvestigatorsRoute: typeof SuperiorInvestigatorsRoute
+  SuperiorLeadsRoute: typeof SuperiorLeadsRoute
+  SuperiorRelationshipsRoute: typeof SuperiorRelationshipsRoute
+  SuperiorReportsRoute: typeof SuperiorReportsRoute
+  SuperiorSettingsRoute: typeof SuperiorSettingsRoute
+  SuperiorTasksRoute: typeof SuperiorTasksRoute
+  SuperiorTimelineRoute: typeof SuperiorTimelineRoute
+}
+
+const SuperiorRouteChildren: SuperiorRouteChildren = {
+  SuperiorAnalyticsRoute: SuperiorAnalyticsRoute,
+  SuperiorCasesRoute: SuperiorCasesRouteWithChildren,
+  SuperiorDashboardRoute: SuperiorDashboardRoute,
+  SuperiorEvidenceRoute: SuperiorEvidenceRouteWithChildren,
+  SuperiorInvestigatorsRoute: SuperiorInvestigatorsRoute,
+  SuperiorLeadsRoute: SuperiorLeadsRoute,
+  SuperiorRelationshipsRoute: SuperiorRelationshipsRoute,
+  SuperiorReportsRoute: SuperiorReportsRoute,
+  SuperiorSettingsRoute: SuperiorSettingsRoute,
+  SuperiorTasksRoute: SuperiorTasksRoute,
+  SuperiorTimelineRoute: SuperiorTimelineRoute,
+}
+
+const SuperiorRouteWithChildren = SuperiorRoute._addFileChildren(
+  SuperiorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ActivityRoute: ActivityRoute,
+  AdminRoute: AdminRouteWithChildren,
+  DashboardRoute: DashboardRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  HelpRoute: HelpRoute,
+  InvestigatorRoute: InvestigatorRouteWithChildren,
   LoginRoute: LoginRoute,
+  MajorAdminRoute: MajorAdminRouteWithChildren,
+  NotificationsRoute: NotificationsRoute,
+  ProfileRoute: ProfileRouteWithChildren,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SearchRoute: SearchRoute,
+  SuperiorRoute: SuperiorRouteWithChildren,
+  UnauthorizedRoute: UnauthorizedRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
