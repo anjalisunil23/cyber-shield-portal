@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 import { RoleTopNavbar } from "@/components/layouts/RoleTopNavbar";
 import { ROLE_NAV } from "@/config/roleNav";
 import { clearToken, getToken, isAuthenticated } from "@/lib/auth";
-import { homeForRole, ROLE_LABEL, roleFromAccessToken, type AppRole } from "@/lib/roles";
+import { homeForRole, ROLE_LABEL, roleFromAccessToken, normalizeRole, type AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
 export function RoleShell({ role, breadcrumbs }: { role: AppRole; breadcrumbs?: ReactNode }) {
@@ -22,8 +22,9 @@ export function RoleShell({ role, breadcrumbs }: { role: AppRole; breadcrumbs?: 
       void navigate({ to: "/login" });
       return;
     }
-    const tokenRole = roleFromAccessToken(getToken());
-    if (tokenRole !== role) {
+    const tokenRole = normalizeRole(roleFromAccessToken(getToken()));
+    const componentRole = normalizeRole(role);
+    if (tokenRole !== componentRole) {
       window.location.assign(homeForRole(tokenRole));
       return;
     }

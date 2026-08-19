@@ -90,6 +90,7 @@ import { Route as InvestigatorEvidenceEvidenceIdRouteImport } from './routes/inv
 import { Route as MajorAdminAdminsCreateRouteImport } from './routes/major-admin/admins.create'
 import { Route as MajorAdminDepartmentsDeptIdRouteImport } from './routes/major-admin/departments.$deptId'
 import { Route as MajorAdminUsersUserIdRouteImport } from './routes/major-admin/users.$userId'
+import { Route as SuperiorCasesIndexRouteImport } from './routes/superior/cases.index'
 import { Route as SuperiorCasesCaseIdRouteImport } from './routes/superior/cases.$caseId'
 import { Route as SuperiorCasesCreateRouteImport } from './routes/superior/cases.create'
 import { Route as SuperiorEvidenceEvidenceIdRouteImport } from './routes/superior/evidence.$evidenceId'
@@ -504,6 +505,11 @@ const MajorAdminUsersUserIdRoute = MajorAdminUsersUserIdRouteImport.update({
   path: '/$userId',
   getParentRoute: () => MajorAdminUsersRoute,
 } as any)
+const SuperiorCasesIndexRoute = SuperiorCasesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SuperiorCasesRoute,
+} as any)
 const SuperiorCasesCaseIdRoute = SuperiorCasesCaseIdRouteImport.update({
   id: '/$caseId',
   path: '/$caseId',
@@ -623,6 +629,7 @@ export interface FileRoutesByFullPath {
   '/superior/cases/$caseId': typeof SuperiorCasesCaseIdRouteWithChildren
   '/superior/cases/create': typeof SuperiorCasesCreateRoute
   '/superior/evidence/$evidenceId': typeof SuperiorEvidenceEvidenceIdRoute
+  '/superior/cases/': typeof SuperiorCasesIndexRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
   '/major-admin/admins/$adminId/edit': typeof MajorAdminAdminsAdminIdEditRoute
   '/superior/cases/$caseId/assign': typeof SuperiorCasesCaseIdAssignRoute
@@ -690,7 +697,6 @@ export interface FileRoutesByTo {
   '/profile/edit': typeof ProfileEditRoute
   '/profile/security': typeof ProfileSecurityRoute
   '/superior/analytics': typeof SuperiorAnalyticsRoute
-  '/superior/cases': typeof SuperiorCasesRouteWithChildren
   '/superior/dashboard': typeof SuperiorDashboardRoute
   '/superior/evidence': typeof SuperiorEvidenceRouteWithChildren
   '/superior/investigators': typeof SuperiorInvestigatorsRoute
@@ -711,6 +717,7 @@ export interface FileRoutesByTo {
   '/superior/cases/$caseId': typeof SuperiorCasesCaseIdRouteWithChildren
   '/superior/cases/create': typeof SuperiorCasesCreateRoute
   '/superior/evidence/$evidenceId': typeof SuperiorEvidenceEvidenceIdRoute
+  '/superior/cases': typeof SuperiorCasesIndexRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
   '/major-admin/admins/$adminId/edit': typeof MajorAdminAdminsAdminIdEditRoute
   '/superior/cases/$caseId/assign': typeof SuperiorCasesCaseIdAssignRoute
@@ -801,6 +808,7 @@ export interface FileRoutesById {
   '/superior/cases/$caseId': typeof SuperiorCasesCaseIdRouteWithChildren
   '/superior/cases/create': typeof SuperiorCasesCreateRoute
   '/superior/evidence/$evidenceId': typeof SuperiorEvidenceEvidenceIdRoute
+  '/superior/cases/': typeof SuperiorCasesIndexRoute
   '/admin/users/$userId/edit': typeof AdminUsersUserIdEditRoute
   '/major-admin/admins/$adminId/edit': typeof MajorAdminAdminsAdminIdEditRoute
   '/superior/cases/$caseId/assign': typeof SuperiorCasesCaseIdAssignRoute
@@ -892,6 +900,7 @@ export interface FileRouteTypes {
     | '/superior/cases/$caseId'
     | '/superior/cases/create'
     | '/superior/evidence/$evidenceId'
+    | '/superior/cases/'
     | '/admin/users/$userId/edit'
     | '/major-admin/admins/$adminId/edit'
     | '/superior/cases/$caseId/assign'
@@ -959,7 +968,6 @@ export interface FileRouteTypes {
     | '/profile/edit'
     | '/profile/security'
     | '/superior/analytics'
-    | '/superior/cases'
     | '/superior/dashboard'
     | '/superior/evidence'
     | '/superior/investigators'
@@ -980,6 +988,7 @@ export interface FileRouteTypes {
     | '/superior/cases/$caseId'
     | '/superior/cases/create'
     | '/superior/evidence/$evidenceId'
+    | '/superior/cases'
     | '/admin/users/$userId/edit'
     | '/major-admin/admins/$adminId/edit'
     | '/superior/cases/$caseId/assign'
@@ -1069,6 +1078,7 @@ export interface FileRouteTypes {
     | '/superior/cases/$caseId'
     | '/superior/cases/create'
     | '/superior/evidence/$evidenceId'
+    | '/superior/cases/'
     | '/admin/users/$userId/edit'
     | '/major-admin/admins/$adminId/edit'
     | '/superior/cases/$caseId/assign'
@@ -1662,6 +1672,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MajorAdminUsersUserIdRouteImport
       parentRoute: typeof MajorAdminUsersRoute
     }
+    '/superior/cases/': {
+      id: '/superior/cases/'
+      path: '/'
+      fullPath: '/superior/cases/'
+      preLoaderRoute: typeof SuperiorCasesIndexRouteImport
+      parentRoute: typeof SuperiorCasesRoute
+    }
     '/superior/cases/$caseId': {
       id: '/superior/cases/$caseId'
       path: '/$caseId'
@@ -1948,11 +1965,13 @@ const SuperiorCasesCaseIdRouteWithChildren =
 interface SuperiorCasesRouteChildren {
   SuperiorCasesCaseIdRoute: typeof SuperiorCasesCaseIdRouteWithChildren
   SuperiorCasesCreateRoute: typeof SuperiorCasesCreateRoute
+  SuperiorCasesIndexRoute: typeof SuperiorCasesIndexRoute
 }
 
 const SuperiorCasesRouteChildren: SuperiorCasesRouteChildren = {
   SuperiorCasesCaseIdRoute: SuperiorCasesCaseIdRouteWithChildren,
   SuperiorCasesCreateRoute: SuperiorCasesCreateRoute,
+  SuperiorCasesIndexRoute: SuperiorCasesIndexRoute,
 }
 
 const SuperiorCasesRouteWithChildren = SuperiorCasesRoute._addFileChildren(

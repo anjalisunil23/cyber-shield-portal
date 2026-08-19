@@ -20,6 +20,8 @@ from app.services.activity import log_activity
 from app.services.evidence_service import EvidenceService
 from app.utils.pagination import paginate
 
+from app.services.case_service import CaseService
+
 router = APIRouter(tags=["evidence"])
 
 
@@ -27,12 +29,13 @@ router = APIRouter(tags=["evidence"])
 def list_evidence(
     case_id: UUID,
     db: Annotated[Session, Depends(get_db)],
-    _: Annotated[User, Depends(get_current_user)],
+    user: Annotated[User, Depends(get_current_user)],
     q: str | None = None,
     file_type: str | None = None,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1, le=100),
 ) -> PageOut[EvidenceOut]:
+    CaseService(db).verify_case_access(user, case_id)
     items, total = EvidenceRepository(db).list_for_case(
         case_id, q=q, file_type=file_type, offset=(page - 1) * page_size, limit=page_size
     )
@@ -48,6 +51,7 @@ async def upload_evidence(
     description: str | None = Form(default=None),
     tags: str | None = Form(default=None),
 ) -> EvidenceOut:
+    CaseService(db).verify_case_access(user, case_id)
     tag_list: list[str] | None = None
     if tags:
         try:
@@ -63,9 +67,11 @@ async def upload_evidence(
 def get_evidence(
     evidence_id: UUID,
     db: Annotated[Session, Depends(get_db)],
-    _: Annotated[User, Depends(get_current_user)],
+    user: Annotated[User, Depends(get_current_user)],
 ) -> EvidenceOut:
-    return EvidenceOut.model_validate(EvidenceService(db).get(evidence_id))
+    item = EvidenceService(db).get(evidence_id)
+    CaseService(db).verify_case_access(user, item.case_id)
+    return EvidenceOut.model_validate(item)
 
 
 @router.patch("/evidence/{evidence_id}", response_model=EvidenceOut)
@@ -73,9 +79,11 @@ def update_evidence_meta(
     evidence_id: UUID,
     payload: EvidenceMetaUpdate,
     db: Annotated[Session, Depends(get_db)],
-    _: Annotated[User, Depends(get_current_user)],
+    user: Annotated[User, Depends(get_current_user)],
 ) -> EvidenceOut:
-    item = EvidenceService(db).get(evidence_id)
+    svc = EvidenceService(db)
+    item = svc.get(evidence_id)
+    CaseService(db).verify_case_access(user, item.case_id)
     data = payload.model_dump(exclude_unset=True)
     for k, v in data.items():
         setattr(item, k, v)
@@ -93,6 +101,7 @@ def download_evidence(
 ) -> FileResponse:
     svc = EvidenceService(db)
     item = svc.get(evidence_id)
+    CaseService(db).verify_case_access(user, item.case_id)
     path = svc.resolve_path(item)
     log_activity(
         db,
@@ -116,5 +125,8 @@ def delete_evidence(
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_user)],
 ) -> dict:
-    EvidenceService(db).delete(evidence_id, user)
+    svc = EvidenceService(db)
+    item = svc.get(evidence_id)
+    CaseService(db).verify_case_access(user, item.case_id)
+    svc.delete(evidence_id, user)
     return {"success": True, "message": "Evidence deleted"}

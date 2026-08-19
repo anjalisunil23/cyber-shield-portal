@@ -33,7 +33,7 @@ export function RoleTopNavbar({ onMenu, role }: { onMenu: () => void; role: AppR
   const notifPath =
     role === "investigator"
       ? "/investigator/dashboard"
-      : role === "superior_officer"
+      : role === "supervisor"
         ? "/superior/dashboard"
         : role === "admin"
           ? "/admin/dashboard"

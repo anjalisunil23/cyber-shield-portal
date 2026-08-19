@@ -75,10 +75,15 @@ export function PageHeader({ title, subtitle, actions }: { title: string; subtit
   );
 }
 
-export function Panel({ title, children, className = "" }: { title?: string; children: ReactNode; className?: string }) {
+export function Panel({ title, children, className = "", actions }: { title?: string; children: ReactNode; className?: string; actions?: ReactNode }) {
   return (
     <div className={`rounded-2xl border border-white/10 bg-[#111827]/90 p-5 ${className}`}>
-      {title && <h3 className="mb-3 text-sm font-semibold text-slate-100">{title}</h3>}
+      {title && (
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-slate-100">{title}</h3>
+          {actions}
+        </div>
+      )}
       {children}
     </div>
   );

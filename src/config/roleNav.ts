@@ -31,6 +31,20 @@ export type NavItem = {
   exact?: boolean;
 };
 
+const supervisorNav: NavItem[] = [
+  { to: "/superior/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/superior/cases", label: "Cases", icon: FolderOpen },
+  { to: "/superior/evidence", label: "Evidence", icon: FileStack },
+  { to: "/superior/timeline", label: "Timeline", icon: Timer },
+  { to: "/superior/relationships", label: "Relationships", icon: Network },
+  { to: "/superior/leads", label: "Manual Leads", icon: GitBranch },
+  { to: "/superior/tasks", label: "Tasks", icon: CheckSquare },
+  { to: "/superior/reports", label: "Reports", icon: FileText },
+  { to: "/superior/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/superior/investigators", label: "Investigators", icon: Users },
+  { to: "/superior/settings", label: "Settings", icon: Settings },
+];
+
 export const ROLE_NAV: Record<AppRole, NavItem[]> = {
   major_admin: [
     { to: "/major-admin/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -58,19 +72,7 @@ export const ROLE_NAV: Record<AppRole, NavItem[]> = {
     { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/admin/settings", label: "Settings", icon: Settings },
   ],
-  superior_officer: [
-    { to: "/superior/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
-    { to: "/superior/cases", label: "Cases", icon: FolderOpen },
-    { to: "/superior/evidence", label: "Evidence", icon: FileStack },
-    { to: "/superior/timeline", label: "Timeline", icon: Timer },
-    { to: "/superior/relationships", label: "Relationships", icon: Network },
-    { to: "/superior/leads", label: "Manual Leads", icon: GitBranch },
-    { to: "/superior/tasks", label: "Tasks", icon: CheckSquare },
-    { to: "/superior/reports", label: "Reports", icon: FileText },
-    { to: "/superior/analytics", label: "Analytics", icon: BarChart3 },
-    { to: "/superior/investigators", label: "Investigators", icon: Users },
-    { to: "/superior/settings", label: "Settings", icon: Settings },
-  ],
+  supervisor: supervisorNav,
   investigator: [
     { to: "/investigator/dashboard", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/investigator/cases", label: "My Cases", icon: FolderOpen },

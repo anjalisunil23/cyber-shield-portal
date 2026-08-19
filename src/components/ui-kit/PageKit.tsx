@@ -132,10 +132,10 @@ export function PrimaryButton({ children, onClick, type = "button", className }:
   );
 }
 
-export function GhostButton({ children, onClick, className }: { children: ReactNode; onClick?: () => void; className?: string }) {
+export function GhostButton({ children, onClick, type = "button", className }: { children: ReactNode; onClick?: () => void; type?: "button" | "submit"; className?: string }) {
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       className={cn("rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/5", className)}
     >

@@ -36,6 +36,9 @@ class CaseRepository:
         status: CaseStatus | None = None,
         priority: CasePriority | None = None,
         assigned_to: UUID | None = None,
+        user_id: UUID | None = None,
+        user_role: str | None = None,
+        user_department_id: UUID | None = None,
         sort_by: str = "updated_at",
         sort_dir: str = "desc",
         offset: int = 0,
@@ -47,6 +50,19 @@ class CaseRepository:
             joinedload(Case.created_by),
         )
         count_stmt = select(func.count()).select_from(Case)
+
+        if user_role and user_id and user_role not in ("major_admin", "admin"):
+            assigned_subquery = select(CaseAssignment.case_id).where(CaseAssignment.user_id == user_id)
+            if user_role in ("supervisor", "superior_officer"):
+                scope_filter = or_(
+                    Case.created_by_id == user_id,
+                    Case.id.in_(assigned_subquery),
+                    Case.department_id == user_department_id if user_department_id else False,
+                )
+            else:  # investigator
+                scope_filter = or_(Case.created_by_id == user_id, Case.id.in_(assigned_subquery))
+            stmt = stmt.where(scope_filter)
+            count_stmt = count_stmt.where(scope_filter)
 
         if q:
             like = f"%{q}%"

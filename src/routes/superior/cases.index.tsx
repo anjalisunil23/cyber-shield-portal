@@ -1,0 +1,140 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { DataTable, PageScaffold, Pagination, PrimaryButton, SelectFilter, StatusPill, Toolbar } from "@/components/ui-kit/PageKit";
+import { CaseCard } from "@/components/ui-kit/Cards";
+import { investigationApi } from "@/services/investigationApi";
+import type { InvestigationCase } from "@/services/types";
+import { Loader2 } from "lucide-react";
+
+export const Route = createFileRoute("/superior/cases/")({ component: Page });
+
+function Page() {
+  const navigate = useNavigate();
+  const [view, setView] = useState<"table" | "grid">("table");
+  const [status, setStatus] = useState("All");
+  const [cases, setCases] = useState<InvestigationCase[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const loadCases = async () => {
+    setLoading(true);
+    try {
+      const data = await investigationApi.listCases({
+        page,
+        page_size: 15,
+        status: status === "All" ? undefined : (status.toLowerCase().replace(/ /g, "_") as any),
+        q: searchQuery || undefined,
+      });
+      setCases(data.items || []);
+      setTotalPages(data.pages || 1);
+    } catch (err) {
+      console.error("Failed to load cases", err);
+      setCases([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCases();
+  }, [page, status, searchQuery]);
+
+  return (
+    <PageScaffold
+      crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "All Cases" }]}
+      title="All Cases"
+      subtitle="Create, assign, and monitor investigations"
+      actions={
+        <PrimaryButton onClick={() => void navigate({ to: "/superior/cases/create" })}>
+          Create case
+        </PrimaryButton>
+      }
+    >
+      <Toolbar
+        search={searchQuery}
+        onSearch={setSearchQuery}
+        filters={
+          <>
+            <SelectFilter
+              value={status}
+              onChange={setStatus}
+              options={["All", "Open", "Under Review", "Evidence Collection", "Analysis", "Completed", "Archived"]}
+            />
+            <button
+              type="button"
+              onClick={() => setView(view === "table" ? "grid" : "table")}
+              className="rounded-xl border border-white/10 px-3 py-2 text-xs bg-slate-900/40 text-slate-300 hover:text-white"
+            >
+              {view === "table" ? "Grid view" : "Table view"}
+            </button>
+          </>
+        }
+      />
+      {loading ? (
+        <div className="flex items-center justify-center py-12 text-slate-400">
+          <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading cases...
+        </div>
+      ) : cases.length === 0 ? (
+        <div className="rounded-xl border border-white/10 bg-slate-900/60 p-8 text-center text-slate-400">
+          No cases found.
+        </div>
+      ) : view === "table" ? (
+        <>
+          <DataTable
+            rows={cases}
+            columns={[
+              {
+                key: "case_number",
+                header: "Case",
+                render: (r) => (
+                  <Link
+                    to="/superior/cases/$caseId"
+                    params={{ caseId: r.id }}
+                    className="text-purple-400 hover:text-purple-300 font-semibold hover:underline"
+                  >
+                    {r.case_number}
+                  </Link>
+                ),
+              },
+              { key: "title", header: "Title", render: (r) => r.title },
+              { key: "priority", header: "Priority", render: (r) => <StatusPill value={r.priority} /> },
+              { key: "status", header: "Status", render: (r) => <StatusPill value={r.status} /> },
+              {
+                key: "assignee",
+                header: "Assigned To",
+                render: (r) =>
+                  r.assignments && r.assignments.length > 0
+                    ? r.assignments.map((a) => a.user?.full_name).join(", ")
+                    : "Unassigned",
+              },
+            ]}
+          />
+          <Pagination page={page} pages={totalPages} onPage={setPage} />
+        </>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {cases.map((c) => (
+            <Link key={c.id} to="/superior/cases/$caseId" params={{ caseId: c.id }}>
+              <CaseCard
+                item={{
+                  id: c.id,
+                  caseNumber: c.case_number,
+                  title: c.title,
+                  priority: (c.priority ? (c.priority.charAt(0).toUpperCase() + c.priority.slice(1)) : "Medium") as "Low" | "Medium" | "High" | "Critical",
+                  status: c.status,
+                  assignee:
+                    c.assignments && c.assignments.length > 0
+                      ? c.assignments[0].user?.full_name || "Agent"
+                      : "Unassigned",
+                  updated: new Date(c.updated_at).toLocaleDateString(),
+                }}
+              />
+            </Link>
+          ))}
+        </div>
+      )}
+    </PageScaffold>
+  );
+}

@@ -22,7 +22,7 @@ router = APIRouter(prefix="/cases", tags=["cases"])
 @router.get("", response_model=PageOut[CaseOut])
 def list_cases(
     db: Annotated[Session, Depends(get_db)],
-    _: Annotated[User, Depends(get_current_user)],
+    user: Annotated[User, Depends(get_current_user)],
     q: str | None = None,
     status: CaseStatus | None = None,
     priority: CasePriority | None = None,
@@ -33,6 +33,7 @@ def list_cases(
     page_size: int = Query(default=20, ge=1, le=100),
 ) -> PageOut[CaseOut]:
     items, total = CaseService(db).list(
+        actor=user,
         q=q,
         status=status,
         priority=priority,
@@ -58,9 +59,9 @@ def create_case(
 def get_case(
     case_id: UUID,
     db: Annotated[Session, Depends(get_db)],
-    _: Annotated[User, Depends(get_current_user)],
+    user: Annotated[User, Depends(get_current_user)],
 ) -> CaseOut:
-    return CaseOut.model_validate(CaseService(db).get(case_id))
+    return CaseOut.model_validate(CaseService(db).get(case_id, actor=user))
 
 
 @router.patch("/{case_id}", response_model=CaseOut)

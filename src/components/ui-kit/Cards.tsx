@@ -36,31 +36,61 @@ function typeIcon(type: MockEvidence["type"]) {
   return Paperclip;
 }
 
-export function EvidenceCard({ item, onOpen }: { item: MockEvidence; onOpen?: () => void }) {
+import { Trash2, UserCheck } from "lucide-react";
+
+export function EvidenceCard({
+  item,
+  onOpen,
+  onDelete,
+}: {
+  item: MockEvidence;
+  onOpen?: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
+}) {
   const Icon = typeIcon(item.type);
   return (
-    <motion.button
-      type="button"
+    <motion.div
       whileHover={{ y: -3, scale: 1.01 }}
-      onClick={onOpen}
-      className="w-full rounded-2xl border border-white/10 bg-[#111827]/90 p-4 text-left hover:border-primary/40"
+      className="group relative w-full rounded-2xl border border-white/10 bg-[#111827]/90 p-4 text-left transition-colors hover:border-cyan/40"
     >
-      <div className="mb-3 grid h-10 w-10 place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary">
-        <Icon className="h-5 w-5" />
+      <div className="flex items-start justify-between">
+        <div
+          onClick={onOpen}
+          className="mb-3 grid h-10 w-10 cursor-pointer place-items-center rounded-xl border border-primary/30 bg-primary/10 text-primary"
+        >
+          <Icon className="h-5 w-5" />
+        </div>
+        {onDelete && (
+          <button
+            type="button"
+            title="Delete Evidence"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onDelete(e);
+            }}
+            className="rounded-lg p-1.5 text-slate-500 hover:bg-rose-500/20 hover:text-rose-400"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
       </div>
-      <p className="truncate text-sm font-medium text-slate-100">{item.name}</p>
-      <p className="mt-1 text-xs text-slate-500">
-        {item.type} · {item.size}
-      </p>
-      <p className="mt-2 text-[11px] text-cyan">{item.caseNumber}</p>
-      <div className="mt-2 flex flex-wrap gap-1">
-        {item.tags.map((t) => (
-          <span key={t} className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-slate-400">
-            {t}
-          </span>
-        ))}
+
+      <div onClick={onOpen} className="cursor-pointer">
+        <p className="truncate text-sm font-medium text-slate-100">{item.name}</p>
+        <p className="mt-1 text-xs text-slate-500">
+          {item.type} · {item.size}
+        </p>
+        <p className="mt-2 text-[11px] text-cyan">{item.caseNumber}</p>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {item.tags.map((t) => (
+            <span key={t} className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] text-slate-400">
+              {t}
+            </span>
+          ))}
+        </div>
       </div>
-    </motion.button>
+    </motion.div>
   );
 }
 
@@ -74,16 +104,40 @@ export function NotificationCard({ item }: { item: MockNotification }) {
   );
 }
 
-export function TaskCard({ item }: { item: MockTask }) {
+export function TaskCard({
+  item,
+  onDelete,
+}: {
+  item: MockTask & { assignee?: string; priority?: string };
+  onDelete?: () => void;
+}) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-4">
+    <div className="relative rounded-2xl border border-white/10 bg-[#111827]/90 p-4">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium text-slate-100">{item.title}</p>
-        <StatusPill value={item.status} />
+        <div className="flex items-center gap-1">
+          <StatusPill value={item.status} />
+          {onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              title="Delete Task"
+              className="rounded-lg p-1 text-slate-500 hover:bg-rose-500/20 hover:text-rose-400"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
       <p className="mt-2 text-xs text-slate-500">
         {item.caseNumber} · Due {item.due}
       </p>
+      {item.assignee && (
+        <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-cyan/20 bg-cyan/5 px-2.5 py-1 text-xs text-cyan">
+          <UserCheck className="h-3.5 w-3.5" />
+          <span>Assigned to: {item.assignee}</span>
+        </div>
+      )}
     </div>
   );
 }

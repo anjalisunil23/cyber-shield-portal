@@ -1,31 +1,153 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { MOCK_EVIDENCE } from "@/data/mock/platform";
-import { DataTable, PageScaffold, Pagination, SelectFilter, Toolbar, useClientTable } from "@/components/ui-kit/PageKit";
+import { useEffect, useState } from "react";
+import { DataTable, PageScaffold, Pagination, SelectFilter, Toolbar } from "@/components/ui-kit/PageKit";
 import { EvidenceCard } from "@/components/ui-kit/Cards";
+import { investigationApi } from "@/services/investigationApi";
+import type { EvidenceItem } from "@/services/types";
+import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/investigator/evidence")({ component: Page });
 
 function Page() {
   const [view, setView] = useState<"grid" | "table">("grid");
   const [type, setType] = useState("All");
-  const items = MOCK_EVIDENCE.filter((e) => type === "All" || e.type === type);
-  const table = useClientTable(items, 6);
+  const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const loadAllEvidence = async () => {
+    setLoading(true);
+    try {
+      // 1. Get investigator's accessible cases
+      const casesData = await investigationApi.listCases({ page_size: 100 });
+      if (casesData.items && casesData.items.length > 0) {
+        // 2. Fetch evidence for each case
+        const promises = casesData.items.map((c) =>
+          investigationApi.listEvidence(c.id).then((res) =>
+            (res.items || []).map((e) => ({
+              ...e,
+              case_number: c.case_number, // attach case number for rendering
+            }))
+          )
+        );
+        const results = await Promise.all(promises);
+        setEvidence(results.flat());
+      } else {
+        setEvidence([]);
+      }
+    } catch (err) {
+      console.error("Failed to load evidence repository", err);
+      setEvidence([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAllEvidence();
+  }, []);
+
+  // Filter and search
+  const filtered = evidence.filter((e) => {
+    const matchesType = type === "All" || e.file_type.toLowerCase() === type.toLowerCase();
+    const matchesSearch =
+      !searchQuery ||
+      e.original_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (e.description || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      ((e as any).case_number || "").toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesType && matchesSearch;
+  });
+
+  const pageSize = 12;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
+
   return (
-    <PageScaffold crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Evidence Repository" }]} title="Evidence Repository" subtitle="Search, filter, and open evidence">
-      <Toolbar search={table.search} onSearch={table.setSearch} filters={<><SelectFilter value={type} onChange={setType} options={["All", "image", "video", "audio", "pdf", "document"]} /><button type="button" className="rounded-xl border border-white/10 px-3 py-2 text-xs" onClick={() => setView(view === "grid" ? "table" : "grid")}>{view === "grid" ? "Table" : "Gallery"}</button></>} />
-      {view === "grid" ? (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{table.rows.map((e) => <Link key={e.id} to={"/investigator/evidence/$evidenceId" as "/"} params={{ evidenceId: e.id } as never}><EvidenceCard item={e} /></Link>)}</div>
+    <PageScaffold
+      crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Evidence Repository" }]}
+      title="Evidence Repository"
+      subtitle="Search and view digital evidence items across all your cases"
+    >
+      <Toolbar
+        search={searchQuery}
+        onSearch={setSearchQuery}
+        filters={
+          <>
+            <SelectFilter
+              value={type}
+              onChange={setType}
+              options={["All", "image", "video", "audio", "pdf", "csv", "json"]}
+            />
+            <button
+              type="button"
+              className="rounded-xl border border-white/10 px-3 py-2 text-xs bg-slate-900/40 text-slate-300 hover:text-white"
+              onClick={() => setView(view === "grid" ? "table" : "grid")}
+            >
+              {view === "grid" ? "Table view" : "Grid view"}
+            </button>
+          </>
+        }
+      />
+      {loading ? (
+        <div className="flex items-center justify-center py-12 text-slate-400">
+          <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading evidence repository...
+        </div>
+      ) : pageItems.length === 0 ? (
+        <div className="rounded-xl border border-white/10 bg-slate-900/60 p-8 text-center text-slate-400">
+          No evidence items found.
+        </div>
+      ) : view === "grid" ? (
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {pageItems.map((e) => (
+            <Link key={e.id} to="/investigator/evidence/$evidenceId" params={{ evidenceId: e.id }}>
+              {/* Adapting EvidenceItem to mock props for EvidenceCard */}
+              <EvidenceCard
+                item={{
+                  id: e.id,
+                  name: e.original_name,
+                  type: e.file_type as any,
+                  date: new Date(e.upload_date).toLocaleDateString(),
+                  aiStatus: e.is_duplicate ? "Analyzed" : "Pending",
+                  color: e.is_duplicate ? "#EF4444" : "#3B82F6",
+                }}
+              />
+            </Link>
+          ))}
+        </div>
       ) : (
-        <DataTable rows={table.rows} columns={[
-          { key: "n", header: "File", render: (r) => <Link to={"/investigator/evidence/$evidenceId" as "/"} params={{ evidenceId: r.id } as never} className="text-cyan">{r.name}</Link> },
-          { key: "t", header: "Type", render: (r) => r.type },
-          { key: "c", header: "Case", render: (r) => r.caseNumber },
-          { key: "s", header: "Size", render: (r) => r.size },
-          { key: "d", header: "Uploaded", render: (r) => r.uploadedAt },
-        ]} />
+        <DataTable
+          rows={pageItems}
+          columns={[
+            {
+              key: "original_name",
+              header: "File",
+              render: (r) => (
+                <Link
+                  to="/investigator/evidence/$evidenceId"
+                  params={{ evidenceId: r.id }}
+                  className="text-purple-400 hover:underline font-semibold"
+                >
+                  {r.original_name}
+                </Link>
+              ),
+            },
+            { key: "file_type", header: "Type", render: (r) => r.file_type.toUpperCase() },
+            { key: "case_number", header: "Case", render: (r) => (r as any).case_number || "N/A" },
+            {
+              key: "file_size",
+              header: "Size",
+              render: (r) => `${(r.file_size / 1024).toFixed(1)} KB`,
+            },
+            {
+              key: "upload_date",
+              header: "Uploaded",
+              render: (r) => new Date(r.upload_date).toLocaleDateString(),
+            },
+          ]}
+        />
       )}
-      <Pagination page={table.page} pages={table.pages} onPage={table.setPage} />
+      <Pagination page={page} pages={totalPages} onPage={setPage} />
     </PageScaffold>
   );
 }

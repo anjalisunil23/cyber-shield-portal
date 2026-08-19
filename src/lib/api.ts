@@ -52,7 +52,7 @@ export async function apiRequest<T>(path: string, init?: RequestInit): Promise<T
   return (await res.json()) as T;
 }
 
-export type UserRoleApi = "major_admin" | "admin" | "superior_officer" | "investigator";
+export type UserRoleApi = "major_admin" | "admin" | "supervisor" | "superior_officer" | "investigator";
 
 export type UserResponse = {
   id: string;
@@ -112,8 +112,9 @@ export function resetPassword(token: string, new_password: string) {
 export function toApiRole(label: string): UserRoleApi {
   const map: Record<string, UserRoleApi> = {
     Investigator: "investigator",
-    "Superior Officer": "superior_officer",
-    "Head of Investigation": "superior_officer",
+    Supervisor: "supervisor",
+    "Superior Officer": "supervisor",
+    "Head of Investigation": "supervisor",
     Admin: "admin",
     Administrator: "admin",
     "Major Admin": "major_admin",

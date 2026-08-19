@@ -93,6 +93,9 @@ def list_activity(
     return paginate(total, page, page_size, [ActivityOut.model_validate(i) for i in items])
 
 
+from app.services.case_service import CaseService
+
+
 @router.post("/cases/{case_id}/reports", response_model=ReportOut, status_code=201)
 def create_report(
     case_id: UUID,
@@ -100,31 +103,33 @@ def create_report(
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_user)],
 ):
+    CaseService(db).verify_case_access(user, case_id)
     return ReportOut.model_validate(ReportService(db).generate(case_id, payload, user))
 
 
 @router.get("/cases/{case_id}/reports", response_model=list[ReportOut])
-def list_reports(case_id: UUID, db: Annotated[Session, Depends(get_db)], _: Annotated[User, Depends(get_current_user)]):
+def list_reports(case_id: UUID, db: Annotated[Session, Depends(get_db)], user: Annotated[User, Depends(get_current_user)]):
+    CaseService(db).verify_case_access(user, case_id)
     return [ReportOut.model_validate(r) for r in ReportRepository(db).list_for_case(case_id)]
 
 
 @router.get("/reports/{report_id}", response_model=ReportOut)
-def get_report(report_id: UUID, db: Annotated[Session, Depends(get_db)], _: Annotated[User, Depends(get_current_user)]):
+def get_report(report_id: UUID, db: Annotated[Session, Depends(get_db)], user: Annotated[User, Depends(get_current_user)]):
     r = ReportRepository(db).get(report_id)
     if not r:
         from fastapi import HTTPException
-
         raise HTTPException(404, detail="Report not found")
+    CaseService(db).verify_case_access(user, r.case_id)
     return ReportOut.model_validate(r)
 
 
 @router.get("/reports/{report_id}/export")
-def export_report(report_id: UUID, db: Annotated[Session, Depends(get_db)], _: Annotated[User, Depends(get_current_user)]):
+def export_report(report_id: UUID, db: Annotated[Session, Depends(get_db)], user: Annotated[User, Depends(get_current_user)]):
     r = ReportRepository(db).get(report_id)
     if not r or not r.content:
         from fastapi import HTTPException
-
         raise HTTPException(404, detail="Report not found")
+    CaseService(db).verify_case_access(user, r.case_id)
     media = "text/csv" if r.format.value == "csv" else "text/html"
     return PlainTextResponse(r.content, media_type=media)
 
