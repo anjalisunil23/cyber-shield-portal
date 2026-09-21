@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageScaffold, Panel, StatusPill } from "@/components/ui-kit/PageKit";
+import { EvidenceViewerModal } from "@/components/dashboard/EvidenceViewerModal";
 import { investigationApi } from "@/services/investigationApi";
 import type { EvidenceItem } from "@/services/types";
-import { AlertTriangle, Download, Loader2 } from "lucide-react";
+import { AlertTriangle, Download, Loader2, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/investigator/evidence/$evidenceId")({ component: Page });
 
@@ -11,6 +12,7 @@ function Page() {
   const { evidenceId } = Route.useParams();
   const [e, setEvidence] = useState<EvidenceItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [openViewer, setOpenViewer] = useState(false);
 
   useEffect(() => {
     investigationApi
@@ -70,13 +72,22 @@ function Page() {
             <p className="text-xs text-muted-foreground mb-4">
               {e.mime_type || "Unknown MIME Type"}
             </p>
-            <a
-              href={downloadUrl}
-              download={e.original_name}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium text-xs transition shadow-xs"
-            >
-              <Download className="h-4 w-4" /> Download Original File
-            </a>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => setOpenViewer(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium text-xs transition shadow-xs"
+              >
+                <Sparkles className="h-4 w-4" /> Open Intelligence Viewer
+              </button>
+              <a
+                href={downloadUrl}
+                download={e.original_name}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card text-foreground font-medium text-xs transition"
+              >
+                <Download className="h-4 w-4" /> Download Original File
+              </a>
+            </div>
           </div>
         </Panel>
 
@@ -133,6 +144,7 @@ function Page() {
           )}
         </Panel>
       </div>
+      {openViewer && <EvidenceViewerModal evidence={e} onClose={() => setOpenViewer(false)} />}
     </PageScaffold>
   );
 }

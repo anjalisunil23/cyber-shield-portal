@@ -12,7 +12,6 @@ function Page() {
         { label: "Platform Settings" },
       ]}
       title="Platform Settings"
-      subtitle="System configuration & appearance"
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <Panel title="Appearance">

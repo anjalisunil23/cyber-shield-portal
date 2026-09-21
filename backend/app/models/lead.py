@@ -38,6 +38,7 @@ class ManualLead(Base):
         UUID(as_uuid=True), ForeignKey("evidence.id", ondelete="SET NULL"), nullable=True
     )
     related_evidence_ids: Mapped[list[Any] | None] = mapped_column(JSONB, nullable=True, default=list)
+    metadata_json: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True, default=dict)
     justification: Mapped[str | None] = mapped_column(Text, nullable=True)
     review_comment: Mapped[str | None] = mapped_column(Text, nullable=True)
     assigned_to_id: Mapped[uuid.UUID | None] = mapped_column(

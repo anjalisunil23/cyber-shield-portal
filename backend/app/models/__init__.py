@@ -23,6 +23,7 @@ from app.models.enums import (
     TimelineEventType,
 )
 from app.models.evidence import Evidence
+from app.models.repository import EvidenceRepositoryItem
 from app.models.lead import ManualLead
 from app.models.note import Note
 from app.models.relationship import Relationship
@@ -42,6 +43,7 @@ __all__ = [
     "ChatMessage",
     "Role",
     "Evidence",
+    "EvidenceRepositoryItem",
     "Note",
     "TimelineEvent",
     "Relationship",

@@ -57,7 +57,7 @@ export function EvidenceCard({
   return (
     <motion.div
       whileHover={{ y: -3, scale: 1.01 }}
-      className="group relative w-full rounded-2xl border border-border bg-card p-4 text-left shadow-xs transition hover:border-cyan/50 hover:shadow-md"
+      className="glass-card glow-hover group relative w-full p-4 text-left"
     >
       <div className="flex items-start justify-between">
         <div

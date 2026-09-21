@@ -8,7 +8,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Admins", to: "/major-admin/admins" }, { label: "Create" }]}
       title="Create Admin"
-      subtitle="Provision a new organization Admin"
       actions={
         <Link to={"/major-admin/admins" as "/"}>
           <GhostButton>Cancel</GhostButton>

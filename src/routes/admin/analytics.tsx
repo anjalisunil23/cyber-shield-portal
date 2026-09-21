@@ -51,7 +51,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Analytics" }]}
       title="Analytics"
-      subtitle="Department performance overview"
     >
       {stats.isLoading && <LoadingBlock />}
       {stats.isError && <ErrorState message={apiMessage(stats.error)} />}

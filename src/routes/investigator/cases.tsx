@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { InvestigationCaseCard } from "@/components/cyber/InvestigationCaseCard";
 import {
   DataTable,
+  EmptyState,
+  LoadingBlock,
   PageScaffold,
   Pagination,
   StatusPill,
@@ -9,9 +12,7 @@ import {
 } from "@/components/ui-kit/PageKit";
 import { investigationApi } from "@/services/investigationApi";
 import type { InvestigationCase } from "@/services/types";
-import { getStoredCases } from "@/data/mock/platformState";
-import { MOCK_CASES } from "@/data/mock/platform";
-import { Loader2, Shield } from "lucide-react";
+import { LayoutGrid, List, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/investigator/cases")({ component: Page });
 
@@ -22,6 +23,7 @@ function Page() {
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [view, setView] = useState<"grid" | "table">("grid");
 
   const loadCases = useCallback(async () => {
     setLoading(true);
@@ -29,47 +31,13 @@ function Page() {
       const me = await investigationApi.me().catch(() => null);
       if (me?.id) setCurrentUserId(me.id);
 
-      let apiItems: InvestigationCase[] = [];
-      try {
-        const data = await investigationApi.listCases({
-          page: 1,
-          page_size: 100,
-          q: searchQuery || undefined,
-        });
-        apiItems = data?.items || [];
-      } catch {
-        apiItems = [];
-      }
-
-      const map = new Map<string, InvestigationCase>();
-
-      // 1. Seed with local / mock cases so nothing is ever lost
-      const stored = getStoredCases();
-      const initialSeed = stored.length > 0 ? stored : MOCK_CASES;
-      initialSeed.forEach((sc) => {
-        map.set(sc.caseNumber, {
-          id: sc.id,
-          case_number: sc.caseNumber,
-          title: sc.title,
-          description: sc.description || "Investigation case",
-          priority: sc.priority.toLowerCase() as InvestigationCase["priority"],
-          status: sc.status.toLowerCase().replace(" ", "_") as InvestigationCase["status"],
-          notes: null,
-          created_by_id: "system",
-          created_at: sc.created || new Date().toISOString(),
-          updated_at: sc.updated || new Date().toISOString(),
-          assignments: [],
-        });
+      const data = await investigationApi.listCases({
+        page: 1,
+        page_size: 100,
+        q: searchQuery || undefined,
       });
+      let allList = data?.items || [];
 
-      // 2. Overlay / Merge live backend API cases
-      apiItems.forEach((c) => {
-        map.set(c.case_number, c);
-      });
-
-      let allList = Array.from(map.values());
-
-      // Filter by search query if provided
       if (searchQuery.trim()) {
         const qLower = searchQuery.toLowerCase().trim();
         allList = allList.filter(
@@ -80,7 +48,6 @@ function Page() {
         );
       }
 
-      // Sort with critical/high priority first and updated date
       allList.sort((a, b) => {
         const pOrder: Record<string, number> = { critical: 4, high: 3, medium: 2, low: 1 };
         const pDiff = (pOrder[b.priority] || 0) - (pOrder[a.priority] || 0);
@@ -95,23 +62,7 @@ function Page() {
       setCases(pagedItems);
       setTotalPages(totalPgs);
     } catch {
-      // Offline fallback
-      const stored = getStoredCases();
-      const fallback = stored.length > 0 ? stored : MOCK_CASES;
-      const mapped: InvestigationCase[] = fallback.map((sc) => ({
-        id: sc.id,
-        case_number: sc.caseNumber,
-        title: sc.title,
-        description: sc.description || "Investigation case",
-        priority: sc.priority.toLowerCase() as InvestigationCase["priority"],
-        status: sc.status.toLowerCase().replace(" ", "_") as InvestigationCase["status"],
-        notes: null,
-        created_by_id: "system",
-        created_at: sc.created || new Date().toISOString(),
-        updated_at: sc.updated || new Date().toISOString(),
-        assignments: [],
-      }));
-      setCases(mapped);
+      setCases([]);
       setTotalPages(1);
     } finally {
       setLoading(false);
@@ -124,19 +75,49 @@ function Page() {
 
   return (
     <PageScaffold
-      crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "My Cases" }]}
-      title="My Assigned Cases"
-      subtitle="Investigation cases assigned to you as Investigator Lead or Team Investigator"
+      crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Cases" }]}
+      title="Cases"
     >
-      <Toolbar search={searchQuery} onSearch={setSearchQuery} />
+      <Toolbar
+        search={searchQuery}
+        onSearch={setSearchQuery}
+        placeholder="Search cases"
+        filters={
+          <button
+            type="button"
+            onClick={() => setView(view === "table" ? "grid" : "table")}
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-card px-3 text-xs text-muted-foreground hover:text-foreground"
+          >
+            {view === "table" ? (
+              <LayoutGrid className="h-3.5 w-3.5" />
+            ) : (
+              <List className="h-3.5 w-3.5" />
+            )}
+            {view === "table" ? "Cards" : "Table"}
+          </button>
+        }
+      />
       {loading ? (
-        <div className="flex items-center justify-center py-12 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading cases...
-        </div>
+        <LoadingBlock rows={8} />
       ) : cases.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground shadow-xs">
-          No cases matching your search.
-        </div>
+        <EmptyState title={searchQuery ? "No cases found." : "No cases assigned."} />
+      ) : view === "grid" ? (
+        <>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {cases.map((c) => (
+              <InvestigationCaseCard
+                key={c.id}
+                item={c}
+                to="/dashboard/cases/$caseId"
+                leadName={
+                  c.investigator_lead?.full_name ||
+                  (c.investigator_lead_id === currentUserId ? "You" : undefined)
+                }
+              />
+            ))}
+          </div>
+          <Pagination page={page} pages={totalPages} onPage={setPage} />
+        </>
       ) : (
         <>
           <DataTable
@@ -144,42 +125,31 @@ function Page() {
             columns={[
               {
                 key: "case_number",
-                header: "Case Number",
+                header: "Case",
                 render: (r) => (
                   <Link
                     to="/dashboard/cases/$caseId"
                     params={{ caseId: r.id }}
-                    className="text-primary font-bold hover:underline inline-flex items-center gap-1.5"
+                    className="font-medium text-primary hover:underline"
                   >
-                    <span>{r.case_number}</span>
+                    {r.case_number}
                   </Link>
                 ),
               },
               {
                 key: "title",
-                header: "Case Title & Description",
-                render: (r) => (
-                  <div>
-                    <p className="font-semibold text-foreground text-sm">{r.title}</p>
-                    {r.description && (
-                      <p className="text-xs text-muted-foreground truncate max-w-md">
-                        {r.description}
-                      </p>
-                    )}
-                  </div>
-                ),
+                header: "Title",
+                render: (r) => <span className="font-medium text-foreground">{r.title}</span>,
               },
               {
                 key: "lead",
-                header: "Investigator Lead",
+                header: "Lead",
                 render: (r) => {
                   const isLead = r.investigator_lead_id === currentUserId;
-                  const leadName =
-                    r.investigator_lead?.full_name ||
-                    (isLead ? "You (Lead)" : "Alex Mercer (Lead)");
+                  const leadName = r.investigator_lead?.full_name || (isLead ? "You" : "—");
                   return (
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-foreground">
-                      <Shield className="h-3 w-3 text-amber-500" />
+                    <span className="inline-flex items-center gap-1 text-xs text-foreground">
+                      <Shield className="h-3 w-3 text-muted-foreground" />
                       {leadName}
                     </span>
                   );
@@ -193,21 +163,8 @@ function Page() {
               { key: "status", header: "Status", render: (r) => <StatusPill value={r.status} /> },
               {
                 key: "updated_at",
-                header: "Last Activity",
+                header: "Updated",
                 render: (r) => new Date(r.updated_at).toLocaleDateString(),
-              },
-              {
-                key: "actions",
-                header: "Action",
-                render: (r) => (
-                  <Link
-                    to="/dashboard/cases/$caseId"
-                    params={{ caseId: r.id }}
-                    className="inline-flex items-center gap-1 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 text-xs font-semibold transition"
-                  >
-                    Open Case →
-                  </Link>
-                ),
               },
             ]}
           />

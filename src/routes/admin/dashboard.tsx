@@ -14,7 +14,6 @@ import {
   YAxis,
 } from "recharts";
 import {
-  AiPlaceholderCard,
   ChartCard,
   PageHeader,
   Panel,
@@ -52,10 +51,7 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Admin Dashboard"
-        subtitle="Organization / district investigation management"
-      />
+      <PageHeader title="Dashboard" />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatsCard
@@ -167,40 +163,24 @@ function AdminDashboard() {
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <QuickActionCard
-          label="Create Investigator"
-          description="Add an investigator account"
+          label="New investigator"
           icon={UserPlus}
           onClick={() => void navigate({ to: "/admin/users/create" })}
         />
         <QuickActionCard
-          label="Create Superior Officer"
-          description="Add a head of investigation"
+          label="New officer"
           icon={Users}
           onClick={() => void navigate({ to: "/admin/users/create" })}
         />
         <QuickActionCard
-          label="Assign Case"
-          description="Open case management"
+          label="Cases"
           icon={Briefcase}
           onClick={() => void navigate({ to: "/admin/cases" })}
         />
         <QuickActionCard
-          label="Generate Report"
-          description="Investigation summaries"
+          label="Reports"
           icon={FileStack}
           onClick={() => void navigate({ to: "/admin/reports" })}
-        />
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        <AiPlaceholderCard
-          title="Department AI Insights"
-          blurb="Performance scoring arrives in Phase 2."
-        />
-        <AiPlaceholderCard title="AI Leads" blurb="Manual leads only for now." />
-        <AiPlaceholderCard
-          title="Object Detection Queue"
-          blurb="Placeholder for YOLO-class modules."
         />
       </div>
     </div>

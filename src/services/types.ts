@@ -175,6 +175,8 @@ export type EvidenceItem = {
   speech_transcript?: string | null;
   risk_score?: number | null;
   ai_summary?: string | null;
+  ai_metadata?: Record<string, unknown> | null;
+  processing_status?: string | null;
 };
 
 export type NoteItem = {
@@ -230,6 +232,7 @@ export type LeadItem = {
   created_by?: UserBrief | null;
   created_at: string;
   updated_at?: string;
+  metadata_json?: Record<string, unknown> | null;
 };
 
 export type NotificationItem = {
@@ -282,6 +285,10 @@ export type DashboardStats = {
   recent_activity: ActivityItem[];
   recent_cases: InvestigationCase[];
   latest_uploads: EvidenceItem[];
+  case_status_counts?: Record<string, number>;
+  ai_processing?: { processed: number; processing: number; failed: number; pending: number };
+  risk_distribution?: { low: number; medium: number; high: number; critical: number };
+  lead_review?: { pending: number; verified: number; rejected: number; modified: number };
 };
 
 export type AdminUser = {
@@ -344,4 +351,256 @@ export type SearchResult = {
   notes: NoteItem[];
   investigators: UserBrief[];
   reports: ReportItem[];
+  leads?: LeadItem[];
+  timeline?: TimelineItem[];
+};
+
+export type AIEngineStatus = {
+  llm: { provider: string; model: string; available: boolean; mode: string; disclaimer: string };
+  ocr_engine: string;
+  stt_engine: string;
+  mode: string;
+  disclaimer: string;
+};
+
+// ---- AI Intelligence & Forensic Decision-Support Types ----
+
+export type ExtractedEntity = {
+  type: string;
+  raw_value: string;
+  normalized_value: string;
+  confidence: number;
+  context?: string;
+  source_evidence_id?: string;
+  occurrences?: number;
+  evidence_ids?: string[];
+  evidence_names?: string[];
+  contexts?: string[];
+};
+
+export type EvidenceAnalysis = {
+  id: string;
+  case_id: string;
+  original_name: string;
+  filename: string;
+  file_type: string;
+  mime_type: string | null;
+  file_size: number;
+  sha256_hash: string;
+  upload_date: string | null;
+  is_duplicate: boolean;
+  duplicate_of_id: string | null;
+  duplicate_warning: string | null;
+  processing_status: string;
+  pipeline_steps: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  ocr_text: string;
+  ocr_engine: string;
+  ocr_confidence: number;
+  speech_transcript: string;
+  stt_engine: string;
+  extracted_entities: ExtractedEntity[];
+  entity_count: number;
+  risk_score: number | null;
+  disclaimer: string;
+};
+
+export type RiskFactor = {
+  factor: string;
+  points: number;
+  detail: string;
+};
+
+export type CaseRiskAssessment = {
+  case_id: string;
+  risk_score: number;
+  risk_level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  badge_color: string;
+  factors: RiskFactor[];
+  top_factors?: string[];
+  disclaimer: string;
+};
+
+export type CaseCorrelation = {
+  entity_type: string;
+  normalized_value: string;
+  evidence_count: number;
+  supporting_evidence_ids: string[];
+  supporting_evidence_names: string[];
+  confidence_score: number;
+  explanation: string;
+};
+
+export type GraphNode = {
+  id: string;
+  label: string;
+  kind: string;
+  color: string;
+  size: number;
+  file_type?: string;
+  evidence_id?: string;
+};
+
+export type GraphEdge = {
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+  label: string;
+  confidence: number;
+  ai_generated: boolean;
+  description: string;
+};
+
+export type CaseGraphData = {
+  case_id: string;
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+};
+
+export type RAGCitation = {
+  evidence_id: string;
+  evidence_name: string;
+  file_type: string;
+  reference: string;
+};
+
+export type RAGMatchingEvidence = {
+  id: string;
+  original_name: string;
+  file_type: string;
+  snippet: string;
+  sha256: string;
+  match_score: number;
+};
+
+export type RAGSearchResult = {
+  query: string;
+  answer: string;
+  citations: RAGCitation[];
+  matching_evidence: RAGMatchingEvidence[];
+  total_matches: number;
+  disclaimer: string;
+};
+
+export type InvestigationSummary = {
+  case_id: string;
+  case_number: string;
+  title: string;
+  priority: string;
+  status: string;
+  generated_at: string;
+  lead_investigator: string;
+  supervisor: string;
+  evidence_count: number;
+  evidence_summary: {
+    id: string;
+    name: string;
+    file_type: string;
+    size_kb: number;
+    sha256: string;
+    is_duplicate: boolean;
+    has_ocr: boolean;
+    has_transcript: boolean;
+  }[];
+  important_entities: {
+    type: string;
+    value: string;
+    source_evidence: string;
+    confidence: number;
+  }[];
+  key_relationships: {
+    source: string;
+    target: string;
+    type: string;
+    description?: string | null;
+    confidence: number;
+    status: string;
+  }[];
+  timeline_event_count: number;
+  timeline_events: {
+    time: string;
+    title: string;
+    description: string;
+  }[];
+  verified_findings: {
+    id: string;
+    title: string;
+    priority: string;
+    status: string;
+    review_state: string;
+    why: string;
+    reviewer_note: string;
+  }[];
+  unverified_ai_leads: {
+    id: string;
+    title: string;
+    priority: string;
+    status: string;
+    review_state: string;
+    why: string;
+    reviewer_note: string;
+  }[];
+  rejected_leads: {
+    id: string;
+    title: string;
+    priority: string;
+    status: string;
+    review_state: string;
+    why: string;
+    reviewer_note: string;
+  }[];
+  summary_text: string;
+  disclaimer: string;
+};
+
+export type PipelineRunResult = {
+  success: boolean;
+  case_id: string;
+  evidence_processed: number;
+  total_evidence: number;
+  correlations_found: number;
+  timeline_events_generated: number;
+  risk_score: number;
+  risk_level: string;
+  leads_generated: number;
+};
+
+export type RepositoryItem = {
+  id: string;
+  case_id: string;
+  case_number?: string | null;
+  case_title?: string | null;
+  filename: string;
+  original_name: string;
+  file_type: string;
+  category: string;
+  mime_type: string | null;
+  file_size: number;
+  sha256_hash: string;
+  description: string | null;
+  source_type: string;
+  processing_status: string;
+  synthetic: boolean;
+  dataset: string;
+  tags?: string[] | null;
+  metadata_json?: Record<string, unknown> | null;
+  imported_evidence_id?: string | null;
+  created_at: string;
+  disclaimer?: string;
+};
+
+export type RepositoryGenerateResult = {
+  success: boolean;
+  case_id?: string;
+  case_number?: string;
+  theme?: string;
+  created: number;
+  skipped_existing?: number;
+  files?: string[];
+  cases?: { case_number: string; created: number; ok?: boolean }[];
+  total_files?: number;
+  disclaimer?: string;
+  job_id?: string;
+  status?: string;
 };

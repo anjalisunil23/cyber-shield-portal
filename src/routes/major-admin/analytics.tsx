@@ -60,7 +60,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "Analytics" }]}
       title="System Analytics"
-      subtitle="Platform trends and metrics overview"
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard title="Monthly cases">

@@ -11,7 +11,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Tasks" }]}
       title="Tasks"
-      subtitle="Pending investigative work"
     >
       <Toolbar search={table.search} onSearch={table.setSearch} />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

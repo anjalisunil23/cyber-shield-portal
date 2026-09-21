@@ -19,7 +19,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "System Reports" }]}
       title="System Reports"
-      subtitle="Platform investigation report library"
     >
       <Toolbar search={table.search} onSearch={table.setSearch} />
       {!table.rows.length ? (

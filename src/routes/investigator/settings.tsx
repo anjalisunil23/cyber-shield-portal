@@ -9,7 +9,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Settings" }]}
       title="Settings"
-      subtitle="Account & notifications"
       actions={
         <Link to={"/profile" as "/"} className="text-sm font-medium text-primary hover:underline">
           Open profile →
@@ -18,10 +17,8 @@ function Page() {
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <Panel title="General">
-          <input
-            defaultValue="Alex Mercer"
-            className="w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-primary/60"
-          />
+          <label className="mb-1.5 block text-xs text-muted-foreground">Display name</label>
+          <input className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground outline-none focus:border-primary/60" />
           <PrimaryButton className="mt-3">Save</PrimaryButton>
         </Panel>
         <Panel title="Notifications">

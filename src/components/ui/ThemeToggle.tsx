@@ -11,15 +11,14 @@ export function ThemeToggle({ className }: { className?: string }) {
       type="button"
       onClick={toggleTheme}
       className={cn(
-        "relative grid h-10 w-10 place-items-center rounded-xl border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "relative grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         "border-border bg-card text-foreground hover:border-primary/40 hover:text-primary",
         className,
       )}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      <span className="sr-only">{isDark ? "Switch to light mode" : "Switch to dark mode"}</span>
-      <div className="relative h-4 w-4">
+      <div className="relative h-4 w-4" aria-hidden="true">
         <Sun
           className={cn(
             "absolute inset-0 h-4 w-4 text-amber-500 transition-transform duration-300",

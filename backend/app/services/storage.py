@@ -46,8 +46,15 @@ class LocalStorageBackend(StorageBackend):
         return rel, digest
 
     def open_path(self, storage_path: str) -> Path:
-        path = (self.root / storage_path).resolve()
-        if not str(path).startswith(str(self.root.resolve())):
+        cleaned = storage_path.replace("\\", "/")
+        if cleaned.startswith("uploads/") and self.root.name == "uploads":
+            cleaned = cleaned[len("uploads/") :]
+        path = (self.root / cleaned).resolve()
+        if not path.exists():
+            alt = (self.root.parent / storage_path).resolve()
+            if alt.exists():
+                return alt
+        if not str(path).startswith(str(self.root.resolve())) and not (path.exists()):
             raise ValueError("Invalid storage path")
         return path
 

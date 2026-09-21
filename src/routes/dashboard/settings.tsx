@@ -32,8 +32,7 @@ function SettingsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
-        <p className="text-sm text-muted-foreground">Update your investigator profile</p>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Settings</h1>
       </div>
       <div className="max-w-lg space-y-4 rounded-2xl border border-border bg-card p-6 shadow-xs">
         <p className="text-sm text-foreground">

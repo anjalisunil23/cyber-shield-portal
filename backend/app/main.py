@@ -18,6 +18,8 @@ from app.api.routes.modules import router as modules_router
 from app.api.routes.platform import router as platform_router
 from app.api.routes.rbac import router as rbac_router
 from app.api.routes.chat import router as chat_router
+from app.api.routes.ai import router as ai_router
+from app.api.routes.repository import router as repository_router
 from app.core.config import get_settings
 from app.services.storage import ensure_upload_tree
 
@@ -26,8 +28,8 @@ ensure_upload_tree()
 
 app = FastAPI(
     title="CyberShield API",
-    description="AI-ready investigation support platform — Phase 1 (no AI models)",
-    version="1.0.0",
+    description="AI-powered investigation support platform — Making Evidence to Intelligence",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -89,6 +91,8 @@ app.include_router(evidence_router, prefix="/api")
 app.include_router(modules_router, prefix="/api")
 app.include_router(platform_router, prefix="/api")
 app.include_router(rbac_router, prefix="/api")
+app.include_router(ai_router, prefix="/api")
+app.include_router(repository_router, prefix="/api")
 
 
 @app.get("/")
@@ -98,7 +102,7 @@ def root() -> dict:
         "message": "CyberShield API",
         "docs": "/docs",
         "health": "/api/health",
-        "phase": 1,
+        "phase": 2,
     }
 
 

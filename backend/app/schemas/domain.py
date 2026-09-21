@@ -203,6 +203,7 @@ class EvidenceOut(BaseModel):
     risk_score: float | None = None
     ai_summary: str | None = None
     knowledge_graph_ids: list[Any] | None = None
+    processing_status: str | None = None
     uploaded_by: UserBrief | None = None
 
 
@@ -336,6 +337,7 @@ class LeadOut(BaseModel):
     created_by_id: UUID
     created_at: datetime
     updated_at: datetime
+    metadata_json: dict[str, Any] | None = None
     assigned_to: UserBrief | None = None
     created_by: UserBrief | None = None
 
@@ -392,6 +394,8 @@ class SearchResult(BaseModel):
     notes: list[NoteOut] = Field(default_factory=list)
     investigators: list[UserBrief] = Field(default_factory=list)
     reports: list[ReportOut] = Field(default_factory=list)
+    leads: list[LeadOut] = Field(default_factory=list)
+    timeline: list[TimelineOut] = Field(default_factory=list)
 
 
 class DashboardStats(BaseModel):
@@ -406,6 +410,10 @@ class DashboardStats(BaseModel):
     recent_activity: list[ActivityOut]
     recent_cases: list[CaseOut]
     latest_uploads: list[EvidenceOut]
+    case_status_counts: dict[str, int] = Field(default_factory=dict)
+    ai_processing: dict[str, int] = Field(default_factory=dict)
+    risk_distribution: dict[str, int] = Field(default_factory=dict)
+    lead_review: dict[str, int] = Field(default_factory=dict)
 
 
 # ---- Chat & Communication ----

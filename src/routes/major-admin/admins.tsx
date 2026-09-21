@@ -38,7 +38,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "Admins" }]}
       title="Admins"
-      subtitle="Create, edit, and suspend Admin accounts"
       actions={
         <PrimaryButton onClick={() => setOpen(true)}>
           <Plus className="mr-1 inline h-4 w-4" /> Create Admin

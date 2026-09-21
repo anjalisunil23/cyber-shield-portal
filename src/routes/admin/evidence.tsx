@@ -82,9 +82,8 @@ function Page() {
 
   return (
     <PageScaffold
-      crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Evidence Categories" }]}
-      title="Evidence Categories"
-      subtitle={`Browse evidence by type · Storage ${formatBytes(storage.data?.total_bytes || 0)} (${storage.data?.total_files || 0} files)`}
+      crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Evidence" }]}
+      title="Evidence"
     >
       <Toolbar
         search={search}

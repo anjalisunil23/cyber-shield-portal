@@ -24,7 +24,6 @@ function Page() {
         { label: "Generate Report" },
       ]}
       title="Generate Report"
-      subtitle="Draft investigation summaries"
     >
       <Panel title="New draft">
         <form

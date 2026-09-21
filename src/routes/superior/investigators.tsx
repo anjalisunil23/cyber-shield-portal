@@ -24,7 +24,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Investigators" }]}
       title="Investigators Directory"
-      subtitle="Team officers available for case & task assignment"
     >
       <Toolbar search={table.search} onSearch={table.setSearch} />
       <DataTable

@@ -1,15 +1,10 @@
-import { CheckCircle2, Play } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { GradientLink } from "@/components/landing/GradientButton";
-import { HeroIllustration } from "@/components/landing/HeroIllustration";
 import { ParticleField } from "@/components/landing/ParticleField";
+import { ShieldCore } from "@/components/cyber/ShieldCore";
 
-const BULLETS = [
-  "AI Evidence Analysis",
-  "Relationship Mapping",
-  "Smart Search",
-  "Automated Reports",
-];
+const BULLETS = ["Secure", "Investigate", "Analyze"];
 
 export function HeroSection() {
   return (
@@ -21,24 +16,34 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-            AI-Powered Digital <span className="text-gradient-brand">Investigation</span> Platform
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-cyan">
+            CyberShield
+          </p>
+          <h1 className="text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-[3.25rem]">
+            Cyber Intelligence
+            <br />
+            <span className="text-gradient-brand">& Investigation Platform</span>
           </h1>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Manage, analyze, and investigate digital evidence faster using Artificial Intelligence.
+            A command center for digital evidence, case investigation, and AI-assisted analysis.
           </p>
-          <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+          <ul className="mt-6 flex flex-wrap gap-3">
             {BULLETS.map((b) => (
-              <li key={b} className="flex items-center gap-2 text-sm text-foreground/90">
+              <li
+                key={b}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-sm text-foreground/90"
+              >
                 <CheckCircle2 className="h-4 w-4 text-success" />
                 {b}
               </li>
             ))}
           </ul>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <GradientLink to="/register">Get Started</GradientLink>
-            <GradientLink to="/dashboard" variant="secondary">
-              <Play className="h-4 w-4" /> Watch Demo
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <GradientLink to="/login" className="min-w-[168px]">
+              Enter Dashboard
+            </GradientLink>
+            <GradientLink to="/register" variant="secondary" className="min-w-[168px]">
+              Request access
             </GradientLink>
           </div>
         </motion.div>
@@ -47,9 +52,9 @@ export function HeroSection() {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.15 }}
-          className="animate-float-slow"
+          className="hidden sm:block"
         >
-          <HeroIllustration />
+          <ShieldCore />
         </motion.div>
       </div>
     </section>

@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.core.deps import get_current_user
 from app.db.session import get_db
 from app.models.enums import ActivityAction
+from app.models.evidence import Evidence
 from app.models.user import User
 from app.repositories.evidence_repository import EvidenceRepository
 from app.schemas.domain import EvidenceMetaUpdate, EvidenceOut, PageOut
@@ -30,6 +31,11 @@ def _to_evidence_out(item: Evidence) -> EvidenceOut:
     out.file_hash = item.sha256_hash
     if item.is_duplicate and item.metadata_json and "duplicate_warning" in item.metadata_json:
         out.warning = item.metadata_json["duplicate_warning"]
+    ai_meta = item.ai_metadata or {}
+    out.processing_status = ai_meta.get(
+        "processing_status",
+        "PROCESSED" if (item.ocr_text or item.extracted_entities) else "UPLOADED",
+    )
     return out
 
 

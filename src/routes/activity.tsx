@@ -1,9 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { DataTable, PageScaffold, Pagination, Toolbar } from "@/components/ui-kit/PageKit";
+import { AuthenticatedShell } from "@/components/layouts/AuthenticatedShell";
+import {
+  DataTable,
+  LoadingBlock,
+  PageScaffold,
+  Pagination,
+  Toolbar,
+} from "@/components/ui-kit/PageKit";
 import { investigationApi } from "@/services/investigationApi";
 import type { ActivityItem } from "@/services/types";
-import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/activity")({ component: Page });
 
@@ -41,50 +47,40 @@ function Page() {
     : activities;
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8 text-foreground transition-colors">
-      <div className="mx-auto max-w-5xl">
-        <PageScaffold
-          crumbs={[{ label: "App" }, { label: "Activity Logs" }]}
-          title="Activity Logs"
-          subtitle="Audit records of platform operations"
-        >
-          <Toolbar search={searchQuery} onSearch={setSearchQuery} />
-          {loading ? (
-            <div className="flex items-center justify-center py-12 text-muted-foreground">
-              <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading activity logs...
-            </div>
-          ) : (
-            <>
-              <DataTable
-                rows={filteredActivities}
-                columns={[
-                  {
-                    key: "action",
-                    header: "Action",
-                    render: (r) => (
-                      <span className="text-primary font-semibold uppercase text-xs">
-                        {r.action}
-                      </span>
-                    ),
-                  },
-                  {
-                    key: "description",
-                    header: "Description",
-                    render: (r) => <span>{r.description}</span>,
-                  },
-                  { key: "user", header: "Actor", render: (r) => r.user?.full_name || "System" },
-                  {
-                    key: "created_at",
-                    header: "Time",
-                    render: (r) => new Date(r.created_at).toLocaleString(),
-                  },
-                ]}
-              />
-              <Pagination page={page} pages={totalPages} onPage={setPage} />
-            </>
-          )}
-        </PageScaffold>
-      </div>
-    </div>
+    <AuthenticatedShell>
+      <PageScaffold crumbs={[{ label: "Home", to: "/" }, { label: "Activity" }]} title="Activity">
+        <Toolbar search={searchQuery} onSearch={setSearchQuery} />
+        {loading ? (
+          <LoadingBlock rows={8} />
+        ) : (
+          <>
+            <DataTable
+              rows={filteredActivities}
+              columns={[
+                {
+                  key: "action",
+                  header: "Action",
+                  render: (r) => (
+                    <span className="text-primary font-semibold uppercase text-xs">{r.action}</span>
+                  ),
+                },
+                {
+                  key: "description",
+                  header: "Description",
+                  render: (r) => <span>{r.description}</span>,
+                },
+                { key: "user", header: "Actor", render: (r) => r.user?.full_name || "System" },
+                {
+                  key: "created_at",
+                  header: "Time",
+                  render: (r) => new Date(r.created_at).toLocaleString(),
+                },
+              ]}
+            />
+            <Pagination page={page} pages={totalPages} onPage={setPage} />
+          </>
+        )}
+      </PageScaffold>
+    </AuthenticatedShell>
   );
 }

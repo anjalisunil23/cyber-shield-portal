@@ -344,7 +344,7 @@ export function NoteEditor({
     const itemHtml =
       `<div class="notepad-checklist-item flex items-start gap-2.5 my-1.5 group select-text" data-checked="false">` +
       `<input type="checkbox" class="notepad-checkbox mt-1 h-4 w-4 rounded border-border accent-primary cursor-pointer shrink-0" />` +
-      `<span class="checklist-text flex-1 outline-none text-foreground/90">Task item...</span>` +
+      `<span class="checklist-text flex-1 outline-none text-foreground/90">New task</span>` +
       `</div><p><br></p>`;
     document.execCommand("insertHTML", false, itemHtml);
     handleEditorInput();
@@ -357,7 +357,7 @@ export function NoteEditor({
     const calloutHtml =
       `<div class="notepad-callout-observation my-3 flex items-start gap-2.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 dark:bg-cyan-950/20 p-3.5 shadow-xs text-foreground">` +
       `<span contenteditable="false" class="select-none rounded bg-cyan-500/20 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase text-cyan shrink-0">OBSERVATION</span>` +
-      `<div class="callout-body flex-1 outline-none leading-relaxed text-sm text-foreground/95">State key technical observation here...</div>` +
+      `<div class="callout-body flex-1 outline-none leading-relaxed text-sm text-foreground/95">Observation</div>` +
       `</div><p><br></p>`;
     document.execCommand("insertHTML", false, calloutHtml);
     handleEditorInput();
@@ -370,7 +370,7 @@ export function NoteEditor({
     const calloutHtml =
       `<div class="notepad-callout-finding my-3 flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 shadow-xs text-foreground">` +
       `<span contenteditable="false" class="select-none rounded bg-amber-500/20 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase text-amber-600 dark:text-amber-400 shrink-0">FINDING</span>` +
-      `<div class="callout-body flex-1 outline-none leading-relaxed text-sm text-foreground/95">State forensic finding description here...</div>` +
+      `<div class="callout-body flex-1 outline-none leading-relaxed text-sm text-foreground/95">Finding</div>` +
       `</div><p><br></p>`;
     document.execCommand("insertHTML", false, calloutHtml);
     handleEditorInput();
@@ -1061,7 +1061,7 @@ export function NoteEditor({
                   onKeyDown={handleCanvasKeyDown}
                   onClick={handleCanvasClick}
                   onPaste={handleCanvasPaste}
-                  data-placeholder="Click anywhere here to begin typing investigation notes, technical findings, or inserting evidence..."
+                  data-placeholder="Start writing…"
                   className="w-full min-h-[650px] outline-none font-sans text-sm sm:text-base leading-relaxed text-[#111827] dark:text-[#F8FAFC] selection:bg-primary/25 empty:before:content-[attr(data-placeholder)] empty:before:text-slate-400 dark:empty:before:text-slate-500 empty:before:pointer-events-none"
                 />
               )}

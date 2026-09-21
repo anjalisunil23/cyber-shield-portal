@@ -25,7 +25,6 @@ import {
 } from "recharts";
 import { useState } from "react";
 import {
-  AiPlaceholderCard,
   ChartCard,
   PageHeader,
   Panel,
@@ -93,10 +92,7 @@ function SuperiorDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <PageHeader
-          title="Superior Officer Oversight Dashboard"
-          subtitle="Head of investigation — oversee team progress, review evidence, request revisions, and authorize approvals"
-        />
+        <PageHeader title="Dashboard" />
 
         {/* Investigator Filter */}
         <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 shrink-0 shadow-sm">
@@ -121,23 +117,16 @@ function SuperiorDashboard() {
 
       {/* Review Alert Banner */}
       {awaitingReviewCount > 0 && (
-        <div className="rounded-2xl border border-primary/40 bg-primary/10 p-4 text-foreground flex items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <Clock className="h-5 w-5 text-primary shrink-0 animate-spin" />
-            <div>
-              <p className="text-sm font-bold text-primary">Review Queue Pending</p>
-              <p className="text-xs text-muted-foreground">
-                You have {awaitingReviewCount} case{awaitingReviewCount > 1 ? "s" : ""} submitted by
-                investigators awaiting your review & sign-off.
-              </p>
-            </div>
-          </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-3">
+          <p className="text-sm font-medium text-foreground">
+            {awaitingReviewCount} case{awaitingReviewCount > 1 ? "s" : ""} awaiting review
+          </p>
           <button
             type="button"
             onClick={() => void navigate({ to: "/superior/cases" })}
-            className="shrink-0 rounded-xl bg-primary px-3.5 py-1.5 text-xs font-bold text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
+            className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Open Review Queue →
+            Review
           </button>
         </div>
       )}
@@ -351,16 +340,6 @@ function SuperiorDashboard() {
           icon={CheckCircle2}
           onClick={() => void navigate({ to: "/superior/cases" })}
         />
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <AiPlaceholderCard
-          title="AI Suggestions"
-          blurb="Review AI findings placeholder — Phase 2."
-        />
-        <AiPlaceholderCard title="Timeline Reconstruction" blurb="Automated timeline reserved." />
-        <AiPlaceholderCard title="Face Detection" blurb="Will attach to evidence records later." />
-        <AiPlaceholderCard title="Risk Assessment" blurb="Case risk score placeholder." />
       </div>
     </div>
   );

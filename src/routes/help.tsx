@@ -1,35 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AuthenticatedShell } from "@/components/layouts/AuthenticatedShell";
 import { PageScaffold, Panel } from "@/components/ui-kit/PageKit";
 
 export const Route = createFileRoute("/help")({ component: Page });
 
 const FAQS = [
-  [
-    "How do I upload evidence?",
-    "Open Upload Evidence, select a case, then drag files into the dropzone.",
-  ],
+  ["How do I upload evidence?", "Open Upload, select a case, then add files."],
   ["Who can create admins?", "Only Major Admin can create Admin accounts."],
-  ["Are AI features available?", "Not in Phase 1 — placeholders are shown across dashboards."],
+  ["How do I assign investigators?", "Open a case and use Add investigator, or use Assignments."],
 ];
 
 function Page() {
   return (
-    <div className="min-h-screen bg-background px-4 py-8 text-foreground transition-colors">
-      <div className="mx-auto max-w-3xl">
-        <PageScaffold
-          crumbs={[{ label: "App" }, { label: "Help Center" }]}
-          title="Help Center"
-          subtitle="Guides for investigators and admins"
-        >
-          <div className="space-y-3">
-            {FAQS.map(([q, a]) => (
-              <Panel key={q} title={q}>
-                <p className="text-sm text-muted-foreground">{a}</p>
-              </Panel>
-            ))}
-          </div>
-        </PageScaffold>
-      </div>
-    </div>
+    <AuthenticatedShell>
+      <PageScaffold crumbs={[{ label: "Home", to: "/" }, { label: "Help" }]} title="Help">
+        <div className="space-y-3">
+          {FAQS.map(([q, a]) => (
+            <Panel key={q} title={q}>
+              <p className="text-sm text-muted-foreground">{a}</p>
+            </Panel>
+          ))}
+        </div>
+      </PageScaffold>
+    </AuthenticatedShell>
   );
 }

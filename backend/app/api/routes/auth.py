@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 from typing import Annotated
 from uuid import UUID
@@ -58,15 +59,30 @@ def _issue_tokens(db: Session, user: User) -> TokenPair:
     )
 
 
+@router.get("/check-email")
+def check_email(email: str, db: Annotated[Session, Depends(get_db)]) -> dict:
+    """Validate format and check if Gmail address is already registered."""
+    clean = email.strip().lower()
+    if not re.match(r"^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@gmail\.com$", clean):
+        return {"valid": False, "exists": False, "message": "Please enter a valid Gmail address."}
+
+    user = db.scalar(select(User).where(User.email == clean))
+    if user is not None:
+        return {"valid": True, "exists": True, "message": "This Gmail address is already registered."}
+
+    return {"valid": True, "exists": False, "message": "Gmail address is available."}
+
+
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def register(payload: UserRegister, db: Annotated[Session, Depends(get_db)]) -> User:
-    existing = db.scalar(select(User).where(User.email == payload.email.lower()))
+    clean_email = payload.email.lower().strip()
+    existing = db.scalar(select(User).where(User.email == clean_email))
     if existing is not None:
-        raise HTTPException(status.HTTP_409_CONFLICT, detail="Email already registered")
+        raise HTTPException(status.HTTP_409_CONFLICT, detail="This Gmail address is already registered.")
 
     user = User(
         full_name=payload.full_name.strip(),
-        email=payload.email.lower(),
+        email=clean_email,
         password_hash=hash_password(payload.password),
         role=payload.role,
         department=payload.department.strip() if payload.department else None,

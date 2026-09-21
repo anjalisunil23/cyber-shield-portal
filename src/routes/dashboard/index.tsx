@@ -60,6 +60,33 @@ function DashboardHome() {
         <StatCard label="Reports" value={data.reports} delta="Live" icon={FileText} />
       </div>
 
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          label="AI Processed"
+          value={data.ai_processing?.processed ?? 0}
+          delta={`${data.ai_processing?.pending ?? 0} pending`}
+          icon={FileStack}
+        />
+        <StatCard
+          label="Leads Pending Review"
+          value={data.lead_review?.pending ?? 0}
+          delta={`${data.lead_review?.verified ?? 0} verified`}
+          icon={FileText}
+        />
+        <StatCard
+          label="High / Critical Risk"
+          value={(data.risk_distribution?.high ?? 0) + (data.risk_distribution?.critical ?? 0)}
+          delta="Investigative priority"
+          icon={Briefcase}
+        />
+        <StatCard
+          label="Open Cases"
+          value={data.case_status_counts?.open ?? data.active_cases}
+          delta={`${data.case_status_counts?.in_progress ?? 0} in progress`}
+          icon={CheckCircle2}
+        />
+      </div>
+
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
           <h3 className="mb-4 text-sm font-semibold text-foreground">Monthly Cases</h3>

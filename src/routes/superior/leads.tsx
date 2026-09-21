@@ -21,7 +21,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Manual Leads" }]}
       title="Manual Leads"
-      subtitle="No AI generation — investigator-created leads"
     >
       <Panel title="New lead">
         <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>

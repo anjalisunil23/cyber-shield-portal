@@ -468,26 +468,33 @@ class ReportService:
             for e in evidence_items:
                 dup_str = "<span style='color: #d97706; font-weight: bold;'>DUPLICATE</span>" if e.is_duplicate else "Unique"
                 lines.append(f"<tr><td>{e.original_name}</td><td>{e.file_type}</td><td>{(e.file_size/1024):.1f} KB</td><td><code>{e.sha256_hash[:16]}...</code></td><td>{dup_str}</td></tr>")
-            lines.append("tbody</table>")
+            lines.append("</tbody></table>")
 
             lines.append(f"<h2>Investigation Timeline ({len(timeline_events)})</h2>")
             lines.append("<table><thead><tr><th>Event Time</th><th>Title</th><th>Type</th><th>Description</th></tr></thead><tbody>")
             for t in timeline_events:
                 t_str = t.event_at.strftime("%Y-%m-%d %H:%M") if t.event_at else ""
                 lines.append(f"<tr><td>{t_str}</td><td><strong>{t.title}</strong></td><td>{t.event_type.value}</td><td>{t.description or '-'}</td></tr>")
-            lines.append("tbody</table>")
+            lines.append("</tbody></table>")
 
             lines.append(f"<h2>Investigation Leads ({len(leads_list)})</h2>")
             lines.append("<table><thead><tr><th>Title</th><th>Priority</th><th>Status</th><th>Justification</th><th>Review Comment</th></tr></thead><tbody>")
             for l in leads_list:
-                lines.append(f"<tr><td><strong>{l.title}</strong></td><td>{l.priority.value}</td><td>{l.status.value}</td><td>{l.justification or '-'}</td><td>{l.review_comment or '-'}</td></tr>")
-            lines.append("tbody</table>")
+                review_state = (l.metadata_json or {}).get("human_review_state", "UNREVIEWED")
+                origin = "AI-generated" if (l.metadata_json or {}).get("ai_generated") else "Investigator"
+                lines.append(
+                    f"<tr><td><strong>{l.title}</strong> <em>({origin} / {review_state})</em></td>"
+                    f"<td>{l.priority.value}</td><td>{l.status.value}</td>"
+                    f"<td>{l.justification or '-'}</td><td>{l.review_comment or '-'}</td></tr>"
+                )
+            lines.append("</tbody></table>")
 
             lines.append(f"<h2>Entity Relationships ({len(rel_list)})</h2>")
             lines.append("<table><thead><tr><th>Entity A</th><th>Type</th><th>Entity B</th><th>Connection Note</th></tr></thead><tbody>")
             for r in rel_list:
-                lines.append(f"<tr><td>{r.source_label} ({r.source_kind.value})</td><td>{r.relationship_type.value}</td><td>{r.target_label} ({r.target_kind.value})</td><td>{r.description or '-'}</td></tr>")
-            lines.append("tbody</table></body></html>")
+                origin = "AI-generated" if r.ai_generated else "Human verified"
+                lines.append(f"<tr><td>{r.source_label} ({r.source_kind.value})</td><td>{r.relationship_type.value} [{origin}]</td><td>{r.target_label} ({r.target_kind.value})</td><td>{r.description or '-'}</td></tr>")
+            lines.append("</tbody></table></body></html>")
 
             content = "\n".join(lines)
 
@@ -530,7 +537,7 @@ class SearchService:
         self.db = db
 
     def search(self, q: str) -> SearchResult:
-        from app.schemas.domain import CaseOut, EvidenceOut, NoteOut, ReportOut, UserBrief
+        from app.schemas.domain import CaseOut, EvidenceOut, LeadOut, NoteOut, ReportOut, TimelineOut, UserBrief
 
         if not q.strip():
             return SearchResult()
@@ -539,12 +546,34 @@ class SearchService:
         notes = NoteRepository(self.db).search(q, limit=10)
         users = UserRepository(self.db).search(q, limit=10)
         reports = ReportRepository(self.db).search(q, limit=10)
+
+        like = f"%{q.strip()}%"
+        leads = list(
+            self.db.scalars(
+                select(ManualLead)
+                .where(
+                    ManualLead.title.ilike(like)
+                    | ManualLead.description.ilike(like)
+                    | ManualLead.justification.ilike(like)
+                )
+                .limit(10)
+            ).all()
+        )
+        timeline = list(
+            self.db.scalars(
+                select(TimelineEvent)
+                .where(TimelineEvent.title.ilike(like) | TimelineEvent.description.ilike(like))
+                .limit(10)
+            ).all()
+        )
         return SearchResult(
             cases=[CaseOut.model_validate(c) for c in cases],
             evidence=[EvidenceOut.model_validate(e) for e in evidence],
             notes=[NoteOut.model_validate(n) for n in notes],
             investigators=[UserBrief.model_validate(u) for u in users],
             reports=[ReportOut.model_validate(r) for r in reports],
+            leads=[LeadOut.model_validate(l) for l in leads],
+            timeline=[TimelineOut.model_validate(t) for t in timeline],
         )
 
 
@@ -601,6 +630,60 @@ class DashboardService:
             ).all()
         )
 
+        status_raw = self.db.execute(select(Case.status, func.count()).group_by(Case.status)).all()
+        case_status_counts = {
+            "total": int(self.db.scalar(select(func.count()).select_from(Case)) or 0),
+            "open": 0,
+            "in_progress": 0,
+            "closed": 0,
+        }
+        for status, count in status_raw:
+            key = status.value if status else "unknown"
+            case_status_counts[key] = count
+            if key in {"closed", "completed", "archived", "approved"}:
+                case_status_counts["closed"] += count
+            elif key in {"open"}:
+                case_status_counts["open"] += count
+            elif key in {"in_progress", "evidence_collection", "analysis", "under_review", "changes_requested"}:
+                case_status_counts["in_progress"] += count
+
+        ai_processing = {"processed": 0, "processing": 0, "failed": 0, "pending": 0}
+        risk_distribution = {"low": 0, "medium": 0, "high": 0, "critical": 0}
+        for ev in self.db.scalars(select(Evidence)).all():
+            status = ((ev.ai_metadata or {}).get("processing_status") or "").upper()
+            if status == "PROCESSED":
+                ai_processing["processed"] += 1
+            elif status == "PROCESSING":
+                ai_processing["processing"] += 1
+            elif status in {"FAILED", "PARTIALLY_PROCESSED"}:
+                if status == "FAILED":
+                    ai_processing["failed"] += 1
+                else:
+                    ai_processing["processed"] += 1
+            else:
+                ai_processing["pending"] += 1
+            score = ev.risk_score or 0
+            if score >= 76:
+                risk_distribution["critical"] += 1
+            elif score >= 51:
+                risk_distribution["high"] += 1
+            elif score >= 26:
+                risk_distribution["medium"] += 1
+            elif score > 0:
+                risk_distribution["low"] += 1
+
+        lead_review = {"pending": 0, "verified": 0, "rejected": 0, "modified": 0}
+        for lead in self.db.scalars(select(ManualLead)).all():
+            state = ((lead.metadata_json or {}).get("human_review_state") or "").upper()
+            if state == "VERIFIED":
+                lead_review["verified"] += 1
+            elif state == "REJECTED":
+                lead_review["rejected"] += 1
+            elif state == "MODIFIED":
+                lead_review["modified"] += 1
+            else:
+                lead_review["pending"] += 1
+
         return DashboardStats(
             active_cases=active,
             completed_cases=completed,
@@ -613,4 +696,8 @@ class DashboardService:
             recent_activity=[ActivityOut.model_validate(a) for a in activities],
             recent_cases=[CaseOut.model_validate(c) for c in recent_cases],
             latest_uploads=[EvidenceOut.model_validate(e) for e in latest],
+            case_status_counts=case_status_counts,
+            ai_processing=ai_processing,
+            risk_distribution=risk_distribution,
+            lead_review=lead_review,
         )

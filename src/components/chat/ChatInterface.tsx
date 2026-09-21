@@ -12,6 +12,7 @@ import {
   Loader2,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
   Plus,
   Crown,
 } from "lucide-react";
@@ -1063,8 +1064,12 @@ export function ChatInterface({
         }
       }
     } else if (!selectedConvId && allConversations.length > 0) {
-      setSelectedConvId(allConversations[0].id);
-      markAsRead(allConversations[0].id);
+      const isNarrow =
+        typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+      if (!isNarrow || isEmbedded) {
+        setSelectedConvId(allConversations[0].id);
+        markAsRead(allConversations[0].id);
+      }
     }
   }, [
     initialTargetUserId,
@@ -1075,6 +1080,7 @@ export function ChatInterface({
     casesQ.data,
     qc,
     markAsRead,
+    isEmbedded,
   ]);
 
   // 14. Messages query for selected conversation (API + localStorage cache)
@@ -1376,30 +1382,32 @@ export function ChatInterface({
 
   return (
     <div
-      className={`flex h-full w-full overflow-hidden bg-card text-foreground ${
+      className={`flex h-full w-full overflow-hidden bg-card/80 text-foreground backdrop-blur-xl ${
         isEmbedded ? "rounded-2xl border border-border shadow-2xl" : ""
       }`}
     >
       {/* LEFT SIDEBAR: Conversation & Team Members List */}
-      <div className="flex w-full flex-col border-r border-border md:w-80 lg:w-96 shrink-0 bg-background/60 backdrop-blur-sm">
+      <div
+        className={`flex w-full flex-col border-r border-border bg-background/60 md:w-80 lg:w-96 shrink-0 ${
+          selectedConvId ? "hidden md:flex" : "flex"
+        }`}
+      >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between border-b border-border p-3.5">
+        <div className="flex items-center justify-between border-b border-border p-3">
           <div className="flex items-center gap-2.5">
-            <div className="relative grid h-9 w-9 place-items-center rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
-              <MessageSquare className="h-5 w-5" />
+            <div className="relative grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary">
+              <MessageSquare className="h-4 w-4" />
               {totalUnreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-500 px-1 text-[9px] font-bold text-white shadow-xs">
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
                   {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
                 </span>
               )}
             </div>
             <div>
-              <h2 className="text-sm font-bold tracking-tight text-foreground">Messages & Chats</h2>
-              <p className="text-[10px] text-muted-foreground">
-                {initialCaseNumber
-                  ? `Case ${initialCaseNumber} Team`
-                  : "Real-Time Investigation Comms"}
-              </p>
+              <h2 className="text-sm font-semibold tracking-tight text-foreground">Messages</h2>
+              {initialCaseNumber ? (
+                <p className="text-[10px] text-muted-foreground">{initialCaseNumber}</p>
+              ) : null}
             </div>
           </div>
 
@@ -1433,7 +1441,7 @@ export function ChatInterface({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search conversations, cases, or team..."
+              placeholder="Search"
               className="w-full rounded-xl border border-border bg-background py-1.5 pl-8 pr-3 text-xs text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none"
             />
           </div>
@@ -1610,13 +1618,9 @@ export function ChatInterface({
                   <p className="font-semibold text-foreground">
                     {activeTab === "unread" ? "No unread messages" : "No conversations found"}
                   </p>
-                  <p className="mt-1 text-[11px]">
-                    {searchQuery
-                      ? "Try adjusting your search query."
-                      : activeTab === "unread"
-                        ? "You are all caught up on all investigation messages."
-                        : "Case group chats and direct messages will appear here."}
-                  </p>
+                  {searchQuery ? (
+                    <p className="mt-1 text-[11px]">No matches for that search.</p>
+                  ) : null}
                   {activeTab !== "unread" && (
                     <button
                       type="button"
@@ -1778,13 +1782,23 @@ export function ChatInterface({
       </div>
 
       {/* RIGHT CHAT PANE: Active Conversation */}
-      <div className="flex flex-1 flex-col bg-background">
+      <div
+        className={`flex-1 flex-col bg-background ${selectedConvId ? "flex" : "hidden md:flex"}`}
+      >
         {selectedConv ? (
           <>
             {/* Active Header without duplicate case number and correct other-user name */}
             <div className="border-b border-border bg-card/70 backdrop-blur-sm">
-              <div className="flex items-center justify-between p-3.5">
+              <div className="flex items-center justify-between p-3">
                 <div className="flex items-center gap-3 min-w-0">
+                  <button
+                    type="button"
+                    className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground md:hidden"
+                    aria-label="Back to conversations"
+                    onClick={() => setSelectedConvId(null)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
                   {selectedConv.type === "case_group" ? (
                     <div className="grid h-9 w-9 place-items-center rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
                       <Users className="h-5 w-5" />
@@ -1815,26 +1829,11 @@ export function ChatInterface({
                           : getCleanConvTitle(selectedConv)}
                       </h3>
                     </div>
-                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground truncate">
-                      {selectedConv.type === "case_group" ? (
-                        <span>
-                          Team Members:{" "}
-                          {unifiedTeamMembers
-                            .map((p) => p.user?.full_name || "Investigator")
-                            .join(", ")}
-                        </span>
-                      ) : (
-                        <span>
-                          Direct 1-on-1 Channel ·{" "}
-                          {selectedDirectParticipant?.role
-                            ? selectedDirectParticipant.role.toUpperCase()
-                            : "INVESTIGATOR"}
-                          {selectedDirectParticipant?.email
-                            ? ` (${selectedDirectParticipant.email})`
-                            : ""}
-                        </span>
-                      )}
-                    </div>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {selectedConv.type === "case_group"
+                        ? `${unifiedTeamMembers.length} members`
+                        : selectedDirectParticipant?.role?.replaceAll("_", " ") || "Direct message"}
+                    </p>
                   </div>
                 </div>
 
@@ -1855,9 +1854,9 @@ export function ChatInterface({
                     </button>
                   )}
 
-                  <span className="flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold text-emerald-400 border border-emerald-500/20">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Live
+                  <span className="hidden sm:inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
+                    Online
                   </span>
                 </div>
               </div>
@@ -1866,13 +1865,7 @@ export function ChatInterface({
               {showTeamDrawer && selectedConv.type === "case_group" && (
                 <div className="border-t border-border bg-muted/30 p-3.5 animate-in slide-in-from-top-2 duration-200">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                      <Shield className="h-3.5 w-3.5 text-primary" />
-                      Case Investigation Team Members
-                    </h4>
-                    <span className="text-[10px] text-muted-foreground">
-                      Click 'Chat' to message 1-on-1
-                    </span>
+                    <h4 className="text-xs font-medium text-muted-foreground">Team</h4>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
@@ -1957,11 +1950,7 @@ export function ChatInterface({
                   <div className="grid h-12 w-12 place-items-center rounded-2xl bg-muted/60 text-muted-foreground/60 mb-2">
                     <MessageSquare className="h-6 w-6" />
                   </div>
-                  <p className="text-xs font-semibold text-foreground">No messages yet</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 max-w-xs">
-                    Send a message below to start collaborating with the investigation team in real
-                    time.
-                  </p>
+                  <p className="text-sm text-foreground">No messages yet</p>
                 </div>
               )}
 
@@ -2069,11 +2058,7 @@ export function ChatInterface({
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={`Message ${
-                    selectedConv.type === "direct" && selectedDirectParticipant
-                      ? selectedDirectParticipant.name
-                      : getCleanConvTitle(selectedConv)
-                  }... (Enter to send, Shift+Enter for newline)`}
+                  placeholder="Message"
                   rows={2}
                   className="flex-1 resize-none rounded-xl border border-border bg-background p-2.5 text-xs sm:text-sm text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none"
                 />
@@ -2095,16 +2080,8 @@ export function ChatInterface({
           </>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center p-8 text-center text-muted-foreground">
-            <div className="grid h-16 w-16 place-items-center rounded-3xl bg-muted/60 text-muted-foreground/60 mb-3">
-              <MessageSquare className="h-8 w-8" />
-            </div>
-            <h3 className="text-base font-bold text-foreground">
-              Investigation Team Communications
-            </h3>
-            <p className="mt-1 text-xs text-muted-foreground max-w-sm">
-              Select a case group chat or a team investigator from the left sidebar to start
-              collaborating.
-            </p>
+            <MessageSquare className="mb-2 h-8 w-8 text-muted-foreground/50" />
+            <p className="text-sm text-foreground">Select a conversation</p>
           </div>
         )}
       </div>
@@ -2118,7 +2095,7 @@ export function ChatInterface({
                 <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary">
                   <Plus className="h-4 w-4" />
                 </div>
-                <h3 className="text-sm font-bold text-foreground">Start New Direct Message</h3>
+                <h3 className="text-sm font-semibold text-foreground">New message</h3>
               </div>
               <button
                 type="button"

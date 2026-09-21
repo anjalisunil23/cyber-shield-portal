@@ -9,7 +9,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Settings" }]}
       title="Settings"
-      subtitle="Preferences & appearance"
     >
       <div className="space-y-4 max-w-2xl">
         <Panel title="Appearance">

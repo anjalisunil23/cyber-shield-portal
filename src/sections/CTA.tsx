@@ -24,8 +24,8 @@ export function CTASection() {
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <GradientLink to="/register">Get Started</GradientLink>
-            <GradientLink href="#contact" variant="secondary">
-              Request Demo
+            <GradientLink to="/register" variant="secondary">
+              Request access
             </GradientLink>
           </div>
         </motion.div>

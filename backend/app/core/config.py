@@ -41,6 +41,20 @@ class Settings(BaseSettings):
     # In development, forgot-password may echo the reset token when no email provider is configured
     expose_reset_token: bool = Field(default=True, alias="EXPOSE_RESET_TOKEN")
 
+    # AI / intelligence — optional; the app stays usable without keys or local models
+    ai_provider: str = Field(default="local", alias="AI_PROVIDER")
+    ai_api_key: str = Field(default="", alias="AI_API_KEY")
+    ai_model_name: str = Field(default="gpt-4o-mini", alias="MODEL_NAME")
+    ocr_engine: str = Field(default="auto", alias="OCR_ENGINE")
+    whisper_model: str = Field(default="base", alias="WHISPER_MODEL")
+    risk_low_max: int = Field(default=25, alias="RISK_LOW_MAX")
+    risk_medium_max: int = Field(default=50, alias="RISK_MEDIUM_MAX")
+    risk_high_max: int = Field(default=75, alias="RISK_HIGH_MAX")
+    evidence_repository_dir: str = Field(
+        default=str(_BACKEND_ROOT / "evidence_repository"),
+        alias="EVIDENCE_REPOSITORY_DIR",
+    )
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]

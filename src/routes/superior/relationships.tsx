@@ -14,7 +14,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Relationship Map" }]}
       title="Relationship Map"
-      subtitle="Manual entity links (AI later)"
     >
       <Panel title="Add relationship">
         <form

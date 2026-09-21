@@ -1,4 +1,12 @@
-export function RelationshipGraph() {
+import { Link } from "@tanstack/react-router";
+import { Share2, ArrowRight } from "lucide-react";
+import { DynamicRelationshipGraph } from "./DynamicRelationshipGraph";
+
+export function RelationshipGraph({ caseId }: { caseId?: string } = {}) {
+  if (caseId) {
+    return <DynamicRelationshipGraph caseId={caseId} />;
+  }
+
   const nodes = [
     { id: "s1", label: "Suspect", x: 80, y: 70, c: "#EF4444" },
     { id: "v1", label: "Victim", x: 220, y: 50, c: "#22C55E" },
@@ -17,11 +25,21 @@ export function RelationshipGraph() {
   ];
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111827]/90 p-5">
-      <h3 className="text-sm font-semibold text-slate-100">Relationship Graph</h3>
-      <p className="mt-1 text-xs text-slate-400">
-        Suspects · Victims · Witnesses · Evidence · Devices · Locations
-      </p>
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">Cross-Evidence Knowledge Graph</h3>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Multi-hop linkages: Suspects · Victims · Evidence · Devices · Locations
+          </p>
+        </div>
+        <Link
+          to="/dashboard/ai-analysis"
+          className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium"
+        >
+          Explore in AI Hub <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
       <svg viewBox="0 0 320 200" className="mt-4 h-52 w-full">
         {edges.map(([a, b], i) => (
           <line

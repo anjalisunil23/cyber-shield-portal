@@ -1,56 +1,138 @@
 import { motion } from "framer-motion";
-import { ChevronRight, FileQuestion, Inbox, Search } from "lucide-react";
-import { Link } from "@tanstack/react-router";
-import { useMemo, useState, type ReactNode } from "react";
+import { ChevronLeft, ChevronRight, FileQuestion, Inbox, Loader2, Search } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useMemo, useState, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { PageHeader, Panel } from "@/components/layouts/DashboardWidgets";
 
-export function Breadcrumb({ items }: { items: { label: string; to?: string }[] }) {
+export function HistoryNav({ className }: { className?: string }) {
+  const locationKey = useRouterState({ select: (s) => s.location.href });
+  const [canBack, setCanBack] = useState(false);
+  const [canForward, setCanForward] = useState(false);
+
+  useEffect(() => {
+    const onPop = () => sessionStorage.setItem("cs_hist_pop", "1");
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  useEffect(() => {
+    const idx = Number(window.history.state?.idx ?? 0);
+    const popped = sessionStorage.getItem("cs_hist_pop") === "1";
+    sessionStorage.setItem("cs_hist_pop", "0");
+    let max = Number(sessionStorage.getItem("cs_hist_max") || "0");
+    max = popped ? Math.max(max, idx) : idx;
+    sessionStorage.setItem("cs_hist_max", String(max));
+    setCanBack(idx > 0);
+    setCanForward(idx < max);
+  }, [locationKey]);
+
   return (
-    <nav className="mb-4 flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
-      {items.map((item, i) => (
-        <span key={`${item.label}-${i}`} className="inline-flex items-center gap-1">
-          {i > 0 && <ChevronRight className="h-3 w-3" />}
-          {item.to ? (
-            <Link to={item.to as "/"} className="hover:text-primary transition-colors">
-              {item.label}
-            </Link>
-          ) : (
-            <span className="font-medium text-foreground">{item.label}</span>
-          )}
+    <div className={cn("flex items-center", className)}>
+      <button
+        type="button"
+        aria-label="Back"
+        title="Back"
+        disabled={!canBack}
+        onClick={() => window.history.back()}
+        className="grid h-9 w-9 place-items-center rounded-l-lg border border-border bg-card text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40"
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        aria-label="Forward"
+        title="Forward"
+        disabled={!canForward}
+        onClick={() => window.history.forward()}
+        className="-ml-px grid h-9 w-9 place-items-center rounded-r-lg border border-border bg-card text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40"
+      >
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+export function Breadcrumb({ items }: { items: { label: string; to?: string }[] }) {
+  if (!items.length) return null;
+  const parent = items.length > 1 ? items[items.length - 2] : null;
+  const current = items[items.length - 1];
+  return (
+    <>
+      <nav
+        aria-label="Breadcrumb"
+        className="mb-3 hidden flex-wrap items-center gap-1 text-xs text-muted-foreground sm:flex"
+      >
+        {items.map((item, i) => {
+          const last = i === items.length - 1;
+          return (
+            <span key={`${item.label}-${i}`} className="inline-flex items-center gap-1">
+              {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 opacity-60" />}
+              {item.to && !last ? (
+                <Link to={item.to as "/"} className="max-w-[140px] truncate hover:text-foreground">
+                  {item.label}
+                </Link>
+              ) : (
+                <span className="max-w-[180px] truncate font-medium text-foreground">
+                  {item.label}
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </nav>
+      <nav
+        aria-label="Breadcrumb"
+        className="mb-3 flex items-center gap-1 text-xs text-muted-foreground sm:hidden"
+      >
+        {parent?.to ? (
+          <Link
+            to={parent.to as "/"}
+            className="inline-flex items-center gap-0.5 hover:text-foreground"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+            {parent.label}
+          </Link>
+        ) : null}
+        <span className="truncate font-medium text-foreground">
+          {parent ? `/ ${current.label}` : current.label}
         </span>
-      ))}
-    </nav>
+      </nav>
+    </>
   );
 }
 
 export function EmptyState({
   title = "Nothing here yet",
-  description = "Items will appear once available.",
+  description,
   action,
+  visual,
 }: {
   title?: string;
   description?: string;
   action?: ReactNode;
+  visual?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/60 px-6 py-16 text-center shadow-xs">
-      <Inbox className="mb-3 h-10 w-10 text-muted-foreground" />
-      <p className="text-sm font-semibold text-foreground">{title}</p>
-      <p className="mt-1 max-w-sm text-xs text-muted-foreground">{description}</p>
+    <div className="glass-card flex flex-col items-center justify-center px-5 py-12 text-center">
+      {visual ?? <Inbox className="mb-2 h-8 w-8 text-muted-foreground" />}
+      <p className="text-sm font-medium text-foreground">{title}</p>
+      {description ? (
+        <p className="mt-1 max-w-sm text-xs text-muted-foreground">{description}</p>
+      ) : null}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
 }
 
 export function ErrorState({
-  message = "Something went wrong loading this view.",
+  message = "Something went wrong. Please try again.",
 }: {
   message?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-6 text-center text-sm text-rose-600 dark:text-rose-200">
-      <FileQuestion className="mx-auto mb-2 h-6 w-6" />
+    <div className="rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-6 text-center text-sm text-destructive">
+      <FileQuestion className="mx-auto mb-2 h-5 w-5" />
       {message}
     </div>
   );
@@ -58,9 +140,9 @@ export function ErrorState({
 
 export function LoadingBlock({ rows = 5 }: { rows?: number }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" aria-busy="true" aria-label="Loading">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="h-12 animate-pulse rounded-xl bg-muted" />
+        <div key={i} className="h-11 animate-pulse rounded-lg bg-muted" />
       ))}
     </div>
   );
@@ -128,24 +210,29 @@ export function PrimaryButton({
   onClick,
   type = "button",
   className,
+  disabled,
+  loading,
 }: {
   children: ReactNode;
   onClick?: () => void;
   type?: "button" | "submit";
   className?: string;
-}) {
+  disabled?: boolean;
+  loading?: boolean;
+} & Pick<ButtonHTMLAttributes<HTMLButtonElement>, "disabled">) {
   return (
-    <motion.button
-      whileTap={{ scale: 0.98 }}
+    <button
       type={type}
       onClick={onClick}
+      disabled={disabled || loading}
       className={cn(
-        "rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary/50 shadow-xs",
+        "inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-xs transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
     >
+      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
       {children}
-    </motion.button>
+    </button>
   );
 }
 
@@ -154,18 +241,21 @@ export function GhostButton({
   onClick,
   type = "button",
   className,
+  disabled,
 }: {
   children: ReactNode;
   onClick?: () => void;
   type?: "button" | "submit";
   className?: string;
+  disabled?: boolean;
 }) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       className={cn(
-        "rounded-xl border border-border bg-card px-4 py-2 text-sm text-foreground transition hover:bg-muted",
+        "inline-flex min-h-9 items-center justify-center rounded-lg border border-border bg-card px-3.5 py-2 text-sm text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40",
         className,
       )}
     >
@@ -251,32 +341,29 @@ export function DataTable<T extends { id: string }>({
 }) {
   if (!rows.length) return <EmptyState title={emptyTitle || "No records"} />;
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-card shadow-xs">
-      <table className="w-full min-w-[640px] text-left text-sm">
-        <thead className="border-b border-border bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground font-semibold">
+    <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <table className="w-full min-w-[560px] text-left text-sm">
+        <thead className="sticky top-0 z-[1] border-b border-border bg-muted/70 text-[11px] font-medium uppercase tracking-wide text-muted-foreground backdrop-blur-sm">
           <tr>
             {columns.map((c) => (
-              <th key={c.key} className={cn("px-4 py-3 font-semibold", c.className)}>
+              <th
+                key={c.key}
+                className={cn("whitespace-nowrap px-3 py-2.5 font-medium", c.className)}
+              >
                 {c.header}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, i) => (
-            <motion.tr
-              key={row.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03 }}
-              className="border-b border-border/50 transition hover:bg-muted/30"
-            >
+          {rows.map((row) => (
+            <tr key={row.id} className="border-b border-border/60 last:border-0 hover:bg-muted/40">
               {columns.map((c) => (
-                <td key={c.key} className={cn("px-4 py-3 text-foreground", c.className)}>
+                <td key={c.key} className={cn("px-3 py-2.5 text-foreground", c.className)}>
                   {c.render(row)}
                 </td>
               ))}
-            </motion.tr>
+            </tr>
           ))}
         </tbody>
       </table>
@@ -294,16 +381,21 @@ export function Pagination({
   onPage: (p: number) => void;
 }) {
   return (
-    <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+    <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
       <span>
         Page {page} of {pages}
       </span>
       <div className="flex gap-2">
-        <GhostButton className="px-3 py-1.5 text-xs" onClick={() => onPage(Math.max(1, page - 1))}>
+        <GhostButton
+          className="px-3 py-1.5 text-xs"
+          disabled={page <= 1}
+          onClick={() => onPage(Math.max(1, page - 1))}
+        >
           Previous
         </GhostButton>
         <GhostButton
           className="px-3 py-1.5 text-xs"
+          disabled={page >= pages}
           onClick={() => onPage(Math.min(pages, page + 1))}
         >
           Next
@@ -340,11 +432,12 @@ export function StatusPill({ value }: { value: string }) {
   return (
     <span
       className={cn(
-        "inline-flex rounded-full border px-2.5 py-0.5 text-[11px] font-semibold",
+        "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-medium",
         tone,
       )}
     >
-      {value}
+      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden />
+      {value.replaceAll("_", " ")}
     </span>
   );
 }
@@ -363,15 +456,11 @@ export function PageScaffold({
   children: ReactNode;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.28 }}
-    >
+    <div>
       <Breadcrumb items={crumbs} />
       <PageHeader title={title} subtitle={subtitle} actions={actions} />
       {children}
-    </motion.div>
+    </div>
   );
 }
 

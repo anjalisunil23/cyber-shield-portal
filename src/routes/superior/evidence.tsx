@@ -32,7 +32,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Evidence Review" }]}
       title="Evidence Management"
-      subtitle="Upload, inspect, and delete case evidence"
       actions={
         <PrimaryButton onClick={() => setIsUploadOpen(true)}>
           <Upload className="mr-1.5 inline h-4 w-4" /> Upload Evidence

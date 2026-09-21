@@ -111,9 +111,8 @@ function Page() {
 
   return (
     <PageScaffold
-      crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Department Cases" }]}
-      title="Department Cases"
-      subtitle="Cases across your organization"
+      crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Cases" }]}
+      title="Cases"
       actions={
         <div className="flex gap-2">
           <PrimaryButton onClick={() => setCreateOpen(true)}>Create case</PrimaryButton>

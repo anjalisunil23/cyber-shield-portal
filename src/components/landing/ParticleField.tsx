@@ -1,5 +1,9 @@
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+
 export function ParticleField() {
-  const dots = Array.from({ length: 28 }, (_, i) => ({
+  const reduced = usePrefersReducedMotion();
+  const count = reduced ? 0 : 18;
+  const dots = Array.from({ length: count }, (_, i) => ({
     left: `${(i * 37) % 100}%`,
     top: `${(i * 53) % 100}%`,
     delay: `${(i % 10) * 0.45}s`,
@@ -16,7 +20,7 @@ export function ParticleField() {
       {dots.map((d, i) => (
         <span
           key={i}
-          className="absolute rounded-full bg-cyan/70"
+          className="absolute rounded-full bg-cyan/70 md:block hidden"
           style={{
             left: d.left,
             top: d.top,

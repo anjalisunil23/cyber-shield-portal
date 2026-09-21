@@ -32,6 +32,7 @@ import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminEvidenceRouteImport } from './routes/admin/evidence'
 import { Route as AdminInvestigatorsRouteImport } from './routes/admin/investigators'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
+import { Route as AdminRepositoryRouteImport } from './routes/admin/repository'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminSuperiorOfficersRouteImport } from './routes/admin/superior-officers'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
@@ -55,6 +56,7 @@ import { Route as InvestigatorLeadsRouteImport } from './routes/investigator/lea
 import { Route as InvestigatorMessagesRouteImport } from './routes/investigator/messages'
 import { Route as InvestigatorNotesRouteImport } from './routes/investigator/notes'
 import { Route as InvestigatorReportsRouteImport } from './routes/investigator/reports'
+import { Route as InvestigatorRepositoryRouteImport } from './routes/investigator/repository'
 import { Route as InvestigatorSettingsRouteImport } from './routes/investigator/settings'
 import { Route as InvestigatorTasksRouteImport } from './routes/investigator/tasks'
 import { Route as InvestigatorTimelineRouteImport } from './routes/investigator/timeline'
@@ -67,6 +69,7 @@ import { Route as MajorAdminCasesRouteImport } from './routes/major-admin/cases'
 import { Route as MajorAdminDashboardRouteImport } from './routes/major-admin/dashboard'
 import { Route as MajorAdminDepartmentsRouteImport } from './routes/major-admin/departments'
 import { Route as MajorAdminReportsRouteImport } from './routes/major-admin/reports'
+import { Route as MajorAdminRepositoryRouteImport } from './routes/major-admin/repository'
 import { Route as MajorAdminRolesRouteImport } from './routes/major-admin/roles'
 import { Route as MajorAdminSettingsRouteImport } from './routes/major-admin/settings'
 import { Route as MajorAdminStorageRouteImport } from './routes/major-admin/storage'
@@ -82,6 +85,7 @@ import { Route as SuperiorLeadsRouteImport } from './routes/superior/leads'
 import { Route as SuperiorMessagesRouteImport } from './routes/superior/messages'
 import { Route as SuperiorRelationshipsRouteImport } from './routes/superior/relationships'
 import { Route as SuperiorReportsRouteImport } from './routes/superior/reports'
+import { Route as SuperiorRepositoryRouteImport } from './routes/superior/repository'
 import { Route as SuperiorSettingsRouteImport } from './routes/superior/settings'
 import { Route as SuperiorTasksRouteImport } from './routes/superior/tasks'
 import { Route as SuperiorTimelineRouteImport } from './routes/superior/timeline'
@@ -215,6 +219,11 @@ const AdminReportsRoute = AdminReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminRepositoryRoute = AdminRepositoryRouteImport.update({
+  id: '/repository',
+  path: '/repository',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -330,6 +339,11 @@ const InvestigatorReportsRoute = InvestigatorReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => InvestigatorRoute,
 } as any)
+const InvestigatorRepositoryRoute = InvestigatorRepositoryRouteImport.update({
+  id: '/repository',
+  path: '/repository',
+  getParentRoute: () => InvestigatorRoute,
+} as any)
 const InvestigatorSettingsRoute = InvestigatorSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -388,6 +402,11 @@ const MajorAdminDepartmentsRoute = MajorAdminDepartmentsRouteImport.update({
 const MajorAdminReportsRoute = MajorAdminReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => MajorAdminRoute,
+} as any)
+const MajorAdminRepositoryRoute = MajorAdminRepositoryRouteImport.update({
+  id: '/repository',
+  path: '/repository',
   getParentRoute: () => MajorAdminRoute,
 } as any)
 const MajorAdminRolesRoute = MajorAdminRolesRouteImport.update({
@@ -463,6 +482,11 @@ const SuperiorRelationshipsRoute = SuperiorRelationshipsRouteImport.update({
 const SuperiorReportsRoute = SuperiorReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => SuperiorRoute,
+} as any)
+const SuperiorRepositoryRoute = SuperiorRepositoryRouteImport.update({
+  id: '/repository',
+  path: '/repository',
   getParentRoute: () => SuperiorRoute,
 } as any)
 const SuperiorSettingsRoute = SuperiorSettingsRouteImport.update({
@@ -580,6 +604,7 @@ export interface FileRoutesByFullPath {
   '/admin/evidence': typeof AdminEvidenceRoute
   '/admin/investigators': typeof AdminInvestigatorsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/repository': typeof AdminRepositoryRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/superior-officers': typeof AdminSuperiorOfficersRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
@@ -602,6 +627,7 @@ export interface FileRoutesByFullPath {
   '/investigator/messages': typeof InvestigatorMessagesRoute
   '/investigator/notes': typeof InvestigatorNotesRoute
   '/investigator/reports': typeof InvestigatorReportsRoute
+  '/investigator/repository': typeof InvestigatorRepositoryRoute
   '/investigator/settings': typeof InvestigatorSettingsRoute
   '/investigator/tasks': typeof InvestigatorTasksRoute
   '/investigator/timeline': typeof InvestigatorTimelineRoute
@@ -614,6 +640,7 @@ export interface FileRoutesByFullPath {
   '/major-admin/dashboard': typeof MajorAdminDashboardRoute
   '/major-admin/departments': typeof MajorAdminDepartmentsRouteWithChildren
   '/major-admin/reports': typeof MajorAdminReportsRoute
+  '/major-admin/repository': typeof MajorAdminRepositoryRoute
   '/major-admin/roles': typeof MajorAdminRolesRoute
   '/major-admin/settings': typeof MajorAdminSettingsRoute
   '/major-admin/storage': typeof MajorAdminStorageRoute
@@ -629,6 +656,7 @@ export interface FileRoutesByFullPath {
   '/superior/messages': typeof SuperiorMessagesRoute
   '/superior/relationships': typeof SuperiorRelationshipsRoute
   '/superior/reports': typeof SuperiorReportsRoute
+  '/superior/repository': typeof SuperiorRepositoryRoute
   '/superior/settings': typeof SuperiorSettingsRoute
   '/superior/tasks': typeof SuperiorTasksRoute
   '/superior/timeline': typeof SuperiorTimelineRoute
@@ -671,6 +699,7 @@ export interface FileRoutesByTo {
   '/admin/evidence': typeof AdminEvidenceRoute
   '/admin/investigators': typeof AdminInvestigatorsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/repository': typeof AdminRepositoryRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/superior-officers': typeof AdminSuperiorOfficersRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
@@ -693,6 +722,7 @@ export interface FileRoutesByTo {
   '/investigator/messages': typeof InvestigatorMessagesRoute
   '/investigator/notes': typeof InvestigatorNotesRoute
   '/investigator/reports': typeof InvestigatorReportsRoute
+  '/investigator/repository': typeof InvestigatorRepositoryRoute
   '/investigator/settings': typeof InvestigatorSettingsRoute
   '/investigator/tasks': typeof InvestigatorTasksRoute
   '/investigator/timeline': typeof InvestigatorTimelineRoute
@@ -705,6 +735,7 @@ export interface FileRoutesByTo {
   '/major-admin/dashboard': typeof MajorAdminDashboardRoute
   '/major-admin/departments': typeof MajorAdminDepartmentsRouteWithChildren
   '/major-admin/reports': typeof MajorAdminReportsRoute
+  '/major-admin/repository': typeof MajorAdminRepositoryRoute
   '/major-admin/roles': typeof MajorAdminRolesRoute
   '/major-admin/settings': typeof MajorAdminSettingsRoute
   '/major-admin/storage': typeof MajorAdminStorageRoute
@@ -719,6 +750,7 @@ export interface FileRoutesByTo {
   '/superior/messages': typeof SuperiorMessagesRoute
   '/superior/relationships': typeof SuperiorRelationshipsRoute
   '/superior/reports': typeof SuperiorReportsRoute
+  '/superior/repository': typeof SuperiorRepositoryRoute
   '/superior/settings': typeof SuperiorSettingsRoute
   '/superior/tasks': typeof SuperiorTasksRoute
   '/superior/timeline': typeof SuperiorTimelineRoute
@@ -763,6 +795,7 @@ export interface FileRoutesById {
   '/admin/evidence': typeof AdminEvidenceRoute
   '/admin/investigators': typeof AdminInvestigatorsRoute
   '/admin/reports': typeof AdminReportsRoute
+  '/admin/repository': typeof AdminRepositoryRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/superior-officers': typeof AdminSuperiorOfficersRoute
   '/admin/users': typeof AdminUsersRouteWithChildren
@@ -785,6 +818,7 @@ export interface FileRoutesById {
   '/investigator/messages': typeof InvestigatorMessagesRoute
   '/investigator/notes': typeof InvestigatorNotesRoute
   '/investigator/reports': typeof InvestigatorReportsRoute
+  '/investigator/repository': typeof InvestigatorRepositoryRoute
   '/investigator/settings': typeof InvestigatorSettingsRoute
   '/investigator/tasks': typeof InvestigatorTasksRoute
   '/investigator/timeline': typeof InvestigatorTimelineRoute
@@ -797,6 +831,7 @@ export interface FileRoutesById {
   '/major-admin/dashboard': typeof MajorAdminDashboardRoute
   '/major-admin/departments': typeof MajorAdminDepartmentsRouteWithChildren
   '/major-admin/reports': typeof MajorAdminReportsRoute
+  '/major-admin/repository': typeof MajorAdminRepositoryRoute
   '/major-admin/roles': typeof MajorAdminRolesRoute
   '/major-admin/settings': typeof MajorAdminSettingsRoute
   '/major-admin/storage': typeof MajorAdminStorageRoute
@@ -812,6 +847,7 @@ export interface FileRoutesById {
   '/superior/messages': typeof SuperiorMessagesRoute
   '/superior/relationships': typeof SuperiorRelationshipsRoute
   '/superior/reports': typeof SuperiorReportsRoute
+  '/superior/repository': typeof SuperiorRepositoryRoute
   '/superior/settings': typeof SuperiorSettingsRoute
   '/superior/tasks': typeof SuperiorTasksRoute
   '/superior/timeline': typeof SuperiorTimelineRoute
@@ -857,6 +893,7 @@ export interface FileRouteTypes {
     | '/admin/evidence'
     | '/admin/investigators'
     | '/admin/reports'
+    | '/admin/repository'
     | '/admin/settings'
     | '/admin/superior-officers'
     | '/admin/users'
@@ -879,6 +916,7 @@ export interface FileRouteTypes {
     | '/investigator/messages'
     | '/investigator/notes'
     | '/investigator/reports'
+    | '/investigator/repository'
     | '/investigator/settings'
     | '/investigator/tasks'
     | '/investigator/timeline'
@@ -891,6 +929,7 @@ export interface FileRouteTypes {
     | '/major-admin/dashboard'
     | '/major-admin/departments'
     | '/major-admin/reports'
+    | '/major-admin/repository'
     | '/major-admin/roles'
     | '/major-admin/settings'
     | '/major-admin/storage'
@@ -906,6 +945,7 @@ export interface FileRouteTypes {
     | '/superior/messages'
     | '/superior/relationships'
     | '/superior/reports'
+    | '/superior/repository'
     | '/superior/settings'
     | '/superior/tasks'
     | '/superior/timeline'
@@ -948,6 +988,7 @@ export interface FileRouteTypes {
     | '/admin/evidence'
     | '/admin/investigators'
     | '/admin/reports'
+    | '/admin/repository'
     | '/admin/settings'
     | '/admin/superior-officers'
     | '/admin/users'
@@ -970,6 +1011,7 @@ export interface FileRouteTypes {
     | '/investigator/messages'
     | '/investigator/notes'
     | '/investigator/reports'
+    | '/investigator/repository'
     | '/investigator/settings'
     | '/investigator/tasks'
     | '/investigator/timeline'
@@ -982,6 +1024,7 @@ export interface FileRouteTypes {
     | '/major-admin/dashboard'
     | '/major-admin/departments'
     | '/major-admin/reports'
+    | '/major-admin/repository'
     | '/major-admin/roles'
     | '/major-admin/settings'
     | '/major-admin/storage'
@@ -996,6 +1039,7 @@ export interface FileRouteTypes {
     | '/superior/messages'
     | '/superior/relationships'
     | '/superior/reports'
+    | '/superior/repository'
     | '/superior/settings'
     | '/superior/tasks'
     | '/superior/timeline'
@@ -1039,6 +1083,7 @@ export interface FileRouteTypes {
     | '/admin/evidence'
     | '/admin/investigators'
     | '/admin/reports'
+    | '/admin/repository'
     | '/admin/settings'
     | '/admin/superior-officers'
     | '/admin/users'
@@ -1061,6 +1106,7 @@ export interface FileRouteTypes {
     | '/investigator/messages'
     | '/investigator/notes'
     | '/investigator/reports'
+    | '/investigator/repository'
     | '/investigator/settings'
     | '/investigator/tasks'
     | '/investigator/timeline'
@@ -1073,6 +1119,7 @@ export interface FileRouteTypes {
     | '/major-admin/dashboard'
     | '/major-admin/departments'
     | '/major-admin/reports'
+    | '/major-admin/repository'
     | '/major-admin/roles'
     | '/major-admin/settings'
     | '/major-admin/storage'
@@ -1088,6 +1135,7 @@ export interface FileRouteTypes {
     | '/superior/messages'
     | '/superior/relationships'
     | '/superior/reports'
+    | '/superior/repository'
     | '/superior/settings'
     | '/superior/tasks'
     | '/superior/timeline'
@@ -1290,6 +1338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReportsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/repository': {
+      id: '/admin/repository'
+      path: '/repository'
+      fullPath: '/admin/repository'
+      preLoaderRoute: typeof AdminRepositoryRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/settings'
@@ -1451,6 +1506,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvestigatorReportsRouteImport
       parentRoute: typeof InvestigatorRoute
     }
+    '/investigator/repository': {
+      id: '/investigator/repository'
+      path: '/repository'
+      fullPath: '/investigator/repository'
+      preLoaderRoute: typeof InvestigatorRepositoryRouteImport
+      parentRoute: typeof InvestigatorRoute
+    }
     '/investigator/settings': {
       id: '/investigator/settings'
       path: '/settings'
@@ -1533,6 +1595,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/major-admin/reports'
       preLoaderRoute: typeof MajorAdminReportsRouteImport
+      parentRoute: typeof MajorAdminRoute
+    }
+    '/major-admin/repository': {
+      id: '/major-admin/repository'
+      path: '/repository'
+      fullPath: '/major-admin/repository'
+      preLoaderRoute: typeof MajorAdminRepositoryRouteImport
       parentRoute: typeof MajorAdminRoute
     }
     '/major-admin/roles': {
@@ -1638,6 +1707,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/superior/reports'
       preLoaderRoute: typeof SuperiorReportsRouteImport
+      parentRoute: typeof SuperiorRoute
+    }
+    '/superior/repository': {
+      id: '/superior/repository'
+      path: '/repository'
+      fullPath: '/superior/repository'
+      preLoaderRoute: typeof SuperiorRepositoryRouteImport
       parentRoute: typeof SuperiorRoute
     }
     '/superior/settings': {
@@ -1784,6 +1860,7 @@ interface AdminRouteChildren {
   AdminEvidenceRoute: typeof AdminEvidenceRoute
   AdminInvestigatorsRoute: typeof AdminInvestigatorsRoute
   AdminReportsRoute: typeof AdminReportsRoute
+  AdminRepositoryRoute: typeof AdminRepositoryRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminSuperiorOfficersRoute: typeof AdminSuperiorOfficersRoute
   AdminUsersRoute: typeof AdminUsersRouteWithChildren
@@ -1797,6 +1874,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminEvidenceRoute: AdminEvidenceRoute,
   AdminInvestigatorsRoute: AdminInvestigatorsRoute,
   AdminReportsRoute: AdminReportsRoute,
+  AdminRepositoryRoute: AdminRepositoryRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminSuperiorOfficersRoute: AdminSuperiorOfficersRoute,
   AdminUsersRoute: AdminUsersRouteWithChildren,
@@ -1882,6 +1960,7 @@ interface InvestigatorRouteChildren {
   InvestigatorMessagesRoute: typeof InvestigatorMessagesRoute
   InvestigatorNotesRoute: typeof InvestigatorNotesRoute
   InvestigatorReportsRoute: typeof InvestigatorReportsRoute
+  InvestigatorRepositoryRoute: typeof InvestigatorRepositoryRoute
   InvestigatorSettingsRoute: typeof InvestigatorSettingsRoute
   InvestigatorTasksRoute: typeof InvestigatorTasksRoute
   InvestigatorTimelineRoute: typeof InvestigatorTimelineRoute
@@ -1896,6 +1975,7 @@ const InvestigatorRouteChildren: InvestigatorRouteChildren = {
   InvestigatorMessagesRoute: InvestigatorMessagesRoute,
   InvestigatorNotesRoute: InvestigatorNotesRoute,
   InvestigatorReportsRoute: InvestigatorReportsRoute,
+  InvestigatorRepositoryRoute: InvestigatorRepositoryRoute,
   InvestigatorSettingsRoute: InvestigatorSettingsRoute,
   InvestigatorTasksRoute: InvestigatorTasksRoute,
   InvestigatorTimelineRoute: InvestigatorTimelineRoute,
@@ -1953,6 +2033,7 @@ interface MajorAdminRouteChildren {
   MajorAdminDashboardRoute: typeof MajorAdminDashboardRoute
   MajorAdminDepartmentsRoute: typeof MajorAdminDepartmentsRouteWithChildren
   MajorAdminReportsRoute: typeof MajorAdminReportsRoute
+  MajorAdminRepositoryRoute: typeof MajorAdminRepositoryRoute
   MajorAdminRolesRoute: typeof MajorAdminRolesRoute
   MajorAdminSettingsRoute: typeof MajorAdminSettingsRoute
   MajorAdminStorageRoute: typeof MajorAdminStorageRoute
@@ -1968,6 +2049,7 @@ const MajorAdminRouteChildren: MajorAdminRouteChildren = {
   MajorAdminDashboardRoute: MajorAdminDashboardRoute,
   MajorAdminDepartmentsRoute: MajorAdminDepartmentsRouteWithChildren,
   MajorAdminReportsRoute: MajorAdminReportsRoute,
+  MajorAdminRepositoryRoute: MajorAdminRepositoryRoute,
   MajorAdminRolesRoute: MajorAdminRolesRoute,
   MajorAdminSettingsRoute: MajorAdminSettingsRoute,
   MajorAdminStorageRoute: MajorAdminStorageRoute,
@@ -2039,6 +2121,7 @@ interface SuperiorRouteChildren {
   SuperiorMessagesRoute: typeof SuperiorMessagesRoute
   SuperiorRelationshipsRoute: typeof SuperiorRelationshipsRoute
   SuperiorReportsRoute: typeof SuperiorReportsRoute
+  SuperiorRepositoryRoute: typeof SuperiorRepositoryRoute
   SuperiorSettingsRoute: typeof SuperiorSettingsRoute
   SuperiorTasksRoute: typeof SuperiorTasksRoute
   SuperiorTimelineRoute: typeof SuperiorTimelineRoute
@@ -2054,6 +2137,7 @@ const SuperiorRouteChildren: SuperiorRouteChildren = {
   SuperiorMessagesRoute: SuperiorMessagesRoute,
   SuperiorRelationshipsRoute: SuperiorRelationshipsRoute,
   SuperiorReportsRoute: SuperiorReportsRoute,
+  SuperiorRepositoryRoute: SuperiorRepositoryRoute,
   SuperiorSettingsRoute: SuperiorSettingsRoute,
   SuperiorTasksRoute: SuperiorTasksRoute,
   SuperiorTimelineRoute: SuperiorTimelineRoute,

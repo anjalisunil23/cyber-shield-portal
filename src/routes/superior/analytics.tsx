@@ -50,7 +50,6 @@ function Page() {
         { label: "Investigation Analytics" },
       ]}
       title="Investigation Analytics"
-      subtitle="Progress and priority overview"
     >
       <div className="grid gap-4 lg:grid-cols-2">
         <ChartCard title="Timeline activity">

@@ -21,7 +21,6 @@ function Page() {
         { label: "Roles & Permissions" },
       ]}
       title="Roles & Permissions"
-      subtitle="RBAC matrix (UI mock)"
     >
       <div className="grid gap-4 md:grid-cols-2">
         {ROLES.map((r) => (

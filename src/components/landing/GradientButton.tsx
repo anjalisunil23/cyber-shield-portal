@@ -20,7 +20,7 @@ export function GradientButton({
         "inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all",
         variant === "primary" && "btn-brand",
         variant === "secondary" &&
-          "border border-white/15 bg-white/5 text-foreground hover:border-primary/40 hover:bg-white/10",
+          "border border-white/20 bg-white/[0.04] text-foreground backdrop-blur-sm hover:-translate-y-0.5 hover:border-cyan/40 hover:bg-white/[0.08]",
         variant === "ghost" && "text-muted-foreground hover:text-foreground",
         className,
       )}
@@ -42,7 +42,7 @@ export function GradientLink({
     "inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all",
     variant === "primary" && "btn-brand",
     variant === "secondary" &&
-      "border border-white/15 bg-white/5 text-foreground hover:border-primary/40 hover:bg-white/10",
+      "border border-white/20 bg-white/[0.04] text-foreground backdrop-blur-sm hover:-translate-y-0.5 hover:border-cyan/40 hover:bg-white/[0.08]",
     variant === "ghost" && "text-muted-foreground hover:text-foreground",
     className,
   );

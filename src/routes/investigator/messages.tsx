@@ -7,7 +7,7 @@ export const Route = createFileRoute("/investigator/messages")({
 
 function InvestigatorMessagesPage() {
   return (
-    <div className="h-[calc(100vh-4rem)] p-3 sm:p-5">
+    <div className="h-full min-h-0">
       <ChatInterface />
     </div>
   );

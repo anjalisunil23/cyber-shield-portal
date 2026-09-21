@@ -10,25 +10,48 @@ from app.models.user import UserRole
 
 
 class UserRegister(BaseModel):
-    full_name: str = Field(..., min_length=1, max_length=255)
+    full_name: str = Field(..., min_length=2, max_length=50)
     email: EmailStr
-    password: str = Field(..., min_length=8, max_length=128)
-    confirm_password: str = Field(..., min_length=8, max_length=128)
+    password: str = Field(..., min_length=8, max_length=64)
+    confirm_password: str = Field(..., min_length=8, max_length=64)
     role: UserRole
     department: str | None = Field(default=None, max_length=255)
+
+    @field_validator("full_name")
+    @classmethod
+    def validate_full_name(cls, value: str) -> str:
+        trimmed = value.strip()
+        if len(trimmed) < 2 or len(trimmed) > 50 or not re.match(r"^[A-Za-z]+(?: [A-Za-z]+)*$", trimmed):
+            raise ValueError("Please enter a valid full name.")
+        return trimmed
+
+    @field_validator("email")
+    @classmethod
+    def validate_gmail(cls, value: str) -> str:
+        clean = str(value).strip().lower()
+        if not re.match(r"^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@gmail\.com$", clean):
+            raise ValueError("Please enter a valid Gmail address.")
+        return clean
 
     @field_validator("password")
     @classmethod
     def password_strength(cls, value: str) -> str:
-        # Minimum strength: 8+ characters and at least one digit
-        if len(value) < 8 or not re.search(r"\d", value):
-            raise ValueError("Password must be at least 8 characters and contain at least one digit")
+        if (
+            len(value) < 8
+            or len(value) > 64
+            or not re.search(r"[A-Z]", value)
+            or not re.search(r"[a-z]", value)
+            or not re.search(r"\d", value)
+            or not re.search(r"[^A-Za-z0-9\s]", value)
+            or re.search(r"\s", value)
+        ):
+            raise ValueError("Password does not meet all requirements.")
         return value
 
     @model_validator(mode="after")
     def passwords_match(self) -> "UserRegister":
         if self.password != self.confirm_password:
-            raise ValueError("password and confirm_password must match")
+            raise ValueError("Passwords do not match.")
         return self
 
 

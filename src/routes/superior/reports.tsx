@@ -20,7 +20,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Reports" }]}
       title="Reports"
-      subtitle="Generate, preview, print"
     >
       <Panel title="Generate report">
         <form

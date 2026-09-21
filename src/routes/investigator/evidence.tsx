@@ -2,16 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   DataTable,
+  EmptyState,
+  LoadingBlock,
   PageScaffold,
   Pagination,
   SelectFilter,
   Toolbar,
 } from "@/components/ui-kit/PageKit";
 import { EvidenceCard } from "@/components/ui-kit/Cards";
+import { SecureVaultVisual } from "@/components/cyber/SecureVaultVisual";
 import { investigationApi } from "@/services/investigationApi";
 import type { AdminEvidence } from "@/services/types";
 import type { MockEvidence } from "@/data/mock/platform";
-import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/investigator/evidence")({ component: Page });
 
@@ -68,12 +70,8 @@ function Page() {
 
   return (
     <PageScaffold
-      crumbs={[
-        { label: "Investigator", to: "/investigator/dashboard" },
-        { label: "Evidence Repository" },
-      ]}
-      title="Evidence Repository"
-      subtitle="Search and view digital evidence items across all your cases"
+      crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Evidence" }]}
+      title="Evidence"
     >
       <Toolbar
         search={searchQuery}
@@ -96,13 +94,9 @@ function Page() {
         }
       />
       {loading ? (
-        <div className="flex items-center justify-center py-12 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading evidence repository...
-        </div>
+        <LoadingBlock rows={8} />
       ) : pageItems.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground shadow-xs">
-          No evidence items found.
-        </div>
+        <EmptyState title="No evidence uploaded yet." visual={<SecureVaultVisual />} />
       ) : view === "grid" ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {pageItems.map((e) => (

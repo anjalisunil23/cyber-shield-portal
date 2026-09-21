@@ -21,7 +21,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "Users" }]}
       title="Users"
-      subtitle="Platform-wide directory"
     >
       <Toolbar
         search={table.search}

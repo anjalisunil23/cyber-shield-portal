@@ -1,83 +1,77 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MOCK_LEADS } from "@/data/mock/platform";
-import {
-  DataTable,
-  PageScaffold,
-  Pagination,
-  PrimaryButton,
-  StatusPill,
-  Toolbar,
-  useClientTable,
-  Panel,
-} from "@/components/ui-kit/PageKit";
-import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { PageScaffold, Panel } from "@/components/ui-kit/PageKit";
+import { AIExplanationCard } from "@/components/dashboard/AIExplanationCard";
+import { AIDisclaimer } from "@/components/dashboard/AIDisclaimer";
+import { investigationApi } from "@/services/investigationApi";
+import type { LeadItem } from "@/services/types";
 
 export const Route = createFileRoute("/investigator/leads")({ component: Page });
 
 function Page() {
-  const [items, setItems] = useState(MOCK_LEADS);
-  const table = useClientTable(items);
-  const [title, setTitle] = useState("");
+  const qc = useQueryClient();
+  const casesQ = useQuery({
+    queryKey: ["cases"],
+    queryFn: () => investigationApi.listCases({ page_size: 100 }),
+  });
+
+  const leadsQ = useQuery({
+    queryKey: ["investigator-leads", casesQ.data?.items?.map((c) => c.id).join(",")],
+    enabled: !!casesQ.data?.items,
+    queryFn: async () => {
+      const rows: { caseNumber: string; caseId: string; lead: LeadItem }[] = [];
+      for (const c of casesQ.data?.items || []) {
+        const leads = await investigationApi.listLeads(c.id);
+        for (const lead of leads) {
+          rows.push({ caseNumber: c.case_number, caseId: c.id, lead });
+        }
+      }
+      return rows;
+    },
+  });
+
+  const rows = leadsQ.data || [];
 
   return (
     <PageScaffold
-      crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Manual Leads" }]}
-      title="Manual Leads"
-      subtitle="Track investigative threads"
+      crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Leads" }]}
+      title="Leads"
     >
-      <Panel>
-        <form
-          className="flex gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!title.trim()) return;
-            setItems((p) => [
-              {
-                id: `l${Date.now()}`,
-                title,
-                priority: "Medium",
-                status: "Open",
-                caseNumber: "CS-2026-0142",
-                assignee: "You",
-              },
-              ...p,
-            ]);
-            setTitle("");
-          }}
-        >
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="New lead"
-            className="flex-1 rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/60 transition"
-          />
-          <PrimaryButton type="submit">Create</PrimaryButton>
-        </form>
-      </Panel>
-      <div className="mt-4" />
-      <Toolbar search={table.search} onSearch={table.setSearch} />
-      <DataTable
-        rows={table.rows}
-        columns={[
-          { key: "t", header: "Title", render: (r) => r.title },
-          {
-            key: "c",
-            header: "Case",
-            render: (r) => (
+      <AIDisclaimer className="mb-4" />
+      {leadsQ.isLoading || casesQ.isLoading ? (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading leads from assigned cases…
+        </div>
+      ) : rows.length === 0 ? (
+        <Panel>
+          <p className="text-sm text-muted-foreground">
+            No leads yet. Open a case, run the AI pipeline, or create a manual lead from the case
+            workspace.
+          </p>
+        </Panel>
+      ) : (
+        <div className="space-y-4">
+          {rows.map(({ caseNumber, caseId, lead }) => (
+            <div key={lead.id} className="space-y-2">
               <Link
                 to="/investigator/cases/$caseId"
-                params={{ caseId: r.caseNumber }}
-                className="text-primary hover:underline font-semibold"
+                params={{ caseId }}
+                className="text-xs font-semibold text-primary hover:underline"
               >
-                {r.caseNumber}
+                {caseNumber}
               </Link>
-            ),
-          },
-          { key: "p", header: "Priority", render: (r) => <StatusPill value={r.priority} /> },
-          { key: "s", header: "Status", render: (r) => <StatusPill value={r.status} /> },
-        ]}
-      />
-      <Pagination page={table.page} pages={table.pages} onPage={table.setPage} />
+              <AIExplanationCard
+                lead={lead}
+                onRefresh={() => {
+                  void qc.invalidateQueries({ queryKey: ["investigator-leads"] });
+                  void qc.invalidateQueries({ queryKey: ["leads"] });
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </PageScaffold>
   );
 }

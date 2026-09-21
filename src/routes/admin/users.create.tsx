@@ -46,7 +46,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Users", to: "/admin/users" }, { label: "Create" }]}
       title="Create User"
-      subtitle="Add Superior Officer or Investigator"
       actions={
         <Link to={"/admin/users" as "/"}>
           <GhostButton>Cancel</GhostButton>

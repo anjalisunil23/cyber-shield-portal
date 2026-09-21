@@ -12,7 +12,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Timeline" }]}
       title="Timeline"
-      subtitle="Chronological investigation events"
     >
       <Panel title="Add manual event">
         <form

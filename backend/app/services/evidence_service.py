@@ -106,6 +106,33 @@ class EvidenceService:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Case not found")
 
         original = file.filename or "upload.bin"
+        data = file.file.read()
+        return self.ingest_bytes(
+            case_id,
+            original,
+            data,
+            actor,
+            description=description,
+            tags=tags,
+            content_type=file.content_type,
+        )
+
+    def ingest_bytes(
+        self,
+        case_id: UUID,
+        original: str,
+        data: bytes,
+        actor: User,
+        *,
+        description: str | None = None,
+        tags: list[str] | None = None,
+        extra_metadata: dict[str, Any] | None = None,
+        content_type: str | None = None,
+    ) -> Evidence:
+        case = self.cases.get(case_id)
+        if not case:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Case not found")
+
         ext = Path(original).suffix.lower()
         if ext not in ALLOWED_EXTENSIONS:
             raise HTTPException(
@@ -113,7 +140,6 @@ class EvidenceService:
                 detail=f"Unsupported file type: {ext or '(none)'}",
             )
 
-        data = file.file.read()
         settings = get_settings()
         if len(data) > settings.max_upload_bytes:
             raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="File too large")
@@ -123,7 +149,7 @@ class EvidenceService:
         storage_path, sha256 = self.storage.save(case_id=str(case_id), filename=original, data=data)
         dup = self.repo.find_by_hash(case_id, sha256)
         mime, _ = mimetypes.guess_type(original)
-        file_type = classify_file_type(mime or file.content_type, ext)
+        file_type = classify_file_type(mime or content_type, ext)
 
         now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
         metadata_json: dict[str, Any] = {
@@ -131,6 +157,8 @@ class EvidenceService:
             "file_created_at": now_iso,
             "file_modified_at": now_iso,
         }
+        if extra_metadata:
+            metadata_json.update(extra_metadata)
         if file_type == "image":
             exif = extract_exif(data)
             if exif:
@@ -138,15 +166,24 @@ class EvidenceService:
 
         warning_msg = None
         if dup:
-            warning_msg = f"Duplicate file detected: matches existing evidence '{dup.original_name}' (ID: {dup.id})"
+            warning_msg = (
+                f"Duplicate file detected: matches existing evidence '{dup.original_name}' "
+                f"(ID: {dup.id}). Original hash preserved for chain of custody."
+            )
             metadata_json["duplicate_warning"] = warning_msg
+            metadata_json["duplicate_of"] = {
+                "id": str(dup.id),
+                "original_name": dup.original_name,
+                "upload_date": dup.upload_date.isoformat() if dup.upload_date else None,
+                "sha256_hash": dup.sha256_hash,
+            }
 
         evidence = Evidence(
             case_id=case_id,
             filename=Path(storage_path).name,
             original_name=original,
             file_type=file_type,
-            mime_type=mime or file.content_type,
+            mime_type=mime or content_type,
             file_size=len(data),
             storage_path=storage_path,
             sha256_hash=sha256,
@@ -156,11 +193,18 @@ class EvidenceService:
             uploaded_by_id=actor.id,
             is_duplicate=dup is not None,
             duplicate_of_id=dup.id if dup else None,
-            # AI placeholders intentionally left null
+            # AI placeholders initially null, populated by pipeline below
         )
         self.repo.add(evidence)
         self.db.flush()
         advance_open_to_in_progress(self.db, case, actor)
+
+        # Run automated AI preprocessing pipeline (safe & non-fatal)
+        try:
+            from app.services.ai.pipeline import EvidencePipeline
+            EvidencePipeline(self.db).process_single_evidence(evidence.id)
+        except Exception:
+            pass
 
         self.db.add(
             TimelineEvent(
@@ -178,8 +222,12 @@ class EvidenceService:
                     self.db,
                     user_id=a.user_id,
                     notification_type=NotificationType.evidence_uploaded,
-                    title="Evidence uploaded",
-                    message=f"{original} added to {case.case_number}",
+                    title="Duplicate evidence detected" if dup else "Evidence uploaded",
+                    message=(
+                        f"{original} matches existing '{dup.original_name}' in {case.case_number}"
+                        if dup
+                        else f"{original} added to {case.case_number}"
+                    ),
                     link=f"/dashboard/cases/{case_id}",
                 )
         actor_role_str = actor.role.value if hasattr(actor.role, "value") else str(actor.role)

@@ -29,7 +29,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Tasks" }]}
       title="Task Management & Assignment"
-      subtitle="Assign, track, and manage investigator tasks"
       actions={
         <PrimaryButton onClick={() => setIsAssignModalOpen(true)}>
           <UserCheck className="mr-1.5 inline h-4 w-4" /> Assign New Task

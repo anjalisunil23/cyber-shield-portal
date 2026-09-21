@@ -9,7 +9,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Investigator", to: "/investigator/dashboard" }, { label: "Timeline" }]}
       title="Timeline"
-      subtitle="Case chronology"
     >
       <ol className="space-y-4">
         {MOCK_TIMELINE.map((t) => (

@@ -49,7 +49,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Settings" }]}
       title="Settings"
-      subtitle="Account and notification preferences"
     >
       {me.isLoading ? (
         <LoadingBlock />

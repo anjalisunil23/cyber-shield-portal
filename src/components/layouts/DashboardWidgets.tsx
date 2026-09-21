@@ -15,7 +15,7 @@ export function ChartCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-border bg-card p-5 shadow-xs backdrop-blur-sm"
+      className="glass-card p-5"
     >
       <div className="mb-4 flex items-center justify-between gap-2">
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
@@ -33,23 +33,22 @@ export function QuickActionCard({
   onClick,
 }: {
   label: string;
-  description: string;
+  description?: string;
   icon: LucideIcon;
   onClick?: () => void;
 }) {
   return (
-    <motion.button
+    <button
       type="button"
-      whileHover={{ y: -3, scale: 1.01 }}
       onClick={onClick}
-      className="rounded-2xl border border-border bg-card p-4 text-left shadow-xs transition hover:border-cyan/50 hover:shadow-md dark:hover:shadow-[0_0_28px_-14px_rgba(6,182,212,0.7)]"
+      className="rounded-xl border border-border bg-card/80 p-3.5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_0_24px_-10px_rgba(59,130,246,0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <div className="mb-3 grid h-10 w-10 place-items-center rounded-xl border border-cyan/30 bg-cyan/10 text-cyan">
-        <Icon className="h-5 w-5" />
+      <div className="mb-2 grid h-9 w-9 place-items-center rounded-lg bg-primary/10 text-primary">
+        <Icon className="h-4 w-4" />
       </div>
-      <p className="text-sm font-semibold text-foreground">{label}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-    </motion.button>
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      {description ? <p className="mt-0.5 text-xs text-muted-foreground">{description}</p> : null}
+    </button>
   );
 }
 
@@ -73,12 +72,14 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="min-w-0">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-[1.75rem]">
+          {title}
+        </h1>
+        {subtitle ? <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p> : null}
       </div>
-      {actions}
+      {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
     </div>
   );
 }
@@ -95,10 +96,10 @@ export function Panel({
   actions?: ReactNode;
 }) {
   return (
-    <div className={`rounded-2xl border border-border bg-card p-5 shadow-xs ${className}`}>
+    <div className={`glass-card p-4 ${className}`}>
       {title && (
         <div className="mb-3 flex items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          <h3 className="text-sm font-medium text-foreground">{title}</h3>
           {actions}
         </div>
       )}

@@ -1,7 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { InvestigationCaseCard } from "@/components/cyber/InvestigationCaseCard";
 import {
   DataTable,
+  EmptyState,
+  LoadingBlock,
   PageScaffold,
   Pagination,
   PrimaryButton,
@@ -9,16 +12,15 @@ import {
   StatusPill,
   Toolbar,
 } from "@/components/ui-kit/PageKit";
-import { CaseCard } from "@/components/ui-kit/Cards";
 import { investigationApi } from "@/services/investigationApi";
 import type { InvestigationCase, CaseStatus } from "@/services/types";
-import { Loader2 } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 
 export const Route = createFileRoute("/superior/cases/")({ component: Page });
 
 function Page() {
   const navigate = useNavigate();
-  const [view, setView] = useState<"table" | "grid">("table");
+  const [view, setView] = useState<"table" | "grid">("grid");
   const [status, setStatus] = useState("All");
   const [cases, setCases] = useState<InvestigationCase[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,9 +54,8 @@ function Page() {
 
   return (
     <PageScaffold
-      crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "All Cases" }]}
-      title="All Cases"
-      subtitle="Create, assign, and monitor investigations"
+      crumbs={[{ label: "Superior", to: "/superior/dashboard" }, { label: "Cases" }]}
+      title="Cases"
       actions={
         <PrimaryButton onClick={() => void navigate({ to: "/superior/cases/create" })}>
           Create case
@@ -82,21 +83,22 @@ function Page() {
             <button
               type="button"
               onClick={() => setView(view === "table" ? "grid" : "table")}
-              className="rounded-xl border border-border px-3 py-2 text-xs bg-card text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs bg-card text-muted-foreground hover:text-foreground transition-colors"
             >
-              {view === "table" ? "Grid view" : "Table view"}
+              {view === "table" ? (
+                <LayoutGrid className="h-3.5 w-3.5" />
+              ) : (
+                <List className="h-3.5 w-3.5" />
+              )}
+              {view === "table" ? "Cards" : "Table"}
             </button>
           </>
         }
       />
       {loading ? (
-        <div className="flex items-center justify-center py-12 text-muted-foreground">
-          <Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading cases...
-        </div>
+        <LoadingBlock rows={8} />
       ) : cases.length === 0 ? (
-        <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground">
-          No cases found.
-        </div>
+        <EmptyState title="No cases found." />
       ) : view === "table" ? (
         <>
           <DataTable
@@ -137,27 +139,7 @@ function Page() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {cases.map((c) => (
-            <Link key={c.id} to="/superior/cases/$caseId" params={{ caseId: c.id }}>
-              <CaseCard
-                item={{
-                  id: c.id,
-                  caseNumber: c.case_number,
-                  title: c.title,
-                  priority: (c.priority
-                    ? c.priority.charAt(0).toUpperCase() + c.priority.slice(1)
-                    : "Medium") as "Low" | "Medium" | "High" | "Critical",
-                  status: c.status,
-                  assignee:
-                    c.assignments && c.assignments.length > 0
-                      ? c.assignments[0].user?.full_name || "Agent"
-                      : "Unassigned",
-                  department: "Cybercrime",
-                  created: new Date(c.created_at).toLocaleDateString(),
-                  updated: new Date(c.updated_at).toLocaleDateString(),
-                  description: c.description || "",
-                }}
-              />
-            </Link>
+            <InvestigationCaseCard key={c.id} item={c} to="/superior/cases/$caseId" />
           ))}
         </div>
       )}

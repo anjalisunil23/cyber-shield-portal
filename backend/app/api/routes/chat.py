@@ -17,6 +17,7 @@ from app.schemas.domain import (
     ChatMessageCreate,
     ChatMessageOut,
     DirectChatCreate,
+    UserBrief,
 )
 from app.services.case_service import CaseService
 from app.services.chat_service import ChatService
@@ -110,7 +111,6 @@ def list_chat_contacts(
 ) -> list[UserBrief]:
     """Retrieve all available investigators, leads, and superiors for direct messaging."""
     from sqlalchemy import select
-    from app.schemas.domain import UserBrief
 
     stmt = select(User).where(User.is_active.is_(True)).order_by(User.full_name.asc())
     users = db.scalars(stmt).all()

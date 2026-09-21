@@ -34,7 +34,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Superior Officers" }]}
       title="Superior Officers"
-      subtitle="Heads of investigation"
       actions={
         <Link to={"/admin/users/create" as "/"}>
           <PrimaryButton>Create</PrimaryButton>

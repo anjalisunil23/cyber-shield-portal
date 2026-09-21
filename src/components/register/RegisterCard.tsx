@@ -11,8 +11,9 @@ import {
   Phone,
   User,
 } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { checkEmailAvailability } from "@/lib/api";
 import { InputField } from "./InputField";
 import { PasswordInput, getPasswordChecks, passwordStrong } from "./PasswordInput";
 import { REGISTER_ROLES, RoleSelect } from "./RoleSelect";
@@ -24,6 +25,10 @@ const DEPARTMENTS = [
   "Special Investigation",
   "Child Protection Unit",
 ];
+
+const FULL_NAME_REGEX = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+const STRICT_GMAIL_REGEX = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@gmail\.com$/i;
+const PHONE_REGEX = /^[+0-9\s\-()]{7,20}$/;
 
 type Props = {
   onSubmit: (payload: {
@@ -49,99 +54,229 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [terms, setTerms] = useState(false);
+
+  const [touched, setTouched] = useState<Record<string, boolean>>({
+    fullName: false,
+    email: false,
+    phone: false,
+    password: false,
+    confirm: false,
+    terms: false,
+  });
+
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [emailServerStatus, setEmailServerStatus] = useState<{
+    checkedEmail: string;
+    exists: boolean;
+    valid: boolean;
+    message: string;
+  } | null>(null);
+
   const [localError, setLocalError] = useState<string | null>(null);
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => (prev[field] ? prev : { ...prev, [field]: true }));
+  };
+
+  // Full name validation
+  const cleanName = fullName.trim();
+  const isNameValid = useMemo(() => {
+    return cleanName.length >= 2 && cleanName.length <= 50 && FULL_NAME_REGEX.test(cleanName);
+  }, [cleanName]);
+
+  const nameError = useMemo(() => {
+    if (!cleanName) return "Please enter a valid full name.";
+    if (!FULL_NAME_REGEX.test(cleanName) || cleanName.length < 2 || cleanName.length > 50) {
+      return "Please enter a valid full name.";
+    }
+    return null;
+  }, [cleanName]);
+
+  // Strict Gmail format validation
+  const cleanEmail = email.trim().toLowerCase();
+  const isGmailFormatValid = useMemo(() => {
+    return STRICT_GMAIL_REGEX.test(cleanEmail);
+  }, [cleanEmail]);
+
+  // Debounced server duplicate check
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    if (!cleanEmail || !isGmailFormatValid) {
+      setEmailChecking(false);
+      setEmailServerStatus(null);
+      return;
+    }
+
+    // If already checked this exact email, skip
+    if (emailServerStatus && emailServerStatus.checkedEmail === cleanEmail) {
+      return;
+    }
+
+    setEmailChecking(true);
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await checkEmailAvailability(cleanEmail);
+        setEmailServerStatus({
+          checkedEmail: cleanEmail,
+          exists: res.exists,
+          valid: res.valid,
+          message: res.message,
+        });
+      } catch {
+        // network or server offline, allow user to proceed to backend validation
+        setEmailServerStatus({
+          checkedEmail: cleanEmail,
+          exists: false,
+          valid: true,
+          message: "Could not verify duplicate, will verify on submit.",
+        });
+      } finally {
+        setEmailChecking(false);
+      }
+    }, 400);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [cleanEmail, isGmailFormatValid, emailServerStatus]);
+
+  const emailError = useMemo(() => {
+    if (!cleanEmail) return "Please enter a valid Gmail address.";
+    if (!isGmailFormatValid) return "Please enter a valid Gmail address.";
+    if (
+      emailServerStatus &&
+      emailServerStatus.checkedEmail === cleanEmail &&
+      emailServerStatus.exists
+    ) {
+      return "This Gmail address is already registered.";
+    }
+    return null;
+  }, [cleanEmail, isGmailFormatValid, emailServerStatus]);
+
+  const isEmailValid = useMemo(() => {
+    return (
+      isGmailFormatValid &&
+      !emailChecking &&
+      (!emailServerStatus ||
+        (emailServerStatus.checkedEmail === cleanEmail && !emailServerStatus.exists))
+    );
+  }, [isGmailFormatValid, emailChecking, emailServerStatus, cleanEmail]);
+
+  // Phone validation (optional)
+  const cleanPhone = phone.trim();
+  const isPhoneValid = useMemo(() => {
+    if (!cleanPhone) return true;
+    return PHONE_REGEX.test(cleanPhone);
+  }, [cleanPhone]);
+
+  const phoneError = useMemo(() => {
+    if (cleanPhone && !PHONE_REGEX.test(cleanPhone)) {
+      return "Please enter a valid phone number (e.g. +1 555 0100).";
+    }
+    return null;
+  }, [cleanPhone]);
+
+  // Password validation
+  const passwordChecks = useMemo(() => getPasswordChecks(password), [password]);
+  const isPasswordValid = useMemo(() => passwordStrong(passwordChecks), [passwordChecks]);
+
+  const passwordError = useMemo(() => {
+    if (!password) return "Password does not meet all requirements.";
+    if (!isPasswordValid) return "Password does not meet all requirements.";
+    return null;
+  }, [password, isPasswordValid]);
+
+  // Confirm password validation
+  const isConfirmValid = useMemo(() => {
+    return Boolean(confirm && confirm === password && isPasswordValid);
+  }, [confirm, password, isPasswordValid]);
+
+  const confirmError = useMemo(() => {
+    if (!confirm) return "Please confirm your password.";
+    if (confirm !== password) return "Passwords do not match.";
+    return null;
+  }, [confirm, password]);
+
+  // Overall form validity
+  const isFormValid = useMemo(() => {
+    return (
+      isNameValid &&
+      isEmailValid &&
+      !emailChecking &&
+      isPhoneValid &&
+      isPasswordValid &&
+      isConfirmValid &&
+      terms
+    );
+  }, [
+    isNameValid,
+    isEmailValid,
+    emailChecking,
+    isPhoneValid,
+    isPasswordValid,
+    isConfirmValid,
+    terms,
+  ]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLocalError(null);
 
-    const cleanName = fullName.trim();
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanPhone = phone.trim();
+    // Mark everything as touched
+    setTouched({
+      fullName: true,
+      email: true,
+      phone: true,
+      password: true,
+      confirm: true,
+      terms: true,
+    });
 
-    if (!cleanName) {
-      const msg = "Full name is required.";
+    // Guard checks and auto-focus first invalid input
+    if (!isNameValid) {
+      const msg = nameError || "Please enter a valid full name.";
       setLocalError(msg);
       toast.error(msg);
+      document.getElementById("full_name")?.focus();
       return;
     }
 
-    if (cleanName.length < 2) {
-      const msg = "Full name must be at least 2 characters long.";
+    if (!isEmailValid) {
+      const msg = emailError || "Please enter a valid Gmail address.";
       setLocalError(msg);
       toast.error(msg);
+      document.getElementById("email")?.focus();
       return;
     }
 
-    if (!cleanEmail) {
-      const msg = "Email address is required.";
+    if (cleanPhone && !isPhoneValid) {
+      const msg = phoneError || "Please enter a valid phone number.";
       setLocalError(msg);
       toast.error(msg);
+      document.getElementById("phone")?.focus();
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
-      const msg = "Please enter a valid email address (e.g. officer@agency.gov).";
+    if (!isPasswordValid) {
+      const msg = "Password does not meet all requirements.";
       setLocalError(msg);
       toast.error(msg);
+      document.getElementById("password")?.focus();
       return;
     }
 
-    if (cleanPhone && !/^[+0-9\s\-()]{7,20}$/.test(cleanPhone)) {
-      const msg = "Please enter a valid phone number (e.g. +1 555 0100).";
+    if (!isConfirmValid) {
+      const msg = confirmError || "Passwords do not match.";
       setLocalError(msg);
       toast.error(msg);
-      return;
-    }
-
-    if (!password) {
-      const msg = "Password is required.";
-      setLocalError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    const checks = getPasswordChecks(password);
-    if (!checks.length) {
-      const msg = "Password must be at least 8 characters long.";
-      setLocalError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    if (!checks.upper) {
-      const msg = "Password must contain at least one uppercase letter (A-Z).";
-      setLocalError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    if (!checks.number) {
-      const msg = "Password must contain at least one number (0-9).";
-      setLocalError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    if (!checks.special) {
-      const msg = "Password must contain at least one special character (!@#$%^&*).";
-      setLocalError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    if (!confirm) {
-      const msg = "Please confirm your password.";
-      setLocalError(msg);
-      toast.error(msg);
-      return;
-    }
-
-    if (password !== confirm) {
-      const msg = "Passwords do not match.";
-      setLocalError(msg);
-      toast.error(msg);
+      document.getElementById("confirm_password")?.focus();
       return;
     }
 
@@ -149,6 +284,7 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
       const msg = "Please agree to the Privacy Policy and Terms of Service.";
       setLocalError(msg);
       toast.error(msg);
+      document.getElementById("terms")?.focus();
       return;
     }
 
@@ -186,7 +322,7 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
         </p>
       </div>
 
-      <form className="mt-7 space-y-4" onSubmit={handleSubmit}>
+      <form className="mt-7 space-y-4" onSubmit={handleSubmit} noValidate>
         {displayError && (
           <div
             role="alert"
@@ -206,36 +342,67 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <InputField
+            id="full_name"
             label="Full Name"
             icon={User}
             name="full_name"
             required
             autoComplete="name"
             value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            onChange={(e) => {
+              setFullName(e.target.value);
+              markTouched("fullName");
+            }}
+            onBlur={() => markTouched("fullName")}
+            error={nameError}
+            success="✓ Valid full name"
+            isValid={isNameValid}
+            isTouched={touched.fullName}
             placeholder="Alex Mercer"
           />
+
           <InputField
-            label="Email"
+            id="email"
+            label="Gmail Address"
             icon={Mail}
             name="email"
             type="email"
             required
             autoComplete="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="officer@agency.gov"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              markTouched("email");
+            }}
+            onBlur={() => markTouched("email")}
+            error={emailError}
+            success="✓ Valid Gmail address"
+            isValid={isEmailValid}
+            isTouched={touched.email}
+            isLoading={emailChecking}
+            placeholder="officer@gmail.com"
           />
+
           <InputField
-            label="Phone Number"
+            id="phone"
+            label="Phone Number (optional)"
             icon={Phone}
             name="phone"
             type="tel"
             autoComplete="tel"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              markTouched("phone");
+            }}
+            onBlur={() => markTouched("phone")}
+            error={phoneError}
+            success={cleanPhone ? "✓ Valid phone number" : null}
+            isValid={isPhoneValid}
+            isTouched={touched.phone}
             placeholder="+1 555 0100"
           />
+
           <label className="block space-y-1.5">
             <span className="text-xs font-medium text-slate-300">Department</span>
             <span className="relative block">
@@ -253,8 +420,11 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
               </select>
             </span>
           </label>
+
           <RoleSelect value={role} onChange={setRole} />
+
           <InputField
+            id="badge"
             label="Badge Number (optional)"
             icon={BadgeCheck}
             name="badge"
@@ -269,22 +439,44 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
             label="Password"
             name="password"
             value={password}
-            onChange={setPassword}
+            onChange={(val) => {
+              setPassword(val);
+              markTouched("password");
+            }}
             showStrength
+            error={passwordError}
+            success="✓ Strong password"
+            isValid={isPasswordValid}
+            isTouched={touched.password}
           />
+
           <PasswordInput
             label="Confirm Password"
             name="confirm_password"
             value={confirm}
-            onChange={setConfirm}
+            onChange={(val) => {
+              setConfirm(val);
+              markTouched("confirm");
+            }}
+            error={confirmError}
+            success="✓ Passwords match"
+            isValid={isConfirmValid}
+            isTouched={touched.confirm}
           />
         </div>
 
-        <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 transition hover:border-primary/30">
+        <label
+          htmlFor="terms"
+          className="flex cursor-pointer items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 transition hover:border-primary/30"
+        >
           <input
+            id="terms"
             type="checkbox"
             checked={terms}
-            onChange={(e) => setTerms(e.target.checked)}
+            onChange={(e) => {
+              setTerms(e.target.checked);
+              markTouched("terms");
+            }}
             className="mt-0.5 h-4 w-4 rounded border-white/20 bg-[#0B1220] accent-primary"
           />
           <span className="text-sm text-slate-300">
@@ -302,14 +494,18 @@ export function RegisterCard({ onSubmit, submitting, error, success }: Props) {
 
         <motion.button
           type="submit"
-          disabled={submitting}
-          whileHover={{ scale: submitting ? 1 : 1.01 }}
-          whileTap={{ scale: submitting ? 1 : 0.99 }}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-cyan py-3.5 text-sm font-semibold text-white shadow-[0_0_40px_-8px_rgba(59,130,246,0.75)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={!isFormValid || submitting || emailChecking}
+          whileHover={{ scale: !isFormValid || submitting || emailChecking ? 1 : 1.01 }}
+          whileTap={{ scale: !isFormValid || submitting || emailChecking ? 1 : 0.99 }}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-cyan py-3.5 text-sm font-semibold text-white shadow-[0_0_40px_-8px_rgba(59,130,246,0.75)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
           {submitting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" /> Creating account…
+            </>
+          ) : emailChecking ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Verifying email…
             </>
           ) : (
             <>

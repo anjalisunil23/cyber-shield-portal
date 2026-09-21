@@ -9,7 +9,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "Storage" }]}
       title="Storage Management"
-      subtitle="Vault usage overview (mock)"
     >
       <div className="grid gap-4 md:grid-cols-3">
         {MOCK_STORAGE.map((s) => (

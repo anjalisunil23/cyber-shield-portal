@@ -24,6 +24,14 @@ import type {
   SearchResult,
   TimelineItem,
   UserBrief,
+  EvidenceAnalysis,
+  CaseRiskAssessment,
+  CaseCorrelation,
+  ExtractedEntity,
+  CaseGraphData,
+  RAGSearchResult,
+  InvestigationSummary,
+  PipelineRunResult,
 } from "@/services/types";
 
 export const investigationApi = {
@@ -449,5 +457,176 @@ export const investigationApi = {
   adminActivity: (page = 1) =>
     apiClient
       .get<Page<ActivityItem>>("/api/admin/activity", { params: { page } })
+      .then((r) => r.data),
+
+  // ---- AI Intelligence & Forensic Decision-Support ----
+  processEvidence: (evidenceId: string) =>
+    apiClient
+      .post<{ success: boolean; status: string; pipeline_steps: Record<string, unknown> }>(
+        `/api/evidence/${evidenceId}/process`,
+      )
+      .then((r) => r.data),
+
+  getEvidenceAnalysis: (evidenceId: string) =>
+    apiClient.get<EvidenceAnalysis>(`/api/evidence/${evidenceId}/analysis`).then((r) => r.data),
+
+  runCasePipeline: (caseId: string) =>
+    apiClient.post<PipelineRunResult>(`/api/cases/${caseId}/pipeline`).then((r) => r.data),
+
+  getCaseCorrelations: (caseId: string) =>
+    apiClient.get<CaseCorrelation[]>(`/api/cases/${caseId}/correlations`).then((r) => r.data),
+
+  getCaseEntities: (caseId: string) =>
+    apiClient.get<ExtractedEntity[]>(`/api/cases/${caseId}/entities`).then((r) => r.data),
+
+  getCaseRisk: (caseId: string) =>
+    apiClient.get<CaseRiskAssessment>(`/api/cases/${caseId}/risk`).then((r) => r.data),
+
+  getCaseGraph: (caseId: string) =>
+    apiClient.get<CaseGraphData>(`/api/cases/${caseId}/graph`).then((r) => r.data),
+
+  searchCaseEvidence: (caseId: string, query: string) =>
+    apiClient.post<RAGSearchResult>(`/api/cases/${caseId}/search`, { query }).then((r) => r.data),
+
+  getCaseSummary: (caseId: string) =>
+    apiClient.post<InvestigationSummary>(`/api/cases/${caseId}/summarize`).then((r) => r.data),
+
+  verifyLead: (leadId: string, reason?: string) =>
+    apiClient
+      .post<{ success: boolean; lead_id: string; status: string; review_state: string }>(
+        `/api/leads/${leadId}/verify`,
+        { reason },
+      )
+      .then((r) => r.data),
+
+  rejectLead: (leadId: string, reason?: string) =>
+    apiClient
+      .post<{ success: boolean; lead_id: string; status: string; review_state: string }>(
+        `/api/leads/${leadId}/reject`,
+        { reason },
+      )
+      .then((r) => r.data),
+
+  modifyLead: (
+    leadId: string,
+    payload: { title?: string; description?: string; reason?: string },
+  ) =>
+    apiClient
+      .post<{
+        success: boolean;
+        lead_id: string;
+        title: string;
+        status: string;
+        review_state: string;
+      }>(`/api/leads/${leadId}/modify`, payload)
+      .then((r) => r.data),
+
+  seedSyntheticCase: () =>
+    apiClient
+      .post<{ success: boolean; case_id: string; case_number: string; title: string }>(
+        "/api/demo/seed-synthetic-case",
+      )
+      .then((r) => r.data),
+
+  getAIStatus: () =>
+    apiClient.get<import("./types").AIEngineStatus>("/api/ai/status").then((r) => r.data),
+
+  getCaseAuditLog: (caseId: string, page = 1) =>
+    apiClient
+      .get<Page<ActivityItem>>(`/api/cases/${caseId}/audit-log`, { params: { page } })
+      .then((r) => r.data),
+
+  exportCaseIntelligence: (caseId: string) =>
+    apiClient
+      .get<Record<string, unknown>>(`/api/cases/${caseId}/intelligence-export`)
+      .then((r) => r.data),
+
+  listRepository: (params?: Record<string, string | number | undefined>) =>
+    apiClient
+      .get<Page<import("./types").RepositoryItem>>("/api/evidence-repository", { params })
+      .then((r) => r.data),
+
+  getRepositoryItem: (id: string) =>
+    apiClient
+      .get<import("./types").RepositoryItem>(`/api/evidence-repository/${id}`)
+      .then((r) => r.data),
+
+  previewRepository: async (id: string, mime?: string | null, fileType?: string) => {
+    const isMedia =
+      (mime || "").startsWith("image/") ||
+      (mime || "").startsWith("audio/") ||
+      (mime || "").startsWith("video/") ||
+      mime === "application/pdf" ||
+      fileType === "image" ||
+      fileType === "audio" ||
+      fileType === "video";
+    if (isMedia) {
+      const res = await apiClient.get(`/api/evidence-repository/${id}/preview`, {
+        responseType: "blob",
+      });
+      return {
+        kind: "blob" as const,
+        url: URL.createObjectURL(res.data as Blob),
+        mime: mime || "application/octet-stream",
+      };
+    }
+    const res = await apiClient.get<{ text: string; filename: string }>(
+      `/api/evidence-repository/${id}/preview`,
+    );
+    return { kind: "text" as const, text: res.data.text || "", filename: res.data.filename };
+  },
+
+  downloadRepository: async (id: string, filename: string) => {
+    const res = await apiClient.get(`/api/evidence-repository/${id}/download`, {
+      responseType: "blob",
+    });
+    const url = URL.createObjectURL(res.data as Blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+
+  generateRepository: (body: {
+    case_id: string;
+    types?: string[];
+    count?: number;
+    complete?: boolean;
+  }) =>
+    apiClient
+      .post<import("./types").RepositoryGenerateResult>("/api/evidence-repository/generate", body)
+      .then((r) => r.data),
+
+  generateRepositoryAll: () =>
+    apiClient
+      .post<import("./types").RepositoryGenerateResult>("/api/evidence-repository/generate-all")
+      .then((r) => r.data),
+
+  getRepositoryJob: (jobId: string) =>
+    apiClient
+      .get<{
+        status: string;
+        completed?: number;
+        total_cases?: number;
+        total_files?: number;
+        error?: string;
+        cases?: { case_number: string; created: number; ok: boolean }[];
+      }>(`/api/evidence-repository/jobs/${jobId}`)
+      .then((r) => r.data),
+
+  addRepositoryToCase: (id: string, caseId: string) =>
+    apiClient
+      .post<EvidenceItem>(`/api/evidence-repository/${id}/add-to-case`, { case_id: caseId })
+      .then((r) => r.data),
+
+  resetSyntheticRepository: () =>
+    apiClient
+      .delete<{
+        success: boolean;
+        repository_items_deleted: number;
+        imported_evidence_deleted: number;
+        message: string;
+      }>("/api/evidence-repository/synthetic")
       .then((r) => r.data),
 };

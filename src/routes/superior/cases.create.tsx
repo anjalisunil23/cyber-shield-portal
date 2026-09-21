@@ -8,7 +8,12 @@ import { addCaseItem } from "@/data/mock/platformState";
 import { toast } from "sonner";
 import { apiMessage } from "@/services/apiClient";
 import { Loader2, ShieldAlert, UserCheck } from "lucide-react";
-import { MOCK_USERS } from "@/data/mock/platform";
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isValidUuid(value: string | undefined): value is string {
+  return Boolean(value && UUID_RE.test(value));
+}
 
 export const Route = createFileRoute("/superior/cases/create")({ component: Page });
 
@@ -43,16 +48,7 @@ function Page() {
         }
       })
       .catch(() => {
-        // Fallback to mock investigators
-        const fallback = MOCK_USERS.filter((u) => u.role === "Investigator").map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-        }));
-        setAvailableInvestigators(fallback);
-        if (fallback.length > 0) {
-          setSelectedLeadId((prev) => prev || fallback[0].id);
-        }
+        toast.error("Unable to load investigators. Check your connection and try again.");
       });
   }, []);
 
@@ -62,6 +58,8 @@ function Page() {
       toast.error("Case title is required");
       return;
     }
+    const leadId = isValidUuid(selectedLeadId) ? selectedLeadId : undefined;
+
     setSubmitting(true);
     try {
       const res = await investigationApi.createCase({
@@ -69,8 +67,9 @@ function Page() {
         description: form.description || undefined,
         priority: form.priority,
         status: form.status,
-        investigator_lead_id: selectedLeadId || undefined,
-        assignee_ids: selectedLeadId ? [selectedLeadId] : [],
+        ...(leadId
+          ? { investigator_lead_id: leadId, assignee_ids: [leadId] }
+          : { assignee_ids: [] }),
       });
       addCaseItem({
         id: res.id,
@@ -95,7 +94,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Cases", to: "/superior/cases" }, { label: "Create" }]}
       title="Create Case"
-      subtitle="Open a new investigation case and assign the initial Investigator Lead"
       actions={
         <Link to="/superior/cases">
           <GhostButton>Cancel</GhostButton>
@@ -118,7 +116,7 @@ function Page() {
             <label className="text-xs font-semibold text-muted-foreground">Description</label>
             <textarea
               value={form.description}
-              onChange={(prev) => setForm((p) => ({ ...p, description: prev.target.value }))}
+              onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
               placeholder="Provide case background and scope details"
               rows={4}
               className="rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"

@@ -62,10 +62,7 @@ function CasesPage() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Investigation Cases</h1>
-          <p className="text-sm text-muted-foreground">
-            Create, filter, assign, and track digital evidence cases
-          </p>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Cases</h1>
         </div>
         <button
           type="button"

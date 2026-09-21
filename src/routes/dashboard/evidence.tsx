@@ -15,11 +15,7 @@ function EvidencePage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Evidence</h1>
-        <p className="text-sm text-muted-foreground">
-          Open a case to upload, preview, search, and download evidence. AI fields are reserved for
-          Phase 2.
-        </p>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Evidence</h1>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {(casesQ.data?.items || []).map((c) => (

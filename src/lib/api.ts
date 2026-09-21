@@ -74,6 +74,12 @@ export type TokenResponse = {
   user_id?: string;
 };
 
+export function checkEmailAvailability(email: string) {
+  return apiRequest<{ valid: boolean; exists: boolean; message: string }>(
+    `/api/auth/check-email?email=${encodeURIComponent(email)}`,
+  );
+}
+
 export function registerUser(body: {
   full_name: string;
   email: string;

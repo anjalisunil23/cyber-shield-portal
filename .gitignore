@@ -33,3 +33,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated synthetic demonstration files (feature code is tracked)
+backend/evidence_repository/**
+!backend/evidence_repository/.gitkeep
+backend/uploads/**
+!backend/uploads/.gitkeep

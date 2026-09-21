@@ -1,29 +1,43 @@
-import { Outlet, useNavigate } from "@tanstack/react-router";
+import { Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { RoleShell } from "@/components/layouts/RoleShell";
+import { LoadingBlock } from "@/components/ui-kit/PageKit";
 import { getToken, isAuthenticated } from "@/lib/auth";
-import { homeForRole, roleFromAccessToken } from "@/lib/roles";
+import { homeForRole, normalizeRole, roleFromAccessToken } from "@/lib/roles";
 
-/** Legacy /dashboard — redirects to role-specific home. */
+/** Legacy /dashboard — redirects home, and wraps child workspaces in the role shell. */
 export const Route = createFileRoute("/dashboard")({
   component: LegacyDashboardRedirect,
 });
 
 function LegacyDashboardRedirect() {
   const navigate = useNavigate();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     if (!isAuthenticated()) {
       void navigate({ to: "/login" });
       return;
     }
-    window.location.replace(homeForRole(roleFromAccessToken(getToken())));
-  }, [navigate]);
+    const path = pathname.replace(/\/$/, "") || "/";
+    if (path === "/dashboard") {
+      window.location.replace(homeForRole(roleFromAccessToken(getToken())));
+    }
+  }, [navigate, pathname]);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-[#020617] text-slate-400">
-      Redirecting to your role workspace…
-      <Outlet />
-    </div>
-  );
+  const path = pathname.replace(/\/$/, "") || "/";
+  if (path === "/dashboard") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-8">
+        <div className="w-full max-w-sm">
+          <LoadingBlock rows={4} />
+        </div>
+      </div>
+    );
+  }
+
+  const role = normalizeRole(roleFromAccessToken(getToken()));
+  if (!role) return <Outlet />;
+  return <RoleShell role={role} />;
 }

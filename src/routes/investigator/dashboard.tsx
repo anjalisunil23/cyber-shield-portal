@@ -7,7 +7,8 @@ import {
   CheckCircle2,
   Clock,
   FileStack,
-  Timer,
+  GitBranch,
+  ShieldAlert,
 } from "lucide-react";
 import {
   Area,
@@ -42,10 +43,6 @@ function InvestigatorDashboard() {
     queryKey: ["cases"],
     queryFn: () => investigationApi.listCases({ page_size: 50 }),
   });
-  const activity = useQuery({
-    queryKey: ["activity"],
-    queryFn: () => investigationApi.activity(1),
-  });
   const notifsQ = useQuery({
     queryKey: ["notifications"],
     queryFn: () => investigationApi.listNotifications(),
@@ -59,7 +56,6 @@ function InvestigatorDashboard() {
   const inProgressCount = caseItems.filter((c) =>
     ["in_progress", "evidence_collection", "analysis", "open"].includes(c.status),
   ).length;
-  const underReviewCount = caseItems.filter((c) => c.status === "under_review").length;
   const changesRequestedCount = caseItems.filter((c) => c.status === "changes_requested").length;
   const approvedCount = caseItems.filter((c) =>
     ["approved", "completed", "closed", "archived"].includes(c.status),
@@ -80,89 +76,60 @@ function InvestigatorDashboard() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Investigator Workspace"
-        subtitle="Manage assigned cases, upload digital evidence, address supervisor feedback, and submit findings"
-      />
+      <PageHeader title="Dashboard" />
 
-      {/* Dynamic Workflow Metrics */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatsCard label="Assigned Cases" value={totalAssigned} icon={Briefcase} />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatsCard label="Cases" value={totalAssigned} icon={Briefcase} />
+        <StatsCard label="In progress" value={inProgressCount} icon={Clock} tone="cyan" />
         <StatsCard
-          label="Under Review"
-          value={underReviewCount}
-          icon={Clock}
-          tone="cyan"
-          delay={0.08}
-        />
-        <StatsCard
-          label="Changes Requested"
+          label="Changes requested"
           value={changesRequestedCount}
           icon={AlertTriangle}
           tone="amber"
-          hint={changesRequestedCount > 0 ? "Requires your attention" : "All clear"}
-          delay={0.12}
         />
-        <StatsCard
-          label="Approved / Closed"
-          value={approvedCount}
-          icon={CheckCircle2}
-          tone="emerald"
-          delay={0.16}
-        />
+        <StatsCard label="Closed" value={approvedCount} icon={CheckCircle2} tone="emerald" />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatsCard
-          label="Evidence Uploaded"
+          label="Evidence"
           value={d?.evidence_uploaded || 0}
           icon={FileStack}
           tone="cyan"
-          delay={0.2}
         />
         <StatsCard
-          label="Unread Notifications"
-          value={unreadNotifs}
-          icon={Bell}
-          tone={unreadNotifs > 0 ? "rose" : "primary"}
-          delay={0.24}
+          label="Leads to review"
+          value={d?.lead_review?.pending || 0}
+          icon={GitBranch}
+          tone="amber"
         />
         <StatsCard
-          label="Activity Logs"
-          value={activity.data?.total || 0}
-          icon={Timer}
-          tone="primary"
-          delay={0.28}
+          label="High risk"
+          value={(d?.risk_distribution?.high || 0) + (d?.risk_distribution?.critical || 0)}
+          icon={ShieldAlert}
+          tone="rose"
         />
+        <StatsCard label="Unread" value={unreadNotifs} icon={Bell} />
       </div>
 
       {/* Feedback Banner if Changes Requested */}
       {changesRequestedCount > 0 && (
-        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-amber-800 dark:text-amber-200 flex items-center justify-between gap-4 shadow-xs">
-          <div className="flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 animate-pulse" />
-            <div>
-              <p className="text-sm font-bold text-amber-700 dark:text-amber-300">
-                Supervisor Review Action Required
-              </p>
-              <p className="text-xs text-amber-800/80 dark:text-amber-200/80">
-                You have {changesRequestedCount} case{changesRequestedCount > 1 ? "s" : ""} where
-                supervisor revisions have been requested.
-              </p>
-            </div>
-          </div>
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-amber-900 dark:text-amber-100 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium">
+            {changesRequestedCount} case{changesRequestedCount > 1 ? "s" : ""} need revision
+          </p>
           <button
             type="button"
             onClick={() => void navigate({ to: "/investigator/cases" })}
-            className="shrink-0 rounded-xl bg-amber-500 px-3.5 py-1.5 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-colors shadow-xs"
+            className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-slate-950 hover:bg-amber-400"
           >
-            Review Feedback →
+            Review
           </button>
         </div>
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Evidence Upload Statistics">
+        <ChartCard title="Evidence types">
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={d?.evidence_types || []}>
@@ -178,7 +145,7 @@ function InvestigatorDashboard() {
             </ResponsiveContainer>
           </div>
         </ChartCard>
-        <ChartCard title="Investigation Trajectory">
+        <ChartCard title="Cases by month">
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={d?.monthly_cases || []}>
@@ -202,30 +169,20 @@ function InvestigatorDashboard() {
       </div>
 
       {/* Active Assigned Cases Roster */}
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-xs space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-primary" />
-              Active Cases Assigned to You
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Investigation files where you are assigned as Lead or Team Member
-            </p>
-          </div>
+      <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm font-medium text-foreground">Recent cases</h3>
           <button
             type="button"
             onClick={() => void navigate({ to: "/investigator/cases" })}
-            className="text-xs font-semibold text-primary hover:underline"
+            className="text-xs font-medium text-primary hover:underline"
           >
-            View All Cases ({caseItems.length}) →
+            View all
           </button>
         </div>
 
         {caseItems.length === 0 ? (
-          <p className="text-xs text-muted-foreground py-6 text-center">
-            No active cases assigned yet.
-          </p>
+          <p className="py-6 text-center text-xs text-muted-foreground">No cases assigned.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-foreground">
@@ -289,7 +246,7 @@ function InvestigatorDashboard() {
                         }
                         className="rounded-lg bg-primary/10 hover:bg-primary/20 text-primary px-2.5 py-1 text-xs font-semibold transition"
                       >
-                        Open Case →
+                        Open
                       </button>
                     </td>
                   </tr>

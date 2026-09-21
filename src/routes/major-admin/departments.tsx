@@ -18,7 +18,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "Departments" }]}
       title="Departments"
-      subtitle="Investigation units across the platform"
       actions={<PrimaryButton>Add department</PrimaryButton>}
     >
       <Toolbar search={table.search} onSearch={table.setSearch} />

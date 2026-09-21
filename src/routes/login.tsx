@@ -157,13 +157,12 @@ function LoginPage() {
         ) {
           message = "Invalid email or password. Please verify your credentials.";
         } else if (err.status === 502 || err.message.toLowerCase().includes("bad gateway")) {
-          message =
-            "Cannot reach the backend server (502 Bad Gateway). Please ensure the Python API is running on port 8001.";
+          message = "Something went wrong. Please try again.";
         } else {
           message = err.message;
         }
       } else if (err instanceof TypeError) {
-        message = "Cannot reach the API. Make sure the backend server is running on port 8001.";
+        message = "Unable to sign in. Please try again.";
       } else if (err instanceof Error) {
         message = err.message;
       }
@@ -273,14 +272,14 @@ function LoginPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full rounded-md bg-white py-3 text-sm font-bold tracking-[0.2em] text-[#0b1220] transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-md bg-white py-3 text-sm font-bold tracking-[0.18em] text-[#0b1220] shadow-[0_0_28px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5 hover:bg-white/95 hover:shadow-[0_0_36px_rgba(6,182,212,0.28)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {submitting ? "SIGNING IN…" : "LOGIN"}
               </button>
 
               <Link
                 to="/register"
-                className="block w-full rounded-md border border-white/80 py-3 text-center text-sm font-semibold tracking-[0.2em] text-white transition hover:bg-white/10"
+                className="block w-full rounded-md border border-white/35 py-3 text-center text-sm font-semibold tracking-[0.18em] text-white/90 transition hover:-translate-y-0.5 hover:border-cyan/50 hover:bg-white/5 hover:text-white"
               >
                 REGISTER
               </Link>

@@ -74,7 +74,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Admin", to: "/admin/dashboard" }, { label: "Users" }]}
       title="Users"
-      subtitle="Organization directory"
       actions={
         <Link to={"/admin/users/create" as "/"}>
           <PrimaryButton>Create user</PrimaryButton>

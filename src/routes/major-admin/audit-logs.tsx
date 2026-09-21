@@ -16,7 +16,6 @@ function Page() {
     <PageScaffold
       crumbs={[{ label: "Major Admin", to: "/major-admin/dashboard" }, { label: "Audit Logs" }]}
       title="Audit Logs"
-      subtitle="Security and operational activity"
     >
       <Toolbar
         search={table.search}

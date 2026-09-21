@@ -25,7 +25,6 @@ import {
   YAxis,
 } from "recharts";
 import {
-  AiPlaceholderCard,
   ChartCard,
   PageHeader,
   Panel,
@@ -74,10 +73,7 @@ function MajorAdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Major Admin Control Center"
-        subtitle="Platform-wide oversight for CyberShield investigation operations"
-      />
+      <PageHeader title="Dashboard" />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatsCard label="Total Admins" value={admins} icon={Shield} tone="primary" delay={0.05} />
@@ -260,22 +256,6 @@ function MajorAdminDashboard() {
           description="Configuration & backups"
           icon={HardDrive}
           onClick={() => void navigate({ to: "/major-admin/settings" })}
-        />
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <AiPlaceholderCard
-          title="AI Evidence Analysis"
-          blurb="Queue depth and model status arrive in Phase 2."
-        />
-        <AiPlaceholderCard
-          title="Knowledge Graph"
-          blurb="Global entity graph reserved for AI linking."
-        />
-        <AiPlaceholderCard title="Risk Assessment" blurb="Platform risk scoring placeholder." />
-        <AiPlaceholderCard
-          title="OCR / Speech / Faces"
-          blurb="Extraction pipelines will plug into evidence fields."
         />
       </div>
     </div>
