@@ -314,7 +314,7 @@ def build_dataset(case: Case, selected: set[str] | None = None, include_duplicat
             ["social", "synthetic"],
             [p["person"], p["email"]],
         ),
-        "social_export",
+        "social_export" if "social_export" in selected else "communications",
     )
 
     call_rows = [
@@ -475,7 +475,7 @@ def build_dataset(case: Case, selected: set[str] | None = None, include_duplicat
         [f"{cn} {theme}", f"{p['person']} {p['phone']}", p["location"], WATERMARK],
         seconds=6,
     )
-    vtype = "video" if ext == ".mp4" else "image"
+    vtype = "video"
     add(
         GeneratedFile(
             f"briefing{ext}",

@@ -29,18 +29,26 @@ logger = logging.getLogger("cybershield.repository")
 
 CATEGORY_ALIASES = {
     "documents": "documents",
+    "document": "documents",
     "images": "images",
+    "image": "images",
     "audio": "audio",
     "video": "video",
     "communications": "communications",
     "communication": "communications",
+    "chat": "communications",
+    "email": "communications",
+    "sms": "communications",
     "location": "location",
+    "gps": "location",
     "browser": "browser",
     "call logs": "call_logs",
     "call_logs": "call_logs",
     "call_log": "call_logs",
+    "cdr": "call_logs",
     "social export": "social_export",
     "social_export": "social_export",
+    "social": "social_export",
     "other": "other",
     "metadata": "other",
 }
@@ -97,6 +105,22 @@ class RepositoryService:
             cat_match = [cat]
             if cat == "call_logs":
                 cat_match.extend(["call_log", "communications"])
+            if cat == "social_export":
+                cat_match.extend(["social", "social_export", "communications"])
+            if cat == "browser":
+                cat_match.extend(["browser", "communications"])
+            if cat == "communications":
+                cat_match.extend(["chat_export", "call_logs", "call_log", "social_export", "social", "browser"])
+            if cat == "images":
+                cat_match.extend(["image", "images"])
+            if cat == "audio":
+                cat_match.extend(["audio"])
+            if cat == "video":
+                cat_match.extend(["video"])
+            if cat == "documents":
+                cat_match.extend(["document", "documents"])
+            if cat == "location":
+                cat_match.extend(["location", "gps"])
             if cat == "other":
                 cat_match.extend(["metadata", "other"])
             stmt = stmt.where(
@@ -171,12 +195,25 @@ class RepositoryService:
         if include_duplicate is None:
             include_duplicate = case.case_number == "CS-2026-0003" or complete
         files = build_dataset(case, selected=selected, include_duplicate=bool(include_duplicate and complete))
-        if count and count > 0:
-            files = files[:count]
+
+        if count and count > 0 and count < len(files):
+            # Fair round-robin distribution across categories present so no type is starved
+            by_category: dict[str, list[Any]] = {}
+            for f in files:
+                cat = f.category or "documents"
+                by_category.setdefault(cat, []).append(f)
+
+            balanced_files: list[Any] = []
+            category_lists = [list(items) for items in by_category.values()]
+            while len(balanced_files) < count and any(category_lists):
+                for cat_items in category_lists:
+                    if cat_items and len(balanced_files) < count:
+                        balanced_files.append(cat_items.pop(0))
+            files = balanced_files
 
         root = repository_root()
         created = []
-        skipped = 0
+        refreshed = []
         for spec in files:
             existing = self.db.scalar(
                 select(EvidenceRepositoryItem).where(
@@ -185,11 +222,30 @@ class RepositoryService:
                     EvidenceRepositoryItem.dataset == DATASET_NAME,
                 )
             )
-            if existing:
-                skipped += 1
-                continue
             digest = sha256_bytes(spec.data)
             path = write_repo_file(root, case.case_number, spec.category, spec.filename, spec.data)
+            if existing:
+                existing.filename = spec.filename
+                existing.original_name = spec.filename
+                existing.file_type = spec.file_type
+                existing.category = spec.category
+                existing.mime_type = spec.mime_type or mimetypes.guess_type(spec.filename)[0]
+                existing.file_size = len(spec.data)
+                existing.storage_path = relative_repo_path(root, path)
+                existing.sha256_hash = digest
+                existing.description = spec.description
+                existing.tags = spec.tags
+                existing.metadata_json = {
+                    "synthetic": True,
+                    "dataset": DATASET_NAME,
+                    "source": "synthetic_evidence_generator",
+                    "theme": detect_theme(case),
+                    "entities": spec.entities,
+                    "disclaimer": "SYNTHETIC DEMONSTRATION DATA — NOT REAL FORENSIC EVIDENCE",
+                }
+                refreshed.append(spec.filename)
+                continue
+
             item = EvidenceRepositoryItem(
                 case_id=case.id,
                 filename=spec.filename,
@@ -219,6 +275,7 @@ class RepositoryService:
             self.db.add(item)
             created.append(spec.filename)
 
+        total_ready = len(created) + len(refreshed)
         log_activity(
             self.db,
             user_id=actor.id,
@@ -226,18 +283,32 @@ class RepositoryService:
             actor_role=actor.role.value if hasattr(actor.role, "value") else str(actor.role),
             action=ActivityAction.create,
             resource_type="evidence_repository",
-            description=f"Generated {len(created)} synthetic repository files for {case.case_number}",
+            description=f"Generated/refreshed {total_ready} synthetic repository files for {case.case_number}",
         )
         self.db.commit()
-        logger.info("Generated %s repository files for %s (skipped %s)", len(created), case.case_number, skipped)
+        logger.info(
+            "Generated %s new, refreshed %s repository files for %s",
+            len(created),
+            len(refreshed),
+            case.case_number,
+        )
         return {
             "success": True,
             "case_id": str(case.id),
             "case_number": case.case_number,
             "theme": detect_theme(case),
             "created": len(created),
-            "skipped_existing": skipped,
-            "files": created,
+            "refreshed": len(refreshed),
+            "skipped_existing": len(refreshed),
+            "total": total_ready,
+            "files": created + refreshed,
+            "message": (
+                f"Generated {len(created)} new and updated {len(refreshed)} synthetic files for {case.case_number}"
+                if len(created) > 0 and len(refreshed) > 0
+                else f"Generated {len(created)} synthetic files for {case.case_number}"
+                if len(created) > 0
+                else f"Refreshed {len(refreshed)} synthetic demonstration files for {case.case_number}"
+            ),
             "disclaimer": "SYNTHETIC DEMONSTRATION DATA — NOT REAL FORENSIC EVIDENCE",
         }
 
