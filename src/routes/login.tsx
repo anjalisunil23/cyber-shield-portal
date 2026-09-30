@@ -162,7 +162,7 @@ function LoginPage() {
           message = err.message;
         }
       } else if (err instanceof TypeError) {
-        message = "Unable to sign in. Please try again.";
+        message = "Unable to connect to backend server. Please check your connection or retry.";
       } else if (err instanceof Error) {
         message = err.message;
       }
