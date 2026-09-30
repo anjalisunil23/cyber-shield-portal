@@ -74,11 +74,11 @@ async def validation_exception_handler(
 
 
 @app.exception_handler(SQLAlchemyError)
-async def database_exception_handler(_request: Request, _exc: SQLAlchemyError) -> JSONResponse:
+async def database_exception_handler(_request: Request, exc: SQLAlchemyError) -> JSONResponse:
     return JSONResponse(
         status_code=503,
         content=_error_body(
-            "Database unavailable. Start PostgreSQL (e.g. docker compose up -d in backend/) then retry."
+            f"Database error: {str(exc)}"
         ),
     )
 

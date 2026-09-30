@@ -17,8 +17,14 @@ def get_engine() -> Engine:
     global _engine, _SessionLocal
     if _engine is None:
         settings = get_settings()
-        # Parameterized queries are SQLAlchemy's default — never interpolate user input into SQL.
-        _engine = create_engine(settings.database_url, pool_pre_ping=True)
+        connect_args = {}
+        if "render.com" in settings.database_url or "dpg-" in settings.database_url:
+            connect_args["sslmode"] = "require"
+        _engine = create_engine(
+            settings.database_url,
+            pool_pre_ping=True,
+            connect_args=connect_args,
+        )
         _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)
     return _engine
 
