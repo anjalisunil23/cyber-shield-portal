@@ -31,9 +31,16 @@ def get_engine() -> Engine:
 
 def get_db() -> Generator[Session, None, None]:
     """Yield a request-scoped SQLAlchemy session and close it afterwards."""
-    get_engine()
-    assert _SessionLocal is not None
-    db = _SessionLocal()
+    from fastapi import HTTPException
+    try:
+        get_engine()
+        assert _SessionLocal is not None
+        db = _SessionLocal()
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=f"Database connection error: {str(exc)}",
+        )
     try:
         yield db
     finally:
