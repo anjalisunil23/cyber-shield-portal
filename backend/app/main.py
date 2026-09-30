@@ -124,3 +124,28 @@ def root() -> dict:
 @app.get("/api/health")
 def health() -> dict:
     return {"success": True, "message": "ok"}
+
+
+@app.get("/api/debug-env")
+def debug_env() -> dict:
+    from app.db.session import get_engine
+    from sqlalchemy import text
+    settings = get_settings()
+    db_ok = False
+    db_err = ""
+    try:
+        engine = get_engine()
+        with engine.connect() as conn:
+            res = conn.execute(text("SELECT 1")).scalar()
+            db_ok = bool(res == 1)
+    except Exception as e:
+        db_err = f"{type(e).__name__}: {str(e)}"
+
+    return {
+        "success": True,
+        "database_url_set": bool(settings.database_url),
+        "database_url_prefix": settings.database_url[:30] if settings.database_url else "",
+        "database_connected": db_ok,
+        "database_error": db_err,
+        "jwt_secret_len": len(settings.jwt_secret),
+    }
