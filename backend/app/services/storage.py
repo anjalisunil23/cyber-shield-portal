@@ -78,4 +78,7 @@ def get_storage() -> StorageBackend:
 
 
 def ensure_upload_tree() -> None:
-    LocalStorageBackend()
+    try:
+        LocalStorageBackend()
+    except Exception:
+        pass
