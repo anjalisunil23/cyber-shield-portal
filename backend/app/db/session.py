@@ -18,10 +18,14 @@ def get_engine() -> Engine:
     if _engine is None:
         settings = get_settings()
         connect_args = {}
-        if "render.com" in settings.database_url or "dpg-" in settings.database_url:
-            connect_args["sslmode"] = "require"
+        db_url = settings.database_url
+        if "sslmode" not in db_url:
+            if "render.com" in db_url:
+                connect_args["sslmode"] = "require"
+            elif "dpg-" in db_url:
+                connect_args["sslmode"] = "prefer"
         _engine = create_engine(
-            settings.database_url,
+            db_url,
             pool_pre_ping=True,
             connect_args=connect_args,
         )

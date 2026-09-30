@@ -63,9 +63,10 @@ class Settings(BaseSettings):
             v = v.strip()
             if v.startswith("postgres://"):
                 v = v.replace("postgres://", "postgresql://", 1)
-            if "render.com" in v and "sslmode" not in v:
+            if ("render.com" in v or "dpg-" in v) and "sslmode" not in v:
                 separator = "&" if "?" in v else "?"
-                v = f"{v}{separator}sslmode=require"
+                mode = "require" if "render.com" in v else "prefer"
+                v = f"{v}{separator}sslmode={mode}"
         return v
 
     @field_validator("jwt_secret", mode="before")

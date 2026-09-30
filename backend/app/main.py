@@ -39,12 +39,20 @@ app = FastAPI(
     version="2.0.0",
 )
 
+raw_origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+if "https://cyber-shield-portal.vercel.app" not in raw_origins:
+    raw_origins.append("https://cyber-shield-portal.vercel.app")
+
+allow_origins = ["*"] if "*" in raw_origins else raw_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=allow_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:.*|http://127\.0\.0\.1:.*",
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
@@ -52,8 +60,29 @@ def _error_body(message: str) -> dict:
     return {"success": False, "message": message}
 
 
+def _cors_headers(request: Request) -> dict:
+    origin = request.headers.get("origin", "*")
+    return {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Credentials": "true",
+    }
+
+
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as exc:
+        headers = _cors_headers(request)
+        return JSONResponse(
+            status_code=500,
+            content=_error_body(f"Server error: {str(exc)}"),
+            headers=headers,
+        )
+
+
 @app.exception_handler(HTTPException)
-async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONResponse:
+async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
     detail = exc.detail
     if isinstance(detail, dict) and "message" in detail:
         body = {"success": False, "message": str(detail["message"])}
@@ -61,12 +90,13 @@ async def http_exception_handler(_request: Request, exc: HTTPException) -> JSONR
         body = _error_body(detail)
     else:
         body = _error_body("Request failed")
-    return JSONResponse(status_code=exc.status_code, content=body, headers=exc.headers)
+    headers = {**_cors_headers(request), **(exc.headers or {})}
+    return JSONResponse(status_code=exc.status_code, content=body, headers=headers)
 
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(
-    _request: Request,
+    request: Request,
     exc: RequestValidationError,
 ) -> JSONResponse:
     errors = exc.errors()
@@ -77,24 +107,24 @@ async def validation_exception_handler(
         message = f"{loc}: {msg}" if loc else msg
     else:
         message = "Validation error"
-    return JSONResponse(status_code=422, content=_error_body(message))
+    return JSONResponse(status_code=422, content=_error_body(message), headers=_cors_headers(request))
 
 
 @app.exception_handler(SQLAlchemyError)
-async def database_exception_handler(_request: Request, exc: SQLAlchemyError) -> JSONResponse:
+async def database_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
     return JSONResponse(
         status_code=503,
-        content=_error_body(
-            f"Database error: {str(exc)}"
-        ),
+        content=_error_body(f"Database error: {str(exc)}"),
+        headers=_cors_headers(request),
     )
 
 
 @app.exception_handler(Exception)
-async def unhandled_exception_handler(_request: Request, exc: Exception) -> JSONResponse:
+async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(
         status_code=500,
         content=_error_body(f"Server error: {str(exc)}"),
+        headers=_cors_headers(request),
     )
 
 
