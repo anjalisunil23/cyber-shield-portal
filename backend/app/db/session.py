@@ -32,14 +32,16 @@ def get_engine() -> Engine:
 def get_db() -> Generator[Session, None, None]:
     """Yield a request-scoped SQLAlchemy session and close it afterwards."""
     from fastapi import HTTPException
+    from sqlalchemy import text
     try:
         get_engine()
         assert _SessionLocal is not None
         db = _SessionLocal()
+        db.execute(text("SELECT 1"))
     except Exception as exc:
         raise HTTPException(
             status_code=503,
-            detail=f"Database connection error: {str(exc)}",
+            detail=f"Database error ({type(exc).__name__}): {str(exc)}. Please check DATABASE_URL in Render Dashboard.",
         )
     try:
         yield db
