@@ -100,21 +100,29 @@ def login(
     request: Request,
     db: Annotated[Session, Depends(get_db)],
 ) -> TokenPair:
-    user = db.scalar(select(User).where(User.email == payload.email.lower()))
-    if user is None or not user.is_active or not verify_password(payload.password, user.password_hash):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+    try:
+        user = db.scalar(select(User).where(User.email == payload.email.lower()))
+        if user is None or not user.is_active or not verify_password(payload.password, user.password_hash):
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
-    user.last_login = datetime.now(timezone.utc)
-    log_activity(
-        db,
-        user_id=user.id,
-        action=ActivityAction.login,
-        description=f"Login {user.email}",
-        ip_address=request.client.host if request.client else None,
-        user_agent=request.headers.get("user-agent"),
-    )
-    db.add(user)
-    return _issue_tokens(db, user)
+        user.last_login = datetime.now(timezone.utc)
+        log_activity(
+            db,
+            user_id=user.id,
+            action=ActivityAction.login,
+            description=f"Login {user.email}",
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+        )
+        db.add(user)
+        return _issue_tokens(db, user)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Login error: {type(exc).__name__}: {str(exc)}",
+        )
 
 
 @router.post("/refresh", response_model=TokenPair)
