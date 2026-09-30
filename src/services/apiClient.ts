@@ -3,7 +3,7 @@ import { clearToken, getRefreshToken, getToken, setTokens } from "@/lib/auth";
 
 const baseURL =
   (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ||
-  (import.meta.env.DEV ? "" : "http://127.0.0.1:8001");
+  (import.meta.env.DEV ? "" : "https://cyber-shield-portal-i0rf.onrender.com");
 
 export const apiClient = axios.create({
   baseURL,

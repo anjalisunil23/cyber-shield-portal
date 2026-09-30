@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     port: int = Field(default=8000, alias="PORT")
     cors_origins: str = Field(
-        default="http://localhost:8080,http://localhost:8081,http://localhost:5173",
+        default="https://cyber-shield-portal.vercel.app,http://localhost:8080,http://localhost:8081,http://localhost:5173",
         alias="CORS_ORIGINS",
     )
     # Local uploads — swap STORAGE_BACKEND to s3/minio in Phase 2 without changing callers

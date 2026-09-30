@@ -3,7 +3,7 @@
 // Prefer explicit VITE_API_URL; otherwise use same-origin `/api` (Vite proxy → backend).
 const API_BASE =
   (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ||
-  (import.meta.env.DEV ? "" : "http://127.0.0.1:8001");
+  (import.meta.env.DEV ? "" : "https://cyber-shield-portal-i0rf.onrender.com");
 
 export type ApiErrorBody = {
   success?: boolean;
