@@ -41,7 +41,8 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 def _issue_tokens(db: Session, user: User) -> TokenPair:
-    access = create_access_token(subject=user.id, role=user.role.value)
+    role_str = user.role.value if hasattr(user.role, "value") else str(user.role)
+    access = create_access_token(subject=user.id, role=role_str)
     raw_refresh = create_refresh_token_value()
     db.add(
         RefreshToken(
@@ -54,7 +55,7 @@ def _issue_tokens(db: Session, user: User) -> TokenPair:
     return TokenPair(
         access_token=access,
         refresh_token=raw_refresh,
-        role=user.role.value,
+        role=role_str,
         user_id=str(user.id),
     )
 

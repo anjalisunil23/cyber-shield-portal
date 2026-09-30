@@ -157,7 +157,7 @@ class AdminUserService:
             user_id=actor.id,
             notification_type=NotificationType.user_created,
             title="User created",
-            message=f"{user.full_name} ({user.role.value}) was created",
+            message=f"{user.full_name} ({user.role.value if hasattr(user.role, 'value') else str(user.role)}) was created",
             link="/admin/users",
         )
         log_activity(

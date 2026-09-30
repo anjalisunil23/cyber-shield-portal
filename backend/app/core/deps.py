@@ -62,11 +62,12 @@ def require_role(allowed_roles: list[str]) -> Callable[..., User]:
             ...
     """
     allowed_values = {
-        r.value if isinstance(r, UserRole) else str(r) for r in allowed_roles
+        r.value if hasattr(r, "value") else str(r) for r in allowed_roles
     }
 
     def _dependency(current_user: Annotated[User, Depends(get_current_user)]) -> User:
-        if current_user.role.value not in allowed_values:
+        user_role_str = current_user.role.value if hasattr(current_user.role, "value") else str(current_user.role)
+        if user_role_str not in allowed_values:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail={"success": False, "message": "Insufficient permissions"},

@@ -163,7 +163,8 @@ def provision_user(
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
 
     if payload.role not in allowed:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, detail=f"Cannot create role {payload.role.value}")
+        role_val = payload.role.value if hasattr(payload.role, "value") else str(payload.role)
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail=f"Cannot create role {role_val}")
 
     if db.scalar(select(User).where(User.email == payload.email.lower())):
         raise HTTPException(status.HTTP_409_CONFLICT, detail="Email already registered")

@@ -182,10 +182,11 @@ def admin_create_user(
     from app.core.security import hash_password
     from app.models.user import UserRole
 
-    # Role hierarchy: major_admin can create anyone; admin cannot create major_admin
-    if actor.role.value == "admin" and payload.role.value == "major_admin":
+    actor_role_val = actor.role.value if hasattr(actor.role, "value") else str(actor.role)
+    payload_role_val = payload.role.value if hasattr(payload.role, "value") else str(payload.role)
+    if actor_role_val == "admin" and payload_role_val == "major_admin":
         raise HTTPException(403, detail="Admins cannot create Major Admin accounts")
-    if actor.role.value == "admin" and payload.role.value == "admin":
+    if actor_role_val == "admin" and payload_role_val == "admin":
         raise HTTPException(403, detail="Only Major Admin can create Admin accounts")
 
     existing = db.scalar(select(User).where(User.email == payload.email.lower()))
