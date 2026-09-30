@@ -59,8 +59,13 @@ class Settings(BaseSettings):
     @classmethod
     def normalize_database_url(cls, v: str) -> str:
         """Render PostgreSQL uses postgres:// which SQLAlchemy 2.0 requires as postgresql://"""
-        if isinstance(v, str) and v.startswith("postgres://"):
-            return v.replace("postgres://", "postgresql://", 1)
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("postgres://"):
+                v = v.replace("postgres://", "postgresql://", 1)
+            if "render.com" in v and "sslmode" not in v:
+                separator = "&" if "?" in v else "?"
+                v = f"{v}{separator}sslmode=require"
         return v
 
     @field_validator("jwt_secret", mode="before")
